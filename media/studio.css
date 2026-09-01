@@ -551,15 +551,39 @@ p {
   z-index: 6;
   display: flex;
   align-items: center;
-  min-height: 70px;
+  min-height: 60px;
   gap: 8px;
-  padding: 9px 12px 9px 16px;
+  padding: 8px 16px;
   border-bottom: 1px solid var(--sg-border-subtle);
   background: color-mix(in srgb, var(--sg-workspace) 92%, transparent);
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sg-border-subtle) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.preview-toolbar::-webkit-scrollbar {
+  height: 4px;
+}
+
+.preview-toolbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.preview-toolbar::-webkit-scrollbar-thumb {
+  background: var(--sg-border-subtle);
+  border-radius: 4px;
+}
+
+.preview-toolbar::-webkit-scrollbar-thumb:hover {
+  background: var(--sg-accent);
 }
 
 .preview-heading-wrap {
-  flex: 1 1 150px;
+  flex: 0 0 auto;
   min-width: 135px;
 }
 
@@ -2199,12 +2223,13 @@ body[data-view="preview"] .sample-app {
   }
 
   .preview-toolbar {
-    flex-wrap: wrap;
-    align-content: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 
   .preview-heading-wrap {
-    flex-basis: 100%;
+    flex: 0 0 auto;
   }
 
   .selected-context {

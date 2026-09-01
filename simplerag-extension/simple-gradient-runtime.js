@@ -840,11 +840,16 @@
   function applyResolvedToSelectors(selectors, category, resolved) {
     const action = resolvedSurfaceAction(resolved);
     if (action === 'skip') return 0;
-    const elements = queryElements(selectors).filter((element) => (
+    let elements = queryElements(selectors).filter((element) => (
       !state.ui?.root?.contains(element)
       && !state.settingsEntry?.contains(element)
       && element !== state.settingsEntry
     ));
+    if (category === 'composer') {
+      // Composer selectors cover wrapper variants and the inner box; tagging a
+      // wrapper that contains the box paints the gradient outside its rounded border.
+      elements = elements.filter((element) => !elements.some((other) => other !== element && element.contains(other)));
+    }
     for (const element of elements) {
       if (action === 'clear') {
         clearElement(element);

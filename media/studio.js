@@ -1887,15 +1887,6 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       closeExportMenu();
       updateAppBarOverflow();
     }, { passive: true });
-    appBar.addEventListener('wheel', (event) => {
-      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
-      const maxScroll = appBar.scrollWidth - appBar.clientWidth;
-      if (maxScroll <= 0) return;
-      const next = Math.max(0, Math.min(maxScroll, appBar.scrollLeft + event.deltaY));
-      if (next === appBar.scrollLeft) return;
-      event.preventDefault();
-      appBar.scrollLeft = next;
-    }, { passive: false });
     if (typeof ResizeObserver === 'function') {
       new ResizeObserver(updateAppBarOverflow).observe(appBar);
     }
@@ -1905,6 +1896,19 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     });
     updateAppBarOverflow();
   }
+
+  // Universal horizontal mouse wheel scroll handler for toolbars and bars
+  document.addEventListener('wheel', (event) => {
+    const scrollable = event.target.closest?.('.preview-toolbar, .sample-nav, .theme-swatch-row, #presetList, .app-bar');
+    if (!scrollable) return;
+    if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+    const maxScroll = scrollable.scrollWidth - scrollable.clientWidth;
+    if (maxScroll <= 0) return;
+    const next = Math.max(0, Math.min(maxScroll, scrollable.scrollLeft + event.deltaY));
+    if (next === scrollable.scrollLeft) return;
+    event.preventDefault();
+    scrollable.scrollLeft = next;
+  }, { passive: false });
 
   document.addEventListener('click', (event) => {
     if (byId('exportMenu').hidden) return;
