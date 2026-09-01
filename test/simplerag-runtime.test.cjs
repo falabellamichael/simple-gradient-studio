@@ -9,9 +9,31 @@ const vm = require('node:vm');
 
 const runtimePath = path.join(__dirname, '..', 'simplerag-extension', 'simple-gradient-runtime.js');
 const cssPath = path.join(__dirname, '..', 'simplerag-extension', 'simple-gradient-runtime.css');
+const studioBundlePath = path.join(__dirname, '..', 'simplerag-extension', 'simple-gradient-studio-bundle.js');
 const runtimeSource = fs.readFileSync(runtimePath, 'utf8');
 const cssSource = fs.readFileSync(cssPath, 'utf8');
+const studioBundleSource = fs.readFileSync(studioBundlePath, 'utf8');
 const runtime = require(runtimePath);
+
+function normalizedSource(filePath) {
+  return fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n');
+}
+
+test('native Studio bundle is generated from the canonical VS Code Studio assets', () => {
+  const sandbox = {};
+  vm.runInNewContext(studioBundleSource, sandbox, { filename: 'simple-gradient-studio-bundle.js' });
+  const assets = sandbox.__SIMPLE_GRADIENT_STUDIO_ASSETS__;
+  const digest = (value) => crypto.createHash('sha256').update(value).digest('hex');
+  assert.equal(assets.schema, 'simple-gradient-studio-assets');
+  assert.equal(assets.sources.htmlSha256, digest(normalizedSource(path.join(__dirname, '..', 'media', 'studio.html'))));
+  assert.equal(assets.sources.cssSha256, digest(normalizedSource(path.join(__dirname, '..', 'media', 'studio.css'))));
+  assert.equal(assets.sources.scriptSha256, digest(normalizedSource(path.join(__dirname, '..', 'media', 'studio.js'))));
+  assert.match(assets.html, /class="studio-shell"/);
+  assert.match(assets.css, /\.assignment-popout/);
+  assert.match(assets.css, /data:font\/truetype;base64,/);
+  assert.match(assets.script, /const catalogs =/);
+  assert.doesNotMatch(assets.html, /\{\{(?:cssUri|scriptUri|codiconUri|nonce|cspSource|view)\}\}/);
+});
 
 test('manifest pins the ordered native runtime payload to the package version', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'simplerag-extension', 'manifest.json'), 'utf8'));
@@ -21,7 +43,7 @@ test('manifest pins the ordered native runtime payload to the package version', 
   assert.equal(manifest.version, pkg.version);
   assert.equal(manifest.enabled, true);
   assert.deepEqual(manifest.surfaces, ['advanced', 'comfy']);
-  assert.deepEqual(manifest.scripts.map((asset) => asset.path), ['profile.js', 'simple-gradient-runtime.js']);
+  assert.deepEqual(manifest.scripts.map((asset) => asset.path), ['profile.js', 'simple-gradient-studio-bundle.js', 'simple-gradient-runtime.js']);
   assert.deepEqual(manifest.styles.map((asset) => asset.path), ['simple-gradient-runtime.css']);
 
   for (const asset of [...manifest.scripts, ...manifest.styles]) {
@@ -67,7 +89,45 @@ test('normalizes profile data without accepting selectors or raw CSS', () => {
   ]);
   assert.deepEqual(profile.assignments['panel:home.assistant'], { mode: 'solid' });
   assert.equal(profile.assignments['panel:home.assistant > script'], undefined);
+  assert.equal(profile.editor.targetCatalog, 'simplerag');
   assert.doesNotMatch(runtime.gradientToCss(profile.gradients.safe), /url\(|bad\.example/i);
+});
+
+test('ties persistent editor overrides to the installed profile fingerprint', () => {
+  const installed = runtime.normalizeProfile({
+    name: 'Installed A',
+    gradients: {
+      base: { stops: [{ color: '#010203', position: 0 }, { color: '#A0B0C0', position: 100 }] }
+    },
+    assignments: { app: { mode: 'gradient', gradientId: 'base' } }
+  });
+  const edited = runtime.normalizeProfile({
+    ...installed,
+    name: 'Edited locally',
+    assignments: { ...installed.assignments, 'page:home': { mode: 'solid' } }
+  });
+  const stored = {
+    schema: 'simple-gradient-runtime-override',
+    version: 1,
+    installedFingerprint: runtime.profileFingerprint(installed),
+    profile: edited
+  };
+
+  assert.equal(runtime.normalizeStoredProfileOverride(JSON.stringify(stored), installed).name, 'Edited locally');
+  assert.equal(runtime.normalizeStoredProfileOverride('{not json', installed), null);
+  assert.equal(runtime.normalizeStoredProfileOverride(stored, { ...installed, name: 'Installed B' }), null);
+  assert.equal(runtime.profileFingerprint(installed), runtime.profileFingerprint(JSON.parse(JSON.stringify(installed))));
+});
+
+test('native editor exposes every SimpleRAG page and six fixed semantic panels', () => {
+  assert.deepEqual(runtime.SIMPLE_RAG_PAGES.map((page) => page.id), [
+    'home', 'journal', 'tasks', 'email', 'calendar', 'pdf', 'graph', 'plugins', 'settings'
+  ]);
+  assert.deepEqual(runtime.EDITOR_PANELS.map((panel) => panel.id), [
+    'navigation', 'workspace', 'cards', 'assistant', 'toolbar', 'composer'
+  ]);
+  assert.equal(runtime.editorTarget('calendar', 'composer'), 'panel:calendar.composer');
+  assert.equal(runtime.editorTarget('not-a-page', 'not-a-panel'), 'page:home');
 });
 
 test('uses the first safe imported gradient when an app assignment is absent', () => {
@@ -190,8 +250,22 @@ test('surface styling layers background images without changing native text colo
   assert.ok(surfaceRule);
   assert.doesNotMatch(surfaceRule, /(^|[;\s])color\s*:/i);
   assert.match(runtimeSource, /MutationObserver/);
-  assert.match(runtimeSource, /simple-gradient-runtime__launcher/);
+  assert.doesNotMatch(runtimeSource, /simple-gradient-runtime__launcher/);
   assert.match(runtimeSource, /data-runtime-enabled/);
   assert.match(runtimeSource, /data-runtime-reset/);
   assert.match(runtimeSource, /data-runtime-reapply/);
+});
+
+test('full editor is mounted only from active Settings Appearance surfaces', () => {
+  assert.match(runtimeSource, /button\[data-tutorial-id="settings-tab-themes"\]/);
+  assert.match(runtimeSource, /\.theme-settings\.settings-detail \[data-tutorial-id="settings-theme-presets"\]/);
+  assert.match(runtimeSource, /\.settings-page\.settings-appearance-page\[data-settings-page-id="appearance"\] \.settings-workspace-main/);
+  assert.match(runtimeSource, /Gradient preset/);
+  assert.match(runtimeSource, /data-editor-angle-range/);
+  assert.match(runtimeSource, /data-editor-add-stop/);
+  assert.match(runtimeSource, /Save &amp; Apply/);
+  assert.match(runtimeSource, /data-runtime-expand/);
+  assert.match(runtimeSource, /PROFILE_STORAGE_KEY/);
+  assert.match(runtimeSource, /profile-storage-sync/);
+  assert.doesNotMatch(cssSource, /\.simple-gradient-runtime__launcher\s*\{[\s\S]*position:\s*fixed/i);
 });

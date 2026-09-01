@@ -5,6 +5,8 @@ SimpleGradient Studio has two coordinated parts:
 - A standalone VS Code editor for designing and previewing gradients.
 - A native SimpleRAG local extension that applies the selected profile inside both the Comfy and Advanced SimpleRAG surfaces.
 
+Inside SimpleRAG, open the editor from **Advanced → Settings → Appearance**, or from Comfy's corresponding **Settings → Themes** appearance area. The native entry is intentionally absent from every other page. It opens the complete Gradient Studio as a large in-app editor; the VS Code editor remains an optional companion.
+
 Gradients can be assigned at three levels:
 
 - App default
@@ -13,7 +15,7 @@ Gradients can be assigned at three levels:
 
 Each target can inherit its parent, use a specific gradient, or explicitly use no gradient. The editor includes a live targetable preview, assignment matrix, reusable gradient library, stop editor, contrast feedback, JSON import/export, CSS export, and synchronized companion panels for Preview and Assignments.
 
-The SimpleRAG catalog includes Home, Journal, Tasks, Email, Calendar, PDF, Knowledge Graph, Plug-ins, and Settings. Every page has independent Navigation, Workspace, Cards, Assistant, and Toolbar targets. Supported modal and pop-out surfaces inherit their corresponding panel, page, and app assignments without overwriting SimpleRAG's native theme or wallpaper settings.
+The SimpleRAG catalog includes Home, Journal, Tasks, Email, Calendar, PDF, Knowledge Graph, Plug-ins, and Settings. Every page has independent Navigation, Workspace, Cards, Assistant, Toolbar, and Composer targets. Supported modal and pop-out surfaces inherit their corresponding panel, page, and app assignments without overwriting SimpleRAG's native theme or wallpaper settings.
 
 ## Open the Studio
 
@@ -38,24 +40,24 @@ This installs the current profile into SimpleRAG's persistent, hash-verified loc
 
 ## Install the exact packaged build
 
-1. Download both `simple-gradient-studio-0.2.0.vsix` and `install.ps1` from the GitHub release into the same folder.
+1. Download both `simple-gradient-studio-0.3.0.vsix` and `install.ps1` from the GitHub release into the same folder.
 2. Run:
 
 ```powershell
 .\install.ps1
 ```
 
-The installer is self-contained: it does not depend on the repository's `scripts/` directory and never chooses the newest matching file. It installs the exact `0.2.0` artifact and then compares every file inside the VSIX with every file in the installed extension directory. Any missing, extra, or hash-mismatched file fails the installation check.
+The installer is self-contained: it does not depend on the repository's `scripts/` directory and never chooses the newest matching file. It installs the exact `0.3.0` artifact and then compares every file inside the VSIX with every file in the installed extension directory. Any missing, extra, or hash-mismatched file fails the installation check.
 
 Manual installation is also supported:
 
 ```powershell
-code.cmd --install-extension .\simple-gradient-studio-0.2.0.vsix --force
+code.cmd --install-extension .\simple-gradient-studio-0.3.0.vsix --force
 ```
 
 ## Install only the SimpleRAG extension
 
-Download `simple-gradient-studio-simplerag-0.2.0.zip` from the release, extract it, and run:
+Download `simple-gradient-studio-simplerag-0.3.0.zip` from the release, extract it, and run:
 
 ```powershell
 .\install-simplerag.ps1

@@ -15,7 +15,7 @@ const MAX_PACKAGE_BYTES = 16 * 1024 * 1024;
 const MAX_REGISTRY_ENTRIES = 128;
 const SEMVER = /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/;
 const SHA256 = /^[0-9a-f]{64}$/;
-const REQUIRED_SCRIPTS = ['profile.js', 'simple-gradient-runtime.js'] as const;
+const REQUIRED_SCRIPTS = ['profile.js', 'simple-gradient-studio-bundle.js', 'simple-gradient-runtime.js'] as const;
 const REQUIRED_STYLES = ['simple-gradient-runtime.css'] as const;
 const REQUIRED_SURFACES = ['advanced', 'comfy'] as const;
 
@@ -604,3 +604,4 @@ export async function installSimpleRagExtension(
     }
   }
 }
+

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "simple-gradient-studio",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "enabled": true,
   "surfaces": [
     "advanced",
@@ -10,20 +10,25 @@
   "scripts": [
     {
       "path": "profile.js",
-      "sha256": "43f59265e692fff4dc2970b649109a20fe53c23fe2835f9b35c22144d48a331f",
-      "size": 3495
+      "sha256": "03069375c4d63bd0336ffc4c2c3996542d26badba71a3665850634ff3fc1d39b",
+      "size": 3978
+    },
+    {
+      "path": "simple-gradient-studio-bundle.js",
+      "sha256": "718164bac321d11715a6d26079698138e16669609ab0440f83b3d786c45d7ae7",
+      "size": 401900
     },
     {
       "path": "simple-gradient-runtime.js",
-      "sha256": "cd5746d93dac09df022e252761432aeff5bb668e9c69858233ae99ec7ddf03d9",
-      "size": 30947
+      "sha256": "9ea412dac0851c64209c139456b40c513be652867baa097486f84459612c1781",
+      "size": 82679
     }
   ],
   "styles": [
     {
       "path": "simple-gradient-runtime.css",
-      "sha256": "260ea50d13126d9cff9fd8928f45210719a77171ac9708f931765112b6a3a6af",
-      "size": 5564
+      "sha256": "0b27f952217408c9f8144f7c9f75acecb1e123d77c1bc51314bdcf50febbe82e",
+      "size": 33965
     }
   ]
 }

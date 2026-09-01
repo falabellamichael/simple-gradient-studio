@@ -12,7 +12,7 @@ const {
   installSimpleRagExtension
 } = require('../out/simplerag.js');
 
-const VERSION = '0.2.0';
+const VERSION = '0.3.0';
 
 function sha256(bytes) {
   return createHash('sha256').update(bytes).digest('hex');
@@ -23,6 +23,7 @@ async function createPackage(root, { badRuntimeHash = false } = {}) {
   const files = {
     'profile.js': Buffer.from('window.__SIMPLE_GRADIENT_PROFILE__ = {};\n'),
     'simple-gradient-runtime.js': Buffer.from('window.SimpleGradientRuntime = { ready: true };\n'),
+    'simple-gradient-studio-bundle.js': Buffer.from('window.__SIMPLE_GRADIENT_STUDIO_ASSETS__ = {};\n'),
     'simple-gradient-runtime.css': Buffer.from(':root { --simple-gradient-ready: 1; }\n')
   };
   for (const [filename, bytes] of Object.entries(files)) {
@@ -39,7 +40,7 @@ async function createPackage(root, { badRuntimeHash = false } = {}) {
     version: VERSION,
     enabled: true,
     surfaces: ['advanced', 'comfy'],
-    scripts: [asset('profile.js'), asset('simple-gradient-runtime.js')],
+    scripts: [asset('profile.js'), asset('simple-gradient-studio-bundle.js'), asset('simple-gradient-runtime.js')],
     styles: [asset('simple-gradient-runtime.css')]
   };
   await fs.writeFile(path.join(root, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
@@ -104,11 +105,16 @@ test('installer preserves unrelated registry entries and atomically updates only
     assert.equal(sha256(installedManifestBytes), first.manifestSha256);
     assert.deepEqual(installedManifest.scripts.map(asset => asset.path), [
       'profile.js',
+      'simple-gradient-studio-bundle.js',
       'simple-gradient-runtime.js'
     ]);
     assert.deepEqual(installedManifest.styles.map(asset => asset.path), [
       'simple-gradient-runtime.css'
     ]);
+    assert.deepEqual(
+      await fs.readFile(path.join(installedRoot, 'simple-gradient-studio-bundle.js')),
+      sourceFiles['simple-gradient-studio-bundle.js']
+    );
     assert.deepEqual(
       await fs.readFile(path.join(installedRoot, 'simple-gradient-runtime.js')),
       sourceFiles['simple-gradient-runtime.js']
@@ -194,3 +200,5 @@ test('installer leaves an invalid existing registry byte-for-byte unchanged', as
     assert.deepEqual(await fs.readdir(registryRoot), ['registry.json']);
   });
 });
+
+

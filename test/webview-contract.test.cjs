@@ -20,7 +20,7 @@ const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'))
 test('webview has a restrictive CSP and nonce-backed external script', () => {
   assert.match(html, /default-src 'none'/);
   assert.match(html, /script-src 'nonce-\{\{nonce\}\}'/);
-  assert.match(html, /<script nonce="\{\{nonce\}\}" src="\{\{scriptUri\}\}\?v=12"><\/script>/);
+  assert.match(html, /<script nonce="\{\{nonce\}\}" src="\{\{scriptUri\}\}\?v=14"><\/script>/);
   assert.doesNotMatch(html, /unsafe-inline|unsafe-eval/);
 });
 
@@ -72,6 +72,8 @@ test('standalone preview remains neutral while SimpleRAG is an explicit optional
   assert.match(combined, /targetCatalogSelect/);
   assert.match(script, /simplerag:/);
   assert.match(script, /id: 'calendar', label: 'Calendar'/);
+  assert.match(script, /id: 'composer', label: 'Composer'/);
+  assert.match(script, /composer: 'composer'/);
   assert.match(script, /panel:\$\{page\.id\}\.\$\{surface\.id\}/);
   assert.match(script, /type: 'installSimpleRag'/);
 });
@@ -87,7 +89,7 @@ test('release installer is self-contained and packaged assets retain third-party
   assert.doesNotMatch(installer, /Convert\]::ToHexString|Path\]::GetRelativePath/i);
   assert.match(installer, /BitConverter\]::ToString/);
   assert.match(installer, new RegExp(`\\$version = '${pkg.version.replaceAll('.', '\\.')}'`));
-  assert.equal(pkg.scripts.package, `vsce package --out simple-gradient-studio-${pkg.version}.vsix`);
+  assert.ok(pkg.scripts.package.includes(`vsce package --out simple-gradient-studio-${pkg.version}.vsix`));
   assert.match(installer, /ExactPayloadMatch = \$true/);
   assert.match(notices, /Codicons/i);
   assert.match(notices, /Creative Commons Attribution 4\.0/i);
@@ -115,3 +117,4 @@ test('responsive states cover wide, medium, compact, narrow, and very narrow wid
     assert.match(css, new RegExp(`max-width: ${breakpoint.replace('.', '\\.').replace('(', '\\(').replace(')', '\\)')}`));
   }
 });
+

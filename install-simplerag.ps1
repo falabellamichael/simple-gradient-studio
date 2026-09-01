@@ -6,7 +6,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $extensionId = 'simple-gradient-studio'
-$version = '0.2.0'
+$version = '0.3.0'
 $schemaVersion = 1
 $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
 $maxRegistryBytes = 64KB
@@ -117,9 +117,10 @@ if ($Action -eq 'Status') {
 
 $assetRoot = Join-Path $PSScriptRoot 'simplerag-extension'
 $runtimeScript = Join-Path $assetRoot 'simple-gradient-runtime.js'
+$studioBundleScript = Join-Path $assetRoot 'simple-gradient-studio-bundle.js'
 $runtimeStyle = Join-Path $assetRoot 'simple-gradient-runtime.css'
 if (-not $ProfilePath) { $ProfilePath = Join-Path $assetRoot 'default-profile.json' }
-foreach ($required in @($runtimeScript, $runtimeStyle, $ProfilePath)) {
+foreach ($required in @($runtimeScript, $studioBundleScript, $runtimeStyle, $ProfilePath)) {
     if (-not (Test-Path -LiteralPath $required -PathType Leaf)) {
         throw "Required SimpleRAG extension source file not found: $required"
     }
@@ -154,10 +155,12 @@ try {
     New-Item -ItemType Directory -Path $stagingPath | Out-Null
     Write-Utf8File -Path (Join-Path $stagingPath 'profile.js') -Text $profileScript
     Copy-Item -LiteralPath $runtimeScript -Destination (Join-Path $stagingPath 'simple-gradient-runtime.js')
+    Copy-Item -LiteralPath $studioBundleScript -Destination (Join-Path $stagingPath 'simple-gradient-studio-bundle.js')
     Copy-Item -LiteralPath $runtimeStyle -Destination (Join-Path $stagingPath 'simple-gradient-runtime.css')
 
     $scriptEntries = @(
         [ordered]@{ path = 'profile.js'; sha256 = Get-LowerSha256 (Join-Path $stagingPath 'profile.js'); size = (Get-Item -LiteralPath (Join-Path $stagingPath 'profile.js')).Length },
+        [ordered]@{ path = 'simple-gradient-studio-bundle.js'; sha256 = Get-LowerSha256 (Join-Path $stagingPath 'simple-gradient-studio-bundle.js'); size = (Get-Item -LiteralPath (Join-Path $stagingPath 'simple-gradient-studio-bundle.js')).Length },
         [ordered]@{ path = 'simple-gradient-runtime.js'; sha256 = Get-LowerSha256 (Join-Path $stagingPath 'simple-gradient-runtime.js'); size = (Get-Item -LiteralPath (Join-Path $stagingPath 'simple-gradient-runtime.js')).Length }
     )
     $styleEntries = @(
@@ -249,7 +252,7 @@ try {
             throw "Installed SimpleRAG asset failed size/hash verification: $($asset.path)"
         }
     }
-    $expectedFiles = @('manifest.json', 'profile.js', 'simple-gradient-runtime.css', 'simple-gradient-runtime.js')
+    $expectedFiles = @('manifest.json', 'profile.js', 'simple-gradient-runtime.css', 'simple-gradient-studio-bundle.js', 'simple-gradient-runtime.js')
     $actualFiles = @(Get-ChildItem -LiteralPath $packagePath -File | ForEach-Object Name | Sort-Object)
     if (($actualFiles -join "`n") -ne (($expectedFiles | Sort-Object) -join "`n")) {
         throw 'Installed SimpleRAG package contains missing or unexpected files.'
@@ -271,3 +274,4 @@ try {
         Move-Item -LiteralPath $backupPath -Destination $packagePath
     }
 }
+

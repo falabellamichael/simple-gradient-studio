@@ -82,10 +82,10 @@ export function createDefaultProfile(): GradientProfile {
       type: 'linear',
       angle: 132,
       stops: [
-        { color: '#FFF9F2', position: 0, opacity: 100 },
-        { color: '#F8EFE3', position: 42, opacity: 100 },
-        { color: '#F1D6C1', position: 76, opacity: 100 },
-        { color: '#E86633', position: 100, opacity: 100 }
+        { color: '#FFF9F2', position: 0, opacity: 24 },
+        { color: '#F8EFE3', position: 42, opacity: 28 },
+        { color: '#F1D6C1', position: 76, opacity: 32 },
+        { color: '#E86633', position: 100, opacity: 22 }
       ]
     },
     'ember-focus': {
@@ -94,10 +94,10 @@ export function createDefaultProfile(): GradientProfile {
       type: 'linear',
       angle: 148,
       stops: [
-        { color: '#171512', position: 0, opacity: 100 },
-        { color: '#25221F', position: 44, opacity: 100 },
-        { color: '#563022', position: 75, opacity: 100 },
-        { color: '#E86633', position: 100, opacity: 100 }
+        { color: '#11100F', position: 0, opacity: 94 },
+        { color: '#1C1714', position: 44, opacity: 88 },
+        { color: '#331E15', position: 75, opacity: 60 },
+        { color: '#E86633', position: 100, opacity: 24 }
       ]
     },
     'ocean-workspace': {
@@ -106,10 +106,10 @@ export function createDefaultProfile(): GradientProfile {
       type: 'linear',
       angle: 128,
       stops: [
-        { color: '#12202A', position: 0, opacity: 100 },
-        { color: '#167C8C', position: 48, opacity: 100 },
-        { color: '#9BCBD1', position: 76, opacity: 100 },
-        { color: '#E8F0F2', position: 100, opacity: 100 }
+        { color: '#0D1418', position: 0, opacity: 94 },
+        { color: '#12252F', position: 48, opacity: 80 },
+        { color: '#184552', position: 76, opacity: 50 },
+        { color: '#4BA2B3', position: 100, opacity: 20 }
       ]
     },
     'grove-workspace': {
@@ -118,10 +118,10 @@ export function createDefaultProfile(): GradientProfile {
       type: 'linear',
       angle: 142,
       stops: [
-        { color: '#17231C', position: 0, opacity: 100 },
-        { color: '#4D7C58', position: 46, opacity: 100 },
-        { color: '#B8CFAD', position: 76, opacity: 100 },
-        { color: '#EDF1E7', position: 100, opacity: 100 }
+        { color: '#0E1511', position: 0, opacity: 94 },
+        { color: '#15261B', position: 46, opacity: 80 },
+        { color: '#22422C', position: 76, opacity: 50 },
+        { color: '#5E9B6E', position: 100, opacity: 20 }
       ]
     },
     'oled-ember': {
@@ -130,10 +130,10 @@ export function createDefaultProfile(): GradientProfile {
       type: 'linear',
       angle: 118,
       stops: [
-        { color: '#000000', position: 0, opacity: 100 },
-        { color: '#0B0B0D', position: 52, opacity: 100 },
-        { color: '#2A1710', position: 80, opacity: 100 },
-        { color: '#E86633', position: 100, opacity: 100 }
+        { color: '#060708', position: 0, opacity: 95 },
+        { color: '#0E1013', position: 52, opacity: 90 },
+        { color: '#1D130F', position: 80, opacity: 65 },
+        { color: '#E86633', position: 100, opacity: 22 }
       ]
     }
   };

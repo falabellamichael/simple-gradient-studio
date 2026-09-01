@@ -1,6 +1,8 @@
 .git/**
 .gitignore
 .github/**
+.tmp*/**
+tmp*/**
 src/**
 test/**
 scripts/**
@@ -8,8 +10,10 @@ install.ps1
 tsconfig.json
 *.vsix
 *.zip
+*.log
 .design-qa/**
 design-qa.md
 node_modules/@vscode/codicons/**
 !node_modules/@vscode/codicons/dist/codicon.css
 !node_modules/@vscode/codicons/dist/codicon.ttf
+

@@ -1,8 +1,154 @@
 /* SimpleGradient native runtime: surface layers only; native text tokens stay intact. */
 [data-simple-gradient-runtime-surface] {
+  background-image: var(--simple-gradient-runtime-layer, none) !important;
+}
+
+[data-simple-gradient-runtime-surface][data-simple-gradient-has-native] {
   background-image:
     var(--simple-gradient-runtime-layer, none),
     var(--simple-gradient-runtime-native-image, none) !important;
+}
+
+.shell[data-simple-gradient-runtime-surface],
+.outlook-app[data-simple-gradient-runtime-surface] {
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Base Glassmorphism & Panoramic Transparency for SimpleRAG Stage Elements */
+.shell .main-stage,
+.shell .main-stage > .home,
+.shell .home,
+.shell .home.chatting,
+.shell .home-chat,
+.shell .home-hero,
+.shell .expanded-home-chat,
+.shell .page-workspace-layout,
+.shell .workspace,
+.shell .page,
+.shell .chat-container,
+.shell .chat-content,
+.shell .chat-layout,
+.shell .chat-stream,
+.shell .chat-stage,
+.shell .ai-home-container,
+.shell .ai-home,
+.shell #home-view,
+.shell .home-view,
+.shell .expanded-chat-canvas,
+.shell .main-stage > div {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Side Helper Rails: Left Workspace Rail & Right AI Endpoints */
+.shell .edge-helper.edge-left,
+.shell .edge-helper.edge-left .helper-panel,
+.shell .edge-helper.edge-left .chat-rail,
+.shell .edge-left,
+.shell .edge-helper.edge-right,
+.shell .edge-helper.edge-right .helper-panel,
+.shell .edge-helper.edge-right .endpoint-helper,
+.shell .endpoint-settings,
+.shell .ai-settings-panel,
+.shell .edge-right,
+.shell aside.assistant {
+  background-color: rgba(14, 16, 22, 0.45) !important;
+  backdrop-filter: blur(28px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Home Welcome Banner in Comfy */
+.shell .home-welcome,
+.shell .main-stage .welcome,
+.shell .main-stage .home-hero {
+  background: rgba(255, 255, 255, 0.07) !important;
+  backdrop-filter: blur(20px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(130%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 16px !important;
+}
+
+/* Answer Layout Wrapper: Completely transparent so the background shines through */
+.shell .main-stage .answer,
+.shell .answer,
+.shell .main-stage .chat-box,
+.shell .main-stage .chat-history,
+.shell .main-stage .conversation-container {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Chat Message Bubbles & Cards inside AI Conversation */
+.shell .main-stage .msg-bubble,
+.shell .main-stage .message-row > article,
+.shell .main-stage .chat-card,
+.shell .main-stage .chat-msg-card,
+.shell .main-stage .message-card {
+  background: rgba(16, 18, 24, 0.65) !important;
+  backdrop-filter: blur(24px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Prompt and Response details */
+.shell .main-stage .prompt-quote,
+.shell .main-stage .prompt-label {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Chat Header Controls & Metadata Pills */
+.shell .main-stage .answer > .chat-header button,
+.shell .main-stage .answer .home-new-chat,
+.shell .main-stage .metadata span {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  border-radius: 10px !important;
+  color: var(--text) !important;
+}
+
+/* Floating Composer in Comfy Home */
+.shell .main-stage .ask,
+.shell .main-stage .home-composer .ask {
+  background: rgba(18, 20, 26, 0.70) !important;
+  backdrop-filter: blur(28px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* 4 Quick Action Tiles */
+.shell .main-stage .quick button,
+.shell .main-stage .quick > button,
+.shell .main-stage .dashboard article {
+  background: rgba(255, 255, 255, 0.07) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  border-radius: 14px !important;
+  color: var(--text) !important;
+  transition: all 0.2s ease !important;
+}
+
+.shell .main-stage .quick button:hover,
+.shell .main-stage .quick > button:hover,
+.shell .main-stage .dashboard article:hover {
+  background: rgba(255, 255, 255, 0.13) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  transform: translateY(-2px) !important;
 }
 
 #simple-gradient-runtime-root,
@@ -33,38 +179,8 @@
   font: inherit;
 }
 
-.simple-gradient-runtime__launcher,
 .simple-gradient-runtime__dialog {
   pointer-events: auto;
-}
-
-.simple-gradient-runtime__launcher {
-  min-width: 42px;
-  min-height: 38px;
-  margin-left: auto;
-  padding: 8px 11px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  border: 1px solid color-mix(in srgb, var(--sgr-accent) 62%, var(--sgr-border));
-  border-radius: var(--border-radius, 8px);
-  background: color-mix(in srgb, var(--sgr-surface) 94%, transparent);
-  color: var(--sgr-text);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.24);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  cursor: pointer;
-}
-
-.simple-gradient-runtime__launcher > span:first-child {
-  color: var(--sgr-accent);
-  font-size: 18px;
-  line-height: 1;
-}
-
-.simple-gradient-runtime[data-enabled="false"] .simple-gradient-runtime__launcher {
-  opacity: 0.72;
 }
 
 .simple-gradient-runtime__dialog {
@@ -194,22 +310,6 @@
   outline-offset: 2px;
 }
 
-@media (max-width: 520px) {
-  #simple-gradient-runtime-root {
-    right: 8px;
-    bottom: 8px;
-  }
-
-  .simple-gradient-runtime__launcher-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   #simple-gradient-runtime-root *,
   #simple-gradient-runtime-root *::before,
@@ -225,3 +325,692 @@
     display: none !important;
   }
 }
+
+/* Settings-only editor entry. There is intentionally no global launcher. */
+.simple-gradient-settings-entry,
+.simple-gradient-settings-entry * {
+  box-sizing: border-box;
+}
+
+.simple-gradient-settings-entry--comfy {
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px solid var(--border, #454a55);
+  border-radius: var(--workspace-radius-18, 18px);
+  background: color-mix(in srgb, var(--card, #1f2228) 94%, var(--accent, #e86633));
+  color: var(--text, #f4f5f7);
+}
+
+.simple-gradient-settings-entry--comfy > header { margin-bottom: 14px; }
+.simple-gradient-settings-entry--comfy h3,
+.simple-gradient-settings-entry--comfy p { margin: 0; }
+.simple-gradient-settings-entry--comfy p {
+  margin-top: 4px;
+  color: var(--muted, #aeb3bd);
+  font-size: 12px;
+}
+
+.simple-gradient-settings-entry--advanced .settings-section-title > i {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--accent, #e86633) 15%, transparent);
+  color: var(--accent, #e86633);
+  font: 700 20px/1 "Segoe UI", system-ui, sans-serif;
+}
+
+.simple-gradient-settings-entry__open {
+  width: 100%;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent, #e86633) 48%, var(--border, #454a55));
+  border-radius: var(--workspace-radius-12, 12px);
+  background: color-mix(in srgb, var(--accent, #e86633) 10%, var(--card, #1f2228));
+  color: var(--text, #f4f5f7);
+  text-align: left;
+  cursor: pointer;
+}
+
+.simple-gradient-settings-entry__open > span:first-child { display: grid; gap: 2px; }
+.simple-gradient-settings-entry__open strong { font-size: 13px; }
+.simple-gradient-settings-entry__open small { color: var(--muted, #aeb3bd); font-size: 11px; }
+.simple-gradient-settings-entry__open > span:last-child { color: var(--accent, #e86633); font-size: 23px; }
+.simple-gradient-settings-entry__open:hover {
+  border-color: var(--accent, #e86633);
+  background: color-mix(in srgb, var(--accent, #e86633) 16%, var(--card, #1f2228));
+}
+
+/* Full editor modal opened from the active Appearance view. */
+#simple-gradient-runtime-root.simple-gradient-studio-host {
+  position: fixed;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0;
+  min-height: 0;
+  padding: 14px;
+  display: block !important;
+  box-sizing: border-box;
+  place-items: initial;
+  overflow: hidden;
+  pointer-events: auto;
+  background: rgba(4, 6, 10, 0.68);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+#simple-gradient-runtime-root.simple-gradient-studio-host .simple-gradient-studio-frame {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 520px;
+  border: 0;
+  display: block;
+}
+
+#simple-gradient-runtime-root.simple-gradient-studio-host .simple-gradient-studio-popout {
+  width: min(1080px, calc(100vw - 28px));
+  height: min(780px, calc(100% - 28px));
+  margin: 0;
+  border: 0;
+  border-radius: var(--sgr-corner-lg);
+  background: transparent;
+  box-shadow: var(--sgr-shadow);
+  overflow: hidden;
+}
+
+#simple-gradient-runtime-root.simple-gradient-studio-host .simple-gradient-studio-popout .simple-gradient-studio-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  min-height: 0;
+}
+#simple-gradient-runtime-root {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  width: auto;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(4, 6, 10, 0.68);
+  pointer-events: auto;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+#simple-gradient-runtime-root button,
+#simple-gradient-runtime-root input,
+#simple-gradient-runtime-root select,
+#simple-gradient-runtime-root output,
+#simple-gradient-runtime-root code { font: inherit; }
+
+#simple-gradient-runtime-root .simple-gradient-runtime__dialog {
+  width: min(1080px, calc(100vw - 48px));
+  height: min(780px, calc(100vh - 48px));
+  min-height: 520px;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--sgr-accent) 34%, var(--sgr-border));
+  border-radius: var(--border-radius, 14px);
+  background: color-mix(in srgb, var(--sgr-surface-raised) 97%, transparent);
+  box-shadow: 0 26px 90px rgba(0, 0, 0, 0.52);
+  pointer-events: auto;
+}
+
+#simple-gradient-runtime-root[data-size="fullscreen"] { padding: 0; }
+#simple-gradient-runtime-root[data-size="fullscreen"] .simple-gradient-runtime__dialog {
+  width: 100vw;
+  height: 100vh;
+  border: 0;
+  border-radius: 0;
+}
+
+.simple-gradient-editor__header {
+  min-height: 66px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  margin: 0 !important;
+  border-bottom: 1px solid var(--sgr-border);
+  background: color-mix(in srgb, var(--sgr-surface) 84%, transparent);
+}
+
+.simple-gradient-editor__brand,
+.simple-gradient-editor__window-actions,
+.simple-gradient-editor__topline,
+.simple-gradient-editor__footer,
+.simple-gradient-editor__footer > div,
+.simple-gradient-editor__angle,
+.simple-gradient-editor__stops-header,
+.simple-gradient-editor__stops-header > div {
+  display: flex;
+  align-items: center;
+}
+
+.simple-gradient-editor__brand { min-width: 0; gap: 11px; }
+#simple-gradient-runtime-root .simple-gradient-runtime__dialog > header > .simple-gradient-editor__brand {
+  display: flex;
+  align-items: center;
+}
+.simple-gradient-editor__brand > span {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--sgr-accent) 17%, var(--sgr-surface));
+  color: var(--sgr-accent);
+  font-size: 25px;
+}
+.simple-gradient-editor__brand > div { min-width: 0; display: grid; gap: 2px; }
+.simple-gradient-editor__brand strong { font-size: 15px; }
+.simple-gradient-editor__brand small,
+.simple-gradient-editor__topline p,
+.simple-gradient-editor__target-list small,
+.simple-gradient-editor__target-list em,
+.simple-gradient-editor__preview small,
+.simple-gradient-editor__footer output { color: var(--sgr-muted); }
+
+.simple-gradient-editor__window-actions { gap: 7px; }
+#simple-gradient-runtime-root .simple-gradient-runtime__dialog > header > .simple-gradient-editor__window-actions {
+  display: flex;
+}
+.simple-gradient-editor__window-actions button,
+.simple-gradient-editor__footer button,
+.simple-gradient-editor__stops-header button {
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid var(--sgr-border);
+  border-radius: 8px;
+  background: var(--sgr-surface);
+  color: var(--sgr-text);
+  cursor: pointer;
+}
+.simple-gradient-editor__window-actions [data-runtime-close] {
+  width: 34px;
+  padding: 0;
+  font-size: 22px;
+}
+
+.simple-gradient-editor__topline {
+  min-height: 48px;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--sgr-border);
+}
+.simple-gradient-editor__topline p {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#simple-gradient-runtime-root .simple-gradient-runtime__enabled {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.simple-gradient-editor__workspace {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+}
+.simple-gradient-editor__targets,
+.simple-gradient-editor__controls {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.simple-gradient-editor__targets {
+  padding: 14px;
+  border-right: 1px solid var(--sgr-border);
+  background: color-mix(in srgb, var(--sgr-surface) 70%, transparent);
+}
+
+.simple-gradient-editor__page,
+.simple-gradient-editor__preset { display: grid; gap: 6px; color: var(--sgr-muted); font-weight: 600; }
+.simple-gradient-editor__page select,
+.simple-gradient-editor__preset select,
+.simple-gradient-editor__angle input[type="number"],
+.simple-gradient-editor__stop input[type="number"] {
+  min-height: 36px;
+  border: 1px solid var(--sgr-border);
+  border-radius: 8px;
+  background: var(--sgr-surface-raised);
+  color: var(--sgr-text);
+}
+.simple-gradient-editor__page select,
+.simple-gradient-editor__preset select { width: 100%; padding: 6px 30px 6px 9px; }
+
+.simple-gradient-editor__target-list { display: grid; gap: 6px; margin-top: 12px; }
+.simple-gradient-editor__target-list button {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--sgr-text);
+  text-align: left;
+  cursor: pointer;
+}
+.simple-gradient-editor__target-list button:hover { background: color-mix(in srgb, var(--sgr-text) 6%, transparent); }
+.simple-gradient-editor__target-list button.active {
+  border-color: color-mix(in srgb, var(--sgr-accent) 56%, var(--sgr-border));
+  background: color-mix(in srgb, var(--sgr-accent) 13%, var(--sgr-surface));
+}
+.simple-gradient-editor__target-list button > span { min-width: 0; display: grid; gap: 1px; }
+.simple-gradient-editor__target-list strong,
+.simple-gradient-editor__target-list small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.simple-gradient-editor__target-list em { font-size: 9px; font-style: normal; text-transform: uppercase; }
+
+.simple-gradient-editor__controls { padding: 18px; }
+.simple-gradient-editor__assignment {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+.simple-gradient-editor__assignment h2 { margin: 2px 0 0; color: var(--sgr-text); font-size: 20px; }
+.simple-gradient-editor__eyebrow {
+  color: var(--sgr-accent);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.simple-gradient-editor__modes,
+.simple-gradient-editor__gradient-controls { margin: 0; border: 0; padding: 0; }
+.simple-gradient-editor__modes {
+  display: flex;
+  padding: 3px;
+  border: 1px solid var(--sgr-border);
+  border-radius: 10px;
+  background: var(--sgr-surface);
+}
+.simple-gradient-editor__modes legend,
+.simple-gradient-editor__gradient-controls > legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.simple-gradient-editor__modes label { cursor: pointer; }
+.simple-gradient-editor__modes input { position: absolute; opacity: 0; pointer-events: none; }
+.simple-gradient-editor__modes span {
+  min-height: 30px;
+  display: grid;
+  place-items: center;
+  padding: 5px 9px;
+  border-radius: 7px;
+  color: var(--sgr-muted);
+}
+.simple-gradient-editor__modes input:checked + span { background: var(--sgr-accent); color: #fff; }
+
+.simple-gradient-editor__gradient-controls {
+  display: grid;
+  grid-template-columns: minmax(180px, .7fr) minmax(260px, 1.3fr);
+  gap: 14px 18px;
+  transition: opacity 120ms ease;
+}
+.simple-gradient-editor__gradient-controls:disabled { opacity: .42; }
+.simple-gradient-editor__preview {
+  min-height: 96px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  border: 1px solid var(--sgr-border);
+  border-radius: 12px;
+  background-color: var(--sgr-surface);
+}
+.simple-gradient-editor__preview > span {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, .52);
+  color: #fff;
+}
+.simple-gradient-editor__preview small { color: rgba(255, 255, 255, .74); }
+.simple-gradient-editor__angle,
+.simple-gradient-editor__stops-header,
+.simple-gradient-editor__stops { grid-column: 1 / -1; }
+.simple-gradient-editor__angle { gap: 10px; }
+.simple-gradient-editor__angle > label { min-width: 42px; color: var(--sgr-muted); font-weight: 600; }
+.simple-gradient-editor__angle input[type="range"] { min-width: 120px; flex: 1; accent-color: var(--sgr-accent); }
+.simple-gradient-editor__angle input[type="number"] { width: 74px; padding: 5px 7px; }
+.simple-gradient-editor__stops-header { justify-content: space-between; gap: 12px; padding-top: 2px; }
+.simple-gradient-editor__stops-header > div { gap: 8px; }
+.simple-gradient-editor__stops-header span { color: var(--sgr-muted); font-size: 10px; }
+.simple-gradient-editor__stops { display: grid; gap: 7px; }
+.simple-gradient-editor__stop {
+  display: grid;
+  grid-template-columns: minmax(170px, 1fr) 92px 92px 34px;
+  align-items: end;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--sgr-border);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--sgr-surface) 80%, transparent);
+}
+.simple-gradient-editor__stop label { min-width: 0; display: grid; gap: 3px; color: var(--sgr-muted); font-size: 10px; }
+.simple-gradient-editor__color { grid-template-columns: auto minmax(0, 1fr) auto !important; align-items: center; gap: 7px !important; }
+.simple-gradient-editor__color > span { grid-column: 1 / -1; }
+.simple-gradient-editor__color input {
+  width: 44px;
+  height: 36px;
+  padding: 3px;
+  border: 1px solid var(--sgr-border);
+  border-radius: 8px;
+  background: var(--sgr-surface-raised);
+}
+.simple-gradient-editor__color code { min-width: 0; color: var(--sgr-muted); overflow: hidden; text-overflow: ellipsis; }
+.simple-gradient-editor__stop input[type="number"] { width: 100%; padding: 5px 7px; }
+.simple-gradient-editor__stop > button {
+  width: 34px;
+  height: 36px;
+  border: 1px solid var(--sgr-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--sgr-muted);
+  font-size: 18px;
+  cursor: pointer;
+}
+.simple-gradient-editor__stop > button:hover:not(:disabled) { border-color: #c95555; color: #e87878; }
+.simple-gradient-editor__stop > button:disabled,
+.simple-gradient-editor__stops-header button:disabled,
+.simple-gradient-editor__footer button:disabled { opacity: .42; cursor: not-allowed; }
+
+.simple-gradient-editor__footer {
+  min-height: 58px;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--sgr-border);
+  background: color-mix(in srgb, var(--sgr-surface) 84%, transparent);
+}
+.simple-gradient-editor__footer output { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.simple-gradient-editor__footer > div { flex: 0 0 auto; gap: 7px; }
+.simple-gradient-editor__footer button.primary {
+  border-color: var(--sgr-accent);
+  background: var(--sgr-accent);
+  color: #fff;
+  font-weight: 700;
+}
+#simple-gradient-runtime-root button:hover:not(:disabled),
+#simple-gradient-runtime-root select:hover:not(:disabled) { border-color: var(--sgr-accent); }
+#simple-gradient-runtime-root :focus-visible,
+.simple-gradient-settings-entry :focus-visible {
+  outline: 2px solid var(--sgr-accent, var(--accent, #e86633));
+  outline-offset: 2px;
+}
+
+/* Visual polish pass: denser hierarchy, cleaner editor chrome */
+#simple-gradient-runtime-root {
+  --sgr-accent: var(--accent, #e86633);
+  --sgr-surface: var(--card, var(--bg-secondary, #1f2228));
+  --sgr-surface-raised: var(--background, var(--bg-primary, #15171b));
+  --sgr-border: var(--border, var(--border-color, #454a55));
+  --sgr-text: var(--text, var(--text-primary, #f4f5f7));
+  --sgr-muted: var(--muted, var(--text-secondary, #aeb3bd));
+  --sgr-muted-2: color-mix(in srgb, var(--sgr-muted) 88%, transparent);
+  --sgr-line: color-mix(in srgb, var(--sgr-border) 70%, transparent);
+  --sgr-corner: var(--workspace-radius-12, 10px);
+  --sgr-corner-lg: var(--border-radius, 14px);
+  --sgr-shadow: 0 28px 90px rgba(0, 0, 0, 0.56);
+  font: 13px/1.38 var(--font-family, "Segoe UI", system-ui, sans-serif);
+}
+
+#simple-gradient-runtime-root .simple-gradient-runtime__dialog {
+  border-color: color-mix(in srgb, var(--sgr-accent) 24%, var(--sgr-border));
+  border-radius: var(--sgr-corner-lg);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--sgr-surface-raised) 93%, transparent), color-mix(in srgb, var(--sgr-surface) 96%, transparent));
+  box-shadow: var(--sgr-shadow);
+}
+
+#simple-gradient-runtime-root .simple-gradient-runtime__dialog > header {
+  border-bottom: 1px solid var(--sgr-line);
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__header {
+  padding: 12px 16px;
+  min-height: 64px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--sgr-surface) 88%, transparent), color-mix(in srgb, var(--sgr-surface-raised) 84%, transparent));
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__brand > span {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--sgr-accent) 65%, var(--sgr-surface)), color-mix(in srgb, var(--sgr-accent) 30%, var(--sgr-accent-2, var(--sgr-surface))));
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 14%), 0 8px 18px rgb(232 102 51 / 28%);
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__window-actions button,
+#simple-gradient-runtime-root .simple-gradient-editor__footer button,
+#simple-gradient-runtime-root .simple-gradient-editor__stops-header button {
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--sgr-surface-raised) 84%, transparent);
+  border-color: color-mix(in srgb, var(--sgr-border) 82%, transparent);
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__window-actions [data-runtime-close] {
+  width: 36px;
+  border-color: color-mix(in srgb, var(--sgr-muted) 28%, var(--sgr-border));
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__window-actions [data-runtime-close]:hover {
+  border-color: color-mix(in srgb, var(--sgr-accent) 40%, var(--sgr-border));
+  background: color-mix(in srgb, var(--sgr-accent) 16%, transparent);
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__topline {
+  border-bottom-color: var(--sgr-line);
+  background: color-mix(in srgb, var(--sgr-surface) 78%, transparent);
+}
+
+#simple-gradient-runtime-root .simple-gradient-runtime__enabled {
+  border-color: color-mix(in srgb, var(--sgr-border) 78%, transparent);
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__workspace {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--sgr-surface) 82%, transparent), color-mix(in srgb, var(--sgr-surface-raised) 92%, transparent));
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__targets {
+  border-right-color: var(--sgr-line);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--sgr-surface) 70%, transparent), color-mix(in srgb, var(--sgr-surface) 56%, transparent));
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__target-list button {
+  padding: 10px 11px;
+  border-radius: 10px;
+  border-color: color-mix(in srgb, var(--sgr-border) 85%, transparent);
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__target-list button.active {
+  border-color: color-mix(in srgb, var(--sgr-accent) 64%, var(--sgr-border));
+  background:
+    linear-gradient(120deg,
+      color-mix(in srgb, var(--sgr-accent) 14%, var(--sgr-surface)),
+      color-mix(in srgb, var(--sgr-accent) 8%, transparent)
+    );
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__controls { padding: 20px; }
+
+#simple-gradient-runtime-root .simple-gradient-editor__assignment h2 {
+  font-size: 21px;
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__modes {
+  border-color: color-mix(in srgb, var(--sgr-border) 82%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--sgr-surface) 92%, transparent), color-mix(in srgb, var(--sgr-surface) 84%, transparent));
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__modes span {
+  border-radius: 8px;
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__modes input:checked + span {
+  background: linear-gradient(120deg, color-mix(in srgb, var(--sgr-accent) 96%, #fff), var(--sgr-accent));
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__gradient-controls {
+  gap: 14px 18px;
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__gradient-controls:disabled {
+  opacity: .38;
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__preview {
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sgr-border) 86%, transparent);
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__preview > span {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.58));
+  backdrop-filter: blur(5px);
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__angle,
+#simple-gradient-runtime-root .simple-gradient-editor__stop,
+#simple-gradient-runtime-root .simple-gradient-editor__stops-header {
+  align-items: center;
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__angle input[type="range"] {
+  min-width: 140px;
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__stop {
+  padding: 9px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--sgr-surface) 86%, transparent);
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__stop > button {
+  border-radius: 8px;
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__stops-header span {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__footer {
+  border-top-color: var(--sgr-line);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--sgr-surface) 88%, transparent), color-mix(in srgb, var(--sgr-surface-raised) 84%, transparent));
+}
+
+#simple-gradient-runtime-root .simple-gradient-editor__footer button.primary {
+  min-width: 156px;
+  border-radius: 10px;
+}
+
+.simple-gradient-settings-entry--comfy {
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--accent, #e86633) 40%, var(--border, #454a55));
+  background:
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--accent, #e86633) 14%, var(--card, #1f2228)),
+      color-mix(in srgb, var(--accent, #e86633) 4%, var(--card, #1f2228))
+    );
+}
+
+.simple-gradient-settings-entry__open {
+  border-color: color-mix(in srgb, var(--accent, #e86633) 42%, var(--border, #454a55));
+  border-radius: var(--workspace-radius-12, 12px);
+  background:
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--accent, #e86633) 10%, var(--card, #1f2228)),
+      color-mix(in srgb, var(--accent, #e86633) 3%, var(--card, #1f2228))
+    );
+}
+
+.simple-gradient-settings-entry__open:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgb(0 0 0 / 22%);
+}
+
+#simple-gradient-runtime-root button:hover:not(:disabled),
+#simple-gradient-runtime-root select:hover:not(:disabled) { border-color: var(--sgr-accent); }
+
+@media (max-width: 800px) {
+  #simple-gradient-runtime-root { padding: 10px; }
+  #simple-gradient-runtime-root .simple-gradient-runtime__dialog { width: calc(100vw - 20px); height: calc(100vh - 20px); }
+  .simple-gradient-editor__workspace { grid-template-columns: 210px minmax(0, 1fr); }
+  .simple-gradient-editor__assignment { grid-template-columns: 1fr; align-items: start; }
+  .simple-gradient-editor__modes { width: fit-content; }
+  .simple-gradient-editor__gradient-controls { grid-template-columns: 1fr; }
+  .simple-gradient-editor__preset,
+  .simple-gradient-editor__preview,
+  .simple-gradient-editor__angle,
+  .simple-gradient-editor__stops-header,
+  .simple-gradient-editor__stops { grid-column: 1; }
+  .simple-gradient-editor__stop { grid-template-columns: minmax(145px, 1fr) 80px 80px 34px; }
+}
+
+@media (max-width: 580px) {
+  #simple-gradient-runtime-root { padding: 0; }
+  #simple-gradient-runtime-root .simple-gradient-runtime__dialog {
+    width: 100vw;
+    height: 100vh;
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+  }
+  .simple-gradient-editor__window-actions [data-runtime-expand] { display: none; }
+  .simple-gradient-editor__topline { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .simple-gradient-editor__workspace { display: block; overflow: auto; }
+  .simple-gradient-editor__targets,
+  .simple-gradient-editor__controls { overflow: visible; }
+  .simple-gradient-editor__targets { border-right: 0; border-bottom: 1px solid var(--sgr-border); }
+  .simple-gradient-editor__target-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .simple-gradient-editor__controls { padding: 14px; }
+  .simple-gradient-editor__modes { width: 100%; }
+  .simple-gradient-editor__modes label { flex: 1; }
+  .simple-gradient-editor__stop { grid-template-columns: minmax(0, 1fr) minmax(70px, .45fr) minmax(70px, .45fr) 34px; }
+  .simple-gradient-editor__color code { display: none; }
+  .simple-gradient-editor__footer { align-items: stretch; flex-direction: column; }
+  .simple-gradient-editor__footer > div { display: grid; grid-template-columns: 1fr 1fr; }
+  .simple-gradient-editor__footer button.primary { grid-column: 1 / -1; }
+}
+
+@media print {
+  .simple-gradient-settings-entry { display: none !important; }
+}
+
+

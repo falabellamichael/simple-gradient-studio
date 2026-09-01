@@ -2,7 +2,7 @@
   "name": "simple-gradient-studio",
   "displayName": "SimpleGradient Studio",
   "description": "Design reusable app, page, and panel gradients, then apply them through the native SimpleRAG extension.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "falabella",
   "license": "MIT",
   "repository": {
@@ -101,12 +101,13 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run build",
+    "vscode:prepublish": "npm run build-simplerag-studio-bundle && npm run build",
     "build": "tsc -p ./",
     "watch": "tsc --watch -p ./",
     "test": "npm run build && node --test test/*.test.cjs",
     "preview": "node scripts/preview-server.cjs",
-    "package": "vsce package --out simple-gradient-studio-0.2.0.vsix"
+    "package": "npm run build-simplerag-studio-bundle && vsce package --out simple-gradient-studio-0.3.0.vsix",
+    "build-simplerag-studio-bundle": "node scripts/build-simplerag-studio-bundle.cjs"
   },
   "dependencies": {
     "@vscode/codicons": "^0.0.36"

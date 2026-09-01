@@ -1,7 +1,7 @@
 param(
-    [string]$VsixPath = (Join-Path $PSScriptRoot '..\simple-gradient-studio-0.2.0.vsix'),
+    [string]$VsixPath = (Join-Path $PSScriptRoot '..\simple-gradient-studio-0.3.0.vsix'),
     [string]$ExtensionId = 'falabella.simple-gradient-studio',
-    [string]$ExpectedVersion = '0.2.0',
+    [string]$ExpectedVersion = '0.3.0',
     [string]$CodeCommand = 'code.cmd'
 )
 
@@ -54,7 +54,7 @@ try {
         try {
             $stream = $entry.Open()
             try {
-                $archiveMap[$relative] = [Convert]::ToHexString($sha.ComputeHash($stream))
+                $archiveMap[$relative] = [BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-', '')
             } finally {
                 $stream.Dispose()
             }
@@ -64,11 +64,13 @@ try {
     }
 
     $installedMap = @{}
+    $installedPrefix = $installedPath.TrimEnd('\', '/') + '\'
     $installedFiles = @(Get-ChildItem -LiteralPath $installedPath -File -Recurse | Where-Object {
-        [System.IO.Path]::GetRelativePath($installedPath, $_.FullName) -ne '.vsixmanifest'
+        $rel = $_.FullName.Substring($installedPrefix.Length)
+        $rel -ne '.vsixmanifest'
     })
     foreach ($file in $installedFiles) {
-        $relative = [System.IO.Path]::GetRelativePath($installedPath, $file.FullName)
+        $relative = $file.FullName.Substring($installedPrefix.Length)
         $installedMap[$relative] = (Get-FileHash -Algorithm SHA256 -LiteralPath $file.FullName).Hash
     }
 
