@@ -80,6 +80,8 @@ test('release installer is self-contained and packaged assets retain third-party
   assert.doesNotMatch(installer, /verify-installed\.ps1/i);
   assert.doesNotMatch(installer, /Convert\]::ToHexString|Path\]::GetRelativePath/i);
   assert.match(installer, /BitConverter\]::ToString/);
+  assert.match(installer, new RegExp(`\\$version = '${pkg.version.replaceAll('.', '\\.')}'`));
+  assert.equal(pkg.scripts.package, `vsce package --out simple-gradient-studio-${pkg.version}.vsix`);
   assert.match(installer, /ExactPayloadMatch = \$true/);
   assert.match(notices, /Codicons/i);
   assert.match(notices, /Creative Commons Attribution 4\.0/i);

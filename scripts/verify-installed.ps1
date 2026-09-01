@@ -1,7 +1,7 @@
 param(
-    [string]$VsixPath = (Join-Path $PSScriptRoot '..\simple-gradient-studio-0.1.0.vsix'),
+    [string]$VsixPath = (Join-Path $PSScriptRoot '..\simple-gradient-studio-0.1.1.vsix'),
     [string]$ExtensionId = 'falabella.simple-gradient-studio',
-    [string]$ExpectedVersion = '0.1.0',
+    [string]$ExpectedVersion = '0.1.1',
     [string]$CodeCommand = 'code.cmd'
 )
 
