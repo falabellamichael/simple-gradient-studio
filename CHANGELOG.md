@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0
+
+- Added a native SimpleRAG local extension for both Comfy and Advanced.
+- Added a SimpleRAG target catalog with independent page and panel assignments.
+- Added one-click Apply/Update from the VS Code editor and a standalone SimpleRAG installer bundle.
+- Added a floating in-app launcher and editor dialog for reapplying, disabling, and restoring the installed profile.
+- Preserved native themes, wallpapers, and unrelated SimpleRAG extensions through layered styling and atomic registry updates.
+- Added focused installer, runtime, target-catalog, webview, and responsive regression tests.
+
 ## 0.1.1
 
 - Replaced the sample surface with a neutral design-system workbench.

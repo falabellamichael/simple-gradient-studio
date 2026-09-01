@@ -1,0 +1,227 @@
+/* SimpleGradient native runtime: surface layers only; native text tokens stay intact. */
+[data-simple-gradient-runtime-surface] {
+  background-image:
+    var(--simple-gradient-runtime-layer, none),
+    var(--simple-gradient-runtime-native-image, none) !important;
+}
+
+#simple-gradient-runtime-root,
+#simple-gradient-runtime-root * {
+  box-sizing: border-box;
+}
+
+#simple-gradient-runtime-root {
+  --sgr-accent: var(--accent, #e86633);
+  --sgr-surface: var(--card, var(--bg-secondary, #1f2228));
+  --sgr-surface-raised: var(--background, var(--bg-primary, #15171b));
+  --sgr-border: var(--border, var(--border-color, #454a55));
+  --sgr-text: var(--text, var(--text-primary, #f4f5f7));
+  --sgr-muted: var(--muted, var(--text-secondary, #aeb3bd));
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 2147483000;
+  width: auto;
+  color: var(--sgr-text);
+  font: 12px/1.4 var(--font-family, "Segoe UI", system-ui, sans-serif);
+  pointer-events: none;
+}
+
+#simple-gradient-runtime-root button,
+#simple-gradient-runtime-root input,
+#simple-gradient-runtime-root label {
+  font: inherit;
+}
+
+.simple-gradient-runtime__launcher,
+.simple-gradient-runtime__dialog {
+  pointer-events: auto;
+}
+
+.simple-gradient-runtime__launcher {
+  min-width: 42px;
+  min-height: 38px;
+  margin-left: auto;
+  padding: 8px 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid color-mix(in srgb, var(--sgr-accent) 62%, var(--sgr-border));
+  border-radius: var(--border-radius, 8px);
+  background: color-mix(in srgb, var(--sgr-surface) 94%, transparent);
+  color: var(--sgr-text);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  cursor: pointer;
+}
+
+.simple-gradient-runtime__launcher > span:first-child {
+  color: var(--sgr-accent);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.simple-gradient-runtime[data-enabled="false"] .simple-gradient-runtime__launcher {
+  opacity: 0.72;
+}
+
+.simple-gradient-runtime__dialog {
+  width: min(292px, calc(100vw - 28px));
+  margin: 8px 0 0 auto;
+  padding: 12px;
+  border: 1px solid var(--sgr-border);
+  border-radius: var(--border-radius, 10px);
+  background: color-mix(in srgb, var(--sgr-surface-raised) 96%, transparent);
+  color: var(--sgr-text);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.simple-gradient-runtime__dialog[hidden] {
+  display: none !important;
+}
+
+.simple-gradient-runtime__dialog > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.simple-gradient-runtime__dialog > header > div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.simple-gradient-runtime__dialog strong {
+  color: var(--sgr-text);
+  font-size: 13px;
+}
+
+.simple-gradient-runtime__dialog small,
+.simple-gradient-runtime__dialog p,
+.simple-gradient-runtime__dialog output {
+  color: var(--sgr-muted);
+}
+
+.simple-gradient-runtime__dialog small,
+.simple-gradient-runtime__dialog p {
+  overflow-wrap: anywhere;
+}
+
+.simple-gradient-runtime__dialog p {
+  margin: 9px 0;
+}
+
+.simple-gradient-runtime__dialog [data-runtime-close] {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: var(--border-radius, 6px);
+  background: transparent;
+  color: var(--sgr-muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.simple-gradient-runtime__dialog [data-runtime-close]:hover {
+  color: var(--sgr-text);
+  background: color-mix(in srgb, var(--sgr-text) 8%, transparent);
+}
+
+.simple-gradient-runtime__enabled {
+  min-height: 34px;
+  padding: 7px 9px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--sgr-border);
+  border-radius: var(--border-radius, 7px);
+  background: color-mix(in srgb, var(--sgr-surface) 82%, transparent);
+  color: var(--sgr-text);
+  cursor: pointer;
+}
+
+.simple-gradient-runtime__enabled input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--sgr-accent);
+}
+
+.simple-gradient-runtime__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.simple-gradient-runtime__actions button {
+  min-height: 32px;
+  padding: 6px 9px;
+  border: 1px solid var(--sgr-border);
+  border-radius: var(--border-radius, 7px);
+  background: var(--sgr-surface);
+  color: var(--sgr-text);
+  cursor: pointer;
+}
+
+.simple-gradient-runtime__actions button:last-child {
+  border-color: color-mix(in srgb, var(--sgr-accent) 70%, var(--sgr-border));
+  background: color-mix(in srgb, var(--sgr-accent) 18%, var(--sgr-surface));
+}
+
+.simple-gradient-runtime__actions button:hover {
+  border-color: var(--sgr-accent);
+}
+
+.simple-gradient-runtime__dialog output {
+  min-height: 17px;
+  margin-top: 10px;
+  display: block;
+  font-size: 11px;
+}
+
+#simple-gradient-runtime-root :focus-visible {
+  outline: 2px solid var(--sgr-accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 520px) {
+  #simple-gradient-runtime-root {
+    right: 8px;
+    bottom: 8px;
+  }
+
+  .simple-gradient-runtime__launcher-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #simple-gradient-runtime-root *,
+  #simple-gradient-runtime-root *::before,
+  #simple-gradient-runtime-root *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+@media print {
+  #simple-gradient-runtime-root {
+    display: none !important;
+  }
+}

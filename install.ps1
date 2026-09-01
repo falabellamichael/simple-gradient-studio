@@ -3,7 +3,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$version = '0.1.1'
+$version = '0.2.0'
 $extensionId = 'falabella.simple-gradient-studio'
 $vsix = Join-Path $PSScriptRoot "simple-gradient-studio-$version.vsix"
 

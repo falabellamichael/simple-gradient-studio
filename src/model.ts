@@ -31,6 +31,7 @@ export interface GradientProfile {
   editor: {
     activePage: string;
     activeTarget: string;
+    targetCatalog: 'studio' | 'simplerag';
     targetMode: boolean;
     zoom: number;
   };
@@ -156,6 +157,7 @@ export function createDefaultProfile(): GradientProfile {
     editor: {
       activePage: 'workbench',
       activeTarget: 'panel:workbench.inspector',
+      targetCatalog: 'studio',
       targetMode: true,
       zoom: 100
     }
@@ -204,6 +206,7 @@ export function normalizeProfile(value: unknown): GradientProfile {
   const activeTarget = typeof editor.activeTarget === 'string' && SAFE_TARGET.test(editor.activeTarget)
     ? editor.activeTarget
     : fallback.editor.activeTarget;
+  const targetCatalog = editor.targetCatalog === 'simplerag' ? 'simplerag' : 'studio';
 
   return {
     schema: PROFILE_SCHEMA,
@@ -214,6 +217,7 @@ export function normalizeProfile(value: unknown): GradientProfile {
     editor: {
       activePage,
       activeTarget,
+      targetCatalog,
       targetMode: editor.targetMode !== false,
       zoom: Math.round(clamp(Number(editor.zoom ?? 100), 70, 140))
     }

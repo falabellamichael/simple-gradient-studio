@@ -15,6 +15,7 @@ test('default profile is versioned and includes reusable gradients', () => {
   const profile = createDefaultProfile();
   assert.equal(profile.schema, PROFILE_SCHEMA);
   assert.equal(profile.version, 1);
+  assert.equal(profile.editor.targetCatalog, 'studio');
   assert.ok(Object.keys(profile.gradients).length >= 5);
   assert.equal(profile.assignments['panel:workbench.inspector'].mode, 'gradient');
 });
@@ -44,6 +45,20 @@ test('normalizer clamps imported values and drops unsafe targets and CSS payload
   assert.deepEqual(profile.gradients.safe.stops.map((stop) => stop.opacity), [100, 0]);
   assert.equal(profile.gradients.safe.stops[0].color, '#12202A');
   assert.equal(profile.assignments['panel:workbench.inspector > script'], undefined);
+});
+
+test('normalizer retains only the supported editor target catalogs', () => {
+  const simpleRag = normalizeProfile({ ...createDefaultProfile(), editor: {
+    ...createDefaultProfile().editor,
+    targetCatalog: 'simplerag'
+  } });
+  assert.equal(simpleRag.editor.targetCatalog, 'simplerag');
+
+  const unsafe = normalizeProfile({ ...createDefaultProfile(), editor: {
+    ...createDefaultProfile().editor,
+    targetCatalog: '<script>'
+  } });
+  assert.equal(unsafe.editor.targetCatalog, 'studio');
 });
 
 test('panel resolution follows exact panel then page then app and solid blocks inheritance', () => {

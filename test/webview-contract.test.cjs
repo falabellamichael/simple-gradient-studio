@@ -11,6 +11,8 @@ const css = fs.readFileSync(path.join(root, 'media', 'studio.css'), 'utf8');
 const script = fs.readFileSync(path.join(root, 'media', 'studio.js'), 'utf8');
 const modelSource = fs.readFileSync(path.join(root, 'src', 'model.ts'), 'utf8');
 const installer = fs.readFileSync(path.join(root, 'install.ps1'), 'utf8');
+const simpleRagInstaller = fs.readFileSync(path.join(root, 'install-simplerag.ps1'), 'utf8');
+const installedVerifier = fs.readFileSync(path.join(root, 'scripts', 'verify-installed.ps1'), 'utf8');
 const notices = fs.readFileSync(path.join(root, 'THIRD_PARTY_NOTICES.md'), 'utf8');
 const vscodeIgnore = fs.readFileSync(path.join(root, '.vscodeignore'), 'utf8');
 const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
@@ -18,7 +20,7 @@ const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'))
 test('webview has a restrictive CSP and nonce-backed external script', () => {
   assert.match(html, /default-src 'none'/);
   assert.match(html, /script-src 'nonce-\{\{nonce\}\}'/);
-  assert.match(html, /<script nonce="\{\{nonce\}\}" src="\{\{scriptUri\}\}\?v=11"><\/script>/);
+  assert.match(html, /<script nonce="\{\{nonce\}\}" src="\{\{scriptUri\}\}\?v=12"><\/script>/);
   assert.doesNotMatch(html, /unsafe-inline|unsafe-eval/);
 });
 
@@ -26,7 +28,8 @@ test('selected concept structure and core interactions are present', () => {
   for (const id of [
     'assignmentPopout', 'stopModal', 'presetList', 'stopRail', 'targetModeButton',
     'applyTargetButton', 'applyGlobalButton', 'pageSelect', 'exportButton',
-    'selectedContextName', 'useParentButton', 'revertDefaultButton', 'scopeDrawerButton'
+    'selectedContextName', 'useParentButton', 'revertDefaultButton', 'scopeDrawerButton',
+    'targetCatalogSelect', 'installSimpleRagButton', 'scopeTree', 'samplePageNav'
   ]) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
@@ -40,12 +43,10 @@ test('selected concept structure and core interactions are present', () => {
   assert.match(script, /function renderAssignments/);
 });
 
-test('standalone product uses a neutral design-system preview and no legacy product content', () => {
+test('standalone preview remains neutral while SimpleRAG is an explicit optional target', () => {
   const combined = `${html}\n${css}\n${script}\n${modelSource}\n${JSON.stringify(pkg)}`;
   const legacyBrandPattern = new RegExp([
-    ['Simple', 'RAG'].join(''),
     ['Her', 'mes'].join(''),
-    ['Com', 'fy'].join(''),
     ['Ol', 'lama'].join(''),
     ['LM', ' Studio'].join('')
   ].join('|'), 'i');
@@ -64,10 +65,15 @@ test('standalone product uses a neutral design-system preview and no legacy prod
   ].join('|'), 'i');
   assert.doesNotMatch(combined, legacyBrandPattern);
   assert.doesNotMatch(combined, blockedCopyPattern);
-  assert.doesNotMatch(combined, /page:(overview|journal|tasks|mail|documents|knowledge)|panel:[^'"\s]+\.(assistant|composer|history|actions|canvas)/i);
+  assert.doesNotMatch(combined, /page:(overview|mail|documents|knowledge)|panel:[^'"\s]+\.(composer|history|actions|canvas)/i);
   assert.match(combined, /DESIGN SYSTEM WORKBENCH/);
   assert.match(combined, /panel:workbench\.inspector/);
   assert.match(combined, /SimpleGradient Studio/);
+  assert.match(combined, /targetCatalogSelect/);
+  assert.match(script, /simplerag:/);
+  assert.match(script, /id: 'calendar', label: 'Calendar'/);
+  assert.match(script, /panel:\$\{page\.id\}\.\$\{surface\.id\}/);
+  assert.match(script, /type: 'installSimpleRag'/);
 });
 
 test('extension identity and commands cannot collide with SimpleTheme', () => {
@@ -86,6 +92,14 @@ test('release installer is self-contained and packaged assets retain third-party
   assert.match(notices, /Codicons/i);
   assert.match(notices, /Creative Commons Attribution 4\.0/i);
   assert.match(vscodeIgnore, /scripts\/\*\*/);
+  assert.match(vscodeIgnore, /\*\.zip/);
+  assert.match(simpleRagInstaller, /\$maxRegistryEntries = 128/);
+  assert.match(simpleRagInstaller, /\$maxRegistryBytes = 64KB/);
+  assert.match(simpleRagInstaller, /\$maxAssetBytes = 8MB/);
+  assert.match(simpleRagInstaller, /\$maxPackageBytes = 16MB/);
+  assert.match(simpleRagInstaller, /Installed SimpleRAG asset failed size\/hash verification/);
+  assert.match(installedVerifier, new RegExp(`simple-gradient-studio-${pkg.version.replaceAll('.', '\\.')}\\.vsix`));
+  assert.match(installedVerifier, new RegExp(`ExpectedVersion = '${pkg.version.replaceAll('.', '\\.')}'`));
   assert.match(vscodeIgnore, /install\.ps1/);
   for (const license of ['codicons-CC-BY-4.0.txt', 'codicons-MIT.txt']) {
     assert.equal(fs.existsSync(path.join(root, 'licenses', license)), true);

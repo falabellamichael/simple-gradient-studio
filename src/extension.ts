@@ -7,6 +7,7 @@ import {
   GradientProfile,
   normalizeProfile
 } from './model';
+import { installSimpleRagExtension, SimpleRagExtensionInstallResult } from './simplerag';
 
 type StudioView = 'studio' | 'assignments' | 'preview';
 
@@ -22,6 +23,7 @@ class GradientStudioController implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[] = [];
   private profile: GradientProfile;
   private statusBar: vscode.StatusBarItem;
+  private simpleRagInstall: Promise<SimpleRagExtensionInstallResult> | undefined;
 
   constructor(private readonly context: vscode.ExtensionContext) {
     this.profile = normalizeProfile(context.globalState.get(PROFILE_KEY) ?? createDefaultProfile());
@@ -95,6 +97,44 @@ class GradientStudioController implements vscode.Disposable {
     void vscode.window.showInformationMessage(`Exported ${format.toUpperCase()} to ${path.basename(uri.fsPath)}.`);
   }
 
+  async installSimpleRag(): Promise<void> {
+    if (this.simpleRagInstall) {
+      void vscode.window.showInformationMessage('SimpleGradient is already updating the SimpleRAG extension.');
+      return;
+    }
+    await this.persistAndBroadcast();
+    const version = String(this.context.extension.packageJSON.version || '').trim();
+    const packageRoot = vscode.Uri.joinPath(this.context.extensionUri, 'simplerag-extension').fsPath;
+    const install = Promise.resolve(vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: 'Installing SimpleGradient into SimpleRAG',
+        cancellable: false
+      },
+      () => installSimpleRagExtension({
+        packageRoot,
+        expectedVersion: version,
+        profile: this.profile
+      })
+    ));
+    this.simpleRagInstall = install;
+    try {
+      const result = await install;
+      const action = result.packageCopied || result.registryUpdated ? 'installed' : 'verified';
+      const message = `SimpleGradient ${result.version} was ${action} for SimpleRAG. Reload an open SimpleRAG window to apply this profile.`;
+      this.statusBar.text = '$(pass-filled) Gradient → SimpleRAG';
+      this.statusBar.tooltip = `SimpleGradient ${result.version} is installed in SimpleRAG`;
+      this.broadcastSimpleRagIntegration(true, message);
+      void vscode.window.showInformationMessage(message);
+    } catch (error) {
+      const message = `Could not install SimpleGradient into SimpleRAG: ${error instanceof Error ? error.message : String(error)}`;
+      this.broadcastSimpleRagIntegration(false, message);
+      void vscode.window.showErrorMessage(message);
+    } finally {
+      this.simpleRagInstall = undefined;
+    }
+  }
+
   private async handleMessage(panel: vscode.WebviewPanel, message: unknown): Promise<void> {
     if (!message || typeof message !== 'object') {
       return;
@@ -116,6 +156,10 @@ class GradientStudioController implements vscode.Disposable {
       case 'save':
         await this.persistAndBroadcast();
         void vscode.window.showInformationMessage('Gradient profile saved.');
+        break;
+      case 'installSimpleRag':
+        this.profile = normalizeProfile(payload.profile ?? this.profile);
+        await this.installSimpleRag();
         break;
       case 'reset':
         this.profile = createDefaultProfile();
@@ -145,6 +189,12 @@ class GradientStudioController implements vscode.Disposable {
 
   private sendState(panel: vscode.WebviewPanel): void {
     void panel.webview.postMessage({ type: 'state', profile: this.profile });
+  }
+
+  private broadcastSimpleRagIntegration(installed: boolean, message: string): void {
+    for (const panel of this.panels.values()) {
+      void panel.webview.postMessage({ type: 'simpleRagIntegration', installed, message });
+    }
   }
 
   private renderHtml(webview: vscode.Webview, view: StudioView): string {
@@ -192,6 +242,7 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand('simpleGradient.openPreview', () => controller.open('preview')),
     vscode.commands.registerCommand('simpleGradient.importProfile', () => controller.importProfile()),
     vscode.commands.registerCommand('simpleGradient.exportProfile', () => controller.exportProfile('json')),
+    vscode.commands.registerCommand('simpleGradient.installSimpleRag', () => controller.installSimpleRag()),
     vscode.window.registerUriHandler({
       handleUri: (uri) => {
         const requested = uri.path.replace(/^\//, '');

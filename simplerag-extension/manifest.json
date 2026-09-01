@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "simple-gradient-studio",
+  "version": "0.2.0",
+  "enabled": true,
+  "surfaces": [
+    "advanced",
+    "comfy"
+  ],
+  "scripts": [
+    {
+      "path": "profile.js",
+      "sha256": "43f59265e692fff4dc2970b649109a20fe53c23fe2835f9b35c22144d48a331f",
+      "size": 3495
+    },
+    {
+      "path": "simple-gradient-runtime.js",
+      "sha256": "cd5746d93dac09df022e252761432aeff5bb668e9c69858233ae99ec7ddf03d9",
+      "size": 30947
+    }
+  ],
+  "styles": [
+    {
+      "path": "simple-gradient-runtime.css",
+      "sha256": "260ea50d13126d9cff9fd8928f45210719a77171ac9708f931765112b6a3a6af",
+      "size": 5564
+    }
+  ]
+}

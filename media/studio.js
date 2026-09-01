@@ -15,39 +15,58 @@
         }
       };
 
-  const pages = [
-    { id: 'workbench', label: 'Workbench', icon: 'layout' },
-    { id: 'files', label: 'Files', icon: 'files' },
-    { id: 'search', label: 'Search', icon: 'search' },
-    { id: 'terminal', label: 'Terminal', icon: 'terminal' },
-    { id: 'debugger', label: 'Debug', icon: 'debug-alt' },
-    { id: 'settings', label: 'Settings', icon: 'settings-gear' },
-    { id: 'components', label: 'Components', icon: 'extensions' }
-  ];
-
-  const surfaces = [
-    { id: 'navigation', label: 'Navigation' },
-    { id: 'editor', label: 'Editor' },
-    { id: 'components', label: 'Components' },
-    { id: 'inspector', label: 'Inspector' },
-    { id: 'toolbar', label: 'Toolbar' }
-  ];
-
-  const targetLabels = {
-    app: 'App default',
-    'page:workbench': 'Workbench',
-    'panel:workbench.navigation': 'Navigation rail',
-    'panel:workbench.editor': 'Editor canvas',
-    'panel:workbench.components': 'Component cards',
-    'panel:workbench.inspector': 'Properties inspector',
-    'panel:workbench.toolbar': 'Filter toolbar',
-    'page:files': 'Files',
-    'page:search': 'Search',
-    'page:terminal': 'Terminal',
-    'page:debugger': 'Debug',
-    'page:settings': 'Settings',
-    'page:components': 'Components'
+  const catalogs = {
+    studio: {
+      label: 'Design workbench',
+      pages: [
+        { id: 'workbench', label: 'Workbench', icon: 'layout' },
+        { id: 'files', label: 'Files', icon: 'files' },
+        { id: 'search', label: 'Search', icon: 'search' },
+        { id: 'terminal', label: 'Terminal', icon: 'terminal' },
+        { id: 'debugger', label: 'Debug', icon: 'debug-alt' },
+        { id: 'settings', label: 'Settings', icon: 'settings-gear' },
+        { id: 'components', label: 'Components', icon: 'extensions' }
+      ],
+      surfaces: [
+        { id: 'navigation', label: 'Navigation' },
+        { id: 'editor', label: 'Editor' },
+        { id: 'components', label: 'Components' },
+        { id: 'inspector', label: 'Inspector' },
+        { id: 'toolbar', label: 'Toolbar' }
+      ],
+      previewSurfaces: {
+        navigation: 'navigation', workspace: 'editor', cards: 'components', assistant: 'inspector', toolbar: 'toolbar'
+      }
+    },
+    simplerag: {
+      label: 'SimpleRAG',
+      pages: [
+        { id: 'home', label: 'Home', icon: 'home' },
+        { id: 'journal', label: 'Journal', icon: 'book' },
+        { id: 'tasks', label: 'Tasks', icon: 'checklist' },
+        { id: 'email', label: 'Email', icon: 'mail' },
+        { id: 'calendar', label: 'Calendar', icon: 'calendar' },
+        { id: 'pdf', label: 'PDF', icon: 'file-pdf' },
+        { id: 'graph', label: 'Knowledge Graph', icon: 'type-hierarchy' },
+        { id: 'plugins', label: 'Plug-ins', icon: 'extensions' },
+        { id: 'settings', label: 'Settings', icon: 'settings-gear' }
+      ],
+      surfaces: [
+        { id: 'navigation', label: 'Navigation' },
+        { id: 'workspace', label: 'Workspace' },
+        { id: 'cards', label: 'Cards' },
+        { id: 'assistant', label: 'Assistant' },
+        { id: 'toolbar', label: 'Toolbar' }
+      ],
+      previewSurfaces: {
+        navigation: 'navigation', workspace: 'workspace', cards: 'cards', assistant: 'assistant', toolbar: 'toolbar'
+      }
+    }
   };
+
+  let pages = catalogs.studio.pages;
+  let surfaces = catalogs.studio.surfaces;
+  let targetLabels = { app: 'App default' };
 
   const byId = (id) => document.getElementById(id);
   const all = (selector, root = document) => Array.from(root.querySelectorAll(selector));
@@ -103,7 +122,7 @@
         'page:settings': { mode: 'inherit' },
         'page:components': { mode: 'inherit' }
       },
-      editor: { activePage: 'workbench', activeTarget: 'panel:workbench.inspector', targetMode: true, zoom: 100 }
+      editor: { activePage: 'workbench', activeTarget: 'panel:workbench.inspector', targetCatalog: 'studio', targetMode: true, zoom: 100 }
     };
   }
 
@@ -119,6 +138,23 @@
   let compareMode = false;
   let scopeDrawerOpen = false;
   let sendTimer = 0;
+
+  function activeCatalog() {
+    return catalogs[profile.editor.targetCatalog] || catalogs.studio;
+  }
+
+  function syncCatalog() {
+    const catalog = activeCatalog();
+    pages = catalog.pages;
+    surfaces = catalog.surfaces;
+    targetLabels = { app: 'App default' };
+    pages.forEach((page) => {
+      targetLabels[`page:${page.id}`] = page.label;
+      surfaces.forEach((surface) => {
+        targetLabels[`panel:${page.id}.${surface.id}`] = `${page.label} ${surface.label.toLowerCase()}`;
+      });
+    });
+  }
 
   function gradientCss(gradient) {
     if (!gradient) return 'none';
@@ -243,6 +279,8 @@
   }
 
   function render() {
+    syncCatalog();
+    renderCatalog();
     renderScope();
     renderPreview();
     renderLibrary();
@@ -254,6 +292,92 @@
     byId('assignmentPopout').hidden = !assignmentVisible;
     document.querySelector('.scope-panel').classList.toggle('drawer-open', scopeDrawerOpen);
     byId('scopeDrawerButton').setAttribute('aria-expanded', String(scopeDrawerOpen));
+  }
+
+  function renderCatalog() {
+    const catalog = activeCatalog();
+    byId('targetCatalogSelect').value = profile.editor.targetCatalog || 'studio';
+    byId('sampleBrandName').textContent = profile.editor.targetCatalog === 'simplerag'
+      ? 'SimpleRAG surface map'
+      : 'Gradient Sandbox';
+
+    const pageSelect = byId('pageSelect');
+    pageSelect.replaceChildren();
+    for (const page of pages) {
+      const option = document.createElement('option');
+      option.value = page.id;
+      option.textContent = page.label;
+      pageSelect.append(option);
+    }
+
+    const sampleNav = byId('samplePageNav');
+    sampleNav.replaceChildren();
+    for (const page of pages) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.pagePreview = page.id;
+      const icon = document.createElement('span');
+      icon.className = `codicon codicon-${page.icon}`;
+      button.append(icon, document.createTextNode(page.label));
+      sampleNav.append(button);
+    }
+
+    const scopeTree = byId('scopeTree');
+    scopeTree.replaceChildren();
+    const appRow = createScopeRow({ id: 'app', label: 'App default', icon: 'home' });
+    scopeTree.append(appRow);
+    for (const page of pages) {
+      const pageTarget = `page:${page.id}`;
+      const pageRow = createScopeRow({ id: pageTarget, label: page.label, icon: page.icon, page: true });
+      scopeTree.append(pageRow);
+      if (page.id !== profile.editor.activePage) continue;
+      const children = document.createElement('div');
+      children.className = 'scope-children';
+      children.setAttribute('role', 'group');
+      for (const surface of surfaces) {
+        children.append(createScopeRow({
+          id: `panel:${page.id}.${surface.id}`,
+          label: surface.label,
+          icon: surface.id === 'navigation' ? 'list-tree' : surface.id === 'assistant' || surface.id === 'inspector' ? 'sparkle' : surface.id === 'toolbar' ? 'filter' : 'layout-centered',
+          child: true
+        }));
+      }
+      scopeTree.append(children);
+    }
+
+    byId('integrationHint').textContent = profile.editor.targetCatalog === 'simplerag'
+      ? 'Assignments in this catalog install into both SimpleRAG Comfy and Advanced.'
+      : `Switch the target above to ${catalogs.simplerag.label} to define each SimpleRAG page and panel.`;
+  }
+
+  function createScopeRow({ id, label, icon, page = false, child = false }) {
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.className = `scope-row${child ? ' child' : ''}`;
+    row.dataset.target = id;
+    row.setAttribute('role', 'treeitem');
+    if (child) {
+      const line = document.createElement('span');
+      line.className = 'tree-line';
+      row.append(line);
+    } else if (page) {
+      const caret = document.createElement('span');
+      caret.className = `codicon codicon-chevron-${id === `page:${profile.editor.activePage}` ? 'down' : 'right'}`;
+      row.append(caret);
+    } else {
+      const caret = document.createElement('span');
+      caret.className = 'codicon codicon-chevron-down';
+      row.append(caret);
+    }
+    const glyph = document.createElement('span');
+    glyph.className = `codicon codicon-${icon}`;
+    const text = document.createElement(child ? 'span' : 'b');
+    text.textContent = label;
+    const chip = document.createElement('span');
+    chip.className = 'scope-chip';
+    chip.textContent = 'Inherited';
+    row.append(glyph, text, chip);
+    return row;
   }
 
   function renderScope() {
@@ -281,6 +405,22 @@
 
   function renderPreview() {
     const app = byId('sampleApp');
+    const catalog = activeCatalog();
+    const previewSurfaces = catalog.previewSurfaces;
+    const targetMap = [
+      ['.sample-sidebar', previewSurfaces.navigation],
+      ['.sample-editor', previewSurfaces.workspace],
+      ['.component-grid', previewSurfaces.cards],
+      ['.sample-inspector', previewSurfaces.assistant],
+      ['.sample-filter', previewSurfaces.toolbar],
+      ['.sample-topbar', previewSurfaces.toolbar]
+    ];
+    const body = app.querySelector('.sample-body');
+    if (body) body.dataset.gradientTarget = `page:${profile.editor.activePage}`;
+    for (const [selector, surface] of targetMap) {
+      const element = app.querySelector(selector);
+      if (element) element.dataset.gradientTarget = `panel:${profile.editor.activePage}.${surface}`;
+    }
     app.classList.toggle('target-mode', profile.editor.targetMode);
     app.classList.toggle('compare-mode', compareMode);
     byId('targetModeButton').classList.toggle('active', profile.editor.targetMode);
@@ -292,7 +432,6 @@
     app.style.transform = `scale(${profile.editor.zoom / 100})`;
 
     const pageGradient = resolveGradient(`page:${profile.editor.activePage}`) || resolveGradient('app');
-    const body = app.querySelector('.sample-body');
     if (body && pageGradient && !compareMode) body.style.backgroundImage = gradientCss(pageGradient);
     if (body && (!pageGradient || compareMode)) body.style.backgroundImage = 'none';
 
@@ -391,13 +530,21 @@
 
   function matrixTarget(pageId, surfaceId) {
     if (pageId === 'app') return 'app';
-    if (pageId === 'workbench') return `panel:workbench.${surfaceId}`;
-    return `page:${pageId}`;
+    return `panel:${pageId}.${surfaceId}`;
   }
 
   function renderAssignments() {
     const grid = byId('assignmentPopout').querySelector('.assignment-grid');
-    all('.row-head, .matrix-cell', grid).forEach((element) => element.remove());
+    grid.replaceChildren();
+    const corner = document.createElement('div');
+    corner.className = 'grid-head';
+    grid.append(corner);
+    for (const surface of surfaces) {
+      const heading = document.createElement('div');
+      heading.className = 'grid-head';
+      heading.textContent = surface.label;
+      grid.append(heading);
+    }
     const rows = [{ id: 'app', label: 'App default', icon: 'globe' }, ...pages];
     rows.forEach((page) => {
       const rowHead = document.createElement('div');
@@ -442,6 +589,31 @@
     const current = document.createElement('b');
     current.textContent = `${label} (${mode.toLowerCase()})`;
     byId('inheritancePath').append(current);
+
+    const summary = byId('scopeSummary');
+    summary.querySelectorAll(':scope > div').forEach((row) => row.remove());
+    const pageTarget = `page:${targetPage()}`;
+    const summaryRows = [
+      { target: 'app', label: 'App default', dot: 'inherited', active: profile.editor.activeTarget === 'app' },
+      { target: pageTarget, label: `${page} (page)`, dot: 'page', active: profile.editor.activeTarget === pageTarget }
+    ];
+    if (profile.editor.activeTarget.startsWith('panel:')) {
+      summaryRows.push({ target: profile.editor.activeTarget, label, dot: 'panel', active: true });
+    }
+    for (const row of summaryRows) {
+      const item = document.createElement('div');
+      item.classList.toggle('active', Boolean(row.active));
+      const dot = document.createElement('span');
+      dot.className = `legend-dot ${row.dot}`;
+      const rowLabel = document.createElement('span');
+      rowLabel.textContent = row.label;
+      const chip = document.createElement('span');
+      const rowMode = assignmentLabel(row.target);
+      chip.className = `scope-chip${rowMode === 'Panel override' ? ' panel' : rowMode === 'Page override' ? ' page' : ''}`;
+      chip.textContent = rowMode;
+      item.append(dot, rowLabel, chip);
+      summary.append(item);
+    }
   }
 
   function showToast(message) {
@@ -493,19 +665,25 @@
     return gradient ? gradientCss(gradient) : 'background-image: none;';
   }
 
-  all('.scope-row[data-target]').forEach((row) => row.addEventListener('click', () => setTarget(row.dataset.target)));
-  all('[data-gradient-target]').forEach((element) => element.addEventListener('click', (event) => {
-    if (!profile.editor.targetMode) return;
+  byId('scopeTree').addEventListener('click', (event) => {
+    const row = event.target.closest('.scope-row[data-target]');
+    if (row) setTarget(row.dataset.target);
+  });
+  byId('sampleApp').addEventListener('click', (event) => {
+    const pageButton = event.target.closest('[data-page-preview]');
+    if (pageButton) {
+      profile.editor.activePage = pageButton.dataset.pagePreview;
+      profile.editor.activeTarget = `page:${pageButton.dataset.pagePreview}`;
+      render();
+      scheduleSend();
+      return;
+    }
+    const target = event.target.closest('[data-gradient-target]');
+    if (!profile.editor.targetMode || !target) return;
     event.preventDefault();
     event.stopPropagation();
-    setTarget(element.dataset.gradientTarget);
-  }));
-  all('[data-page-preview]').forEach((button) => button.addEventListener('click', () => {
-    profile.editor.activePage = button.dataset.pagePreview;
-    profile.editor.activeTarget = `page:${button.dataset.pagePreview}`;
-    render();
-    scheduleSend();
-  }));
+    setTarget(target.dataset.gradientTarget);
+  });
   all('[data-open-view]').forEach((button) => button.addEventListener('click', () => host.postMessage({ type: 'openView', view: button.dataset.openView })));
   all('[data-mode]').forEach((button) => button.addEventListener('click', () => commit((draft) => {
     const mode = button.dataset.mode;
@@ -522,6 +700,20 @@
     if (next) replaceFromHistory(next, undoStack);
   });
   byId('saveButton').addEventListener('click', () => host.postMessage({ type: 'save' }));
+  byId('installSimpleRagButton').addEventListener('click', () => {
+    host.postMessage({ type: 'installSimpleRag', profile });
+    showToast('Installing this profile into SimpleRAG…');
+  });
+  byId('targetCatalogSelect').addEventListener('change', (event) => {
+    const nextCatalog = event.target.value === 'simplerag' ? 'simplerag' : 'studio';
+    const next = catalogs[nextCatalog];
+    profile.editor.targetCatalog = nextCatalog;
+    profile.editor.activePage = next.pages[0].id;
+    profile.editor.activeTarget = `page:${next.pages[0].id}`;
+    render();
+    scheduleSend();
+    showToast(`${next.label} page and panel targets are ready.`);
+  });
   byId('helpButton').addEventListener('click', () => {
     assignmentVisible = true;
     render();
@@ -727,6 +919,14 @@
       render();
       host.setState?.({ profile });
     }
+    if (event.data?.type === 'simpleRagIntegration') {
+      const button = byId('installSimpleRagButton');
+      button.classList.toggle('integration-installed', event.data.installed === true);
+      button.innerHTML = event.data.installed === true
+        ? '<span class="codicon codicon-pass-filled"></span>Update SimpleRAG'
+        : '<span class="codicon codicon-plug"></span>Apply to SimpleRAG';
+      if (event.data.message) showToast(event.data.message);
+    }
   });
 
   window.addEventListener('simple-gradient-host-message', (event) => {
@@ -738,6 +938,7 @@
     if (message?.type === 'export') showToast(`${String(message.format || 'json').toUpperCase()} export is handled by VS Code after installation.`);
     if (message?.type === 'copy') navigator.clipboard?.writeText(message.text).then(() => showToast('Copied CSS to clipboard.')).catch(() => showToast(message.text));
     if (message?.type === 'openView') showToast(`${titleCase(message.view)} opens as a synchronized VS Code editor panel after installation.`);
+    if (message?.type === 'installSimpleRag') showToast('SimpleRAG installation is available from the packaged VS Code extension.');
   });
 
   render();

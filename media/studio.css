@@ -179,6 +179,18 @@ p {
   gap: 4px;
 }
 
+#installSimpleRagButton {
+  border-color: color-mix(in srgb, var(--sg-accent) 52%, transparent);
+  color: color-mix(in srgb, var(--sg-accent) 72%, white);
+  background: var(--sg-accent-soft);
+}
+
+#installSimpleRagButton.integration-installed {
+  border-color: color-mix(in srgb, var(--sg-success) 52%, transparent);
+  color: var(--sg-success);
+  background: color-mix(in srgb, var(--sg-success) 12%, transparent);
+}
+
 .top-actions .action-divider {
   margin: 0 7px;
 }
@@ -308,6 +320,11 @@ p {
   margin-top: 7px;
   color: var(--sg-text-secondary);
   font-size: 10.5px;
+}
+
+.scope-panel > .integration-hint {
+  margin-top: 5px;
+  color: color-mix(in srgb, var(--sg-accent) 66%, var(--sg-text-secondary));
 }
 
 .scope-legend,

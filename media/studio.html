@@ -20,6 +20,12 @@
             <option>Warm Glass Workspace</option>
           </select>
         </label>
+        <label class="theme-select">Target:
+          <select id="targetCatalogSelect" aria-label="Target application">
+            <option value="studio">Design workbench</option>
+            <option value="simplerag">SimpleRAG</option>
+          </select>
+        </label>
       </div>
       <nav class="top-actions" aria-label="Studio actions">
         <button class="ghost-button" id="undoButton" type="button"><span class="codicon codicon-discard"></span>Undo</button>
@@ -36,6 +42,8 @@
           </div>
         </div>
         <span class="action-divider" aria-hidden="true"></span>
+        <button class="ghost-button" id="installSimpleRagButton" type="button"><span class="codicon codicon-plug"></span>Apply to SimpleRAG</button>
+        <span class="action-divider" aria-hidden="true"></span>
         <button class="icon-button scope-drawer-button" id="scopeDrawerButton" type="button" aria-label="Open target scope drawer" aria-expanded="false"><span class="codicon codicon-list-tree"></span></button>
         <button class="icon-button" id="helpButton" type="button" aria-label="Show shortcuts and help"><span class="codicon codicon-question"></span></button>
       </nav>
@@ -48,13 +56,14 @@
           <button class="icon-button detach" type="button" data-open-view="assignments" aria-label="Open assignments beside Studio" title="Open assignments beside Studio"><span class="codicon codicon-open-preview"></span></button>
         </div>
         <p>Choose where this gradient applies.</p>
+        <p id="integrationHint" class="integration-hint">Switch the target above to SimpleRAG to define each app page and panel.</p>
         <div class="scope-legend" aria-label="Assignment states">
           <span><i class="legend-dot inherited"></i>Inherited</span>
           <span><i class="legend-dot page"></i>Page override</span>
           <span><i class="legend-dot panel"></i>Panel override</span>
         </div>
 
-        <div class="scope-tree" role="tree" aria-label="Gradient target scopes">
+        <div class="scope-tree" id="scopeTree" role="tree" aria-label="Gradient target scopes">
           <button class="scope-row" type="button" data-target="app" role="treeitem">
             <span class="codicon codicon-chevron-down"></span><span class="codicon codicon-home"></span><b>App default</b><span class="scope-chip">Inherited</span>
           </button>
@@ -86,7 +95,7 @@
           <p>Create and save a reusable gradient.</p>
           <button class="outlined-accent" id="newGradientButton" type="button"><span class="codicon codicon-add"></span>New gradient</button>
         </section>
-        <section class="scope-card scope-summary">
+        <section class="scope-card scope-summary" id="scopeSummary">
           <h3>Scope summary</h3>
           <div><span class="legend-dot inherited"></span>App default<span class="scope-chip">Inherited</span></div>
           <div><span class="legend-dot inherited"></span>Workbench (page)<span class="scope-chip">Inherited</span></div>
@@ -128,8 +137,8 @@
         <div class="preview-stage" id="previewStage">
           <div class="sample-app" id="sampleApp">
             <nav class="sample-topbar">
-              <div class="sample-brand"><span class="brand-mark small codicon codicon-symbol-color"></span><strong>Gradient Sandbox</strong></div>
-              <div class="sample-nav" aria-label="Sample workspace pages">
+              <div class="sample-brand"><span class="brand-mark small codicon codicon-symbol-color"></span><strong id="sampleBrandName">Gradient Sandbox</strong></div>
+              <div class="sample-nav" id="samplePageNav" aria-label="Sample workspace pages">
                 <button class="active" data-page-preview="workbench"><span class="codicon codicon-layout"></span>Workbench</button>
                 <button data-page-preview="files"><span class="codicon codicon-files"></span>Files</button>
                 <button data-page-preview="search"><span class="codicon codicon-search"></span>Search</button>
@@ -264,6 +273,6 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-  <script nonce="{{nonce}}" src="{{scriptUri}}?v=11"></script>
+  <script nonce="{{nonce}}" src="{{scriptUri}}?v=12"></script>
 </body>
 </html>
