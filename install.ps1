@@ -61,7 +61,7 @@ try {
         try {
             $stream = $entry.Open()
             try {
-                $archiveMap[$relative] = [Convert]::ToHexString($sha.ComputeHash($stream))
+                $archiveMap[$relative] = ([System.BitConverter]::ToString($sha.ComputeHash($stream))).Replace('-', '')
             } finally {
                 $stream.Dispose()
             }
@@ -71,11 +71,16 @@ try {
     }
 
     $installedMap = @{}
+    $installedRoot = [System.IO.Path]::GetFullPath($installedPath).TrimEnd([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar) + [System.IO.Path]::DirectorySeparatorChar
     $installedFiles = @(Get-ChildItem -LiteralPath $installedPath -File -Recurse | Where-Object {
-        [System.IO.Path]::GetRelativePath($installedPath, $_.FullName) -ne '.vsixmanifest'
+        [System.IO.Path]::GetFullPath($_.FullName).Substring($installedRoot.Length) -ne '.vsixmanifest'
     })
     foreach ($file in $installedFiles) {
-        $relative = [System.IO.Path]::GetRelativePath($installedPath, $file.FullName)
+        $fullName = [System.IO.Path]::GetFullPath($file.FullName)
+        if (-not $fullName.StartsWith($installedRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+            throw "Installed file resolved outside the extension directory: $fullName"
+        }
+        $relative = $fullName.Substring($installedRoot.Length)
         $installedMap[$relative] = (Get-FileHash -Algorithm SHA256 -LiteralPath $file.FullName).Hash
     }
 

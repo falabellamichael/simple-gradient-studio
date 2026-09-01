@@ -78,6 +78,8 @@ test('extension identity and commands cannot collide with SimpleTheme', () => {
 
 test('release installer is self-contained and packaged assets retain third-party notices', () => {
   assert.doesNotMatch(installer, /verify-installed\.ps1/i);
+  assert.doesNotMatch(installer, /Convert\]::ToHexString|Path\]::GetRelativePath/i);
+  assert.match(installer, /BitConverter\]::ToString/);
   assert.match(installer, /ExactPayloadMatch = \$true/);
   assert.match(notices, /Codicons/i);
   assert.match(notices, /Creative Commons Attribution 4\.0/i);
