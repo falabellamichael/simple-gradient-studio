@@ -16,7 +16,7 @@ test('default profile is versioned and includes reusable gradients', () => {
   assert.equal(profile.schema, PROFILE_SCHEMA);
   assert.equal(profile.version, 1);
   assert.ok(Object.keys(profile.gradients).length >= 5);
-  assert.equal(profile.assignments['panel:overview.assistant'].mode, 'gradient');
+  assert.equal(profile.assignments['panel:workbench.inspector'].mode, 'gradient');
 });
 
 test('normalizer clamps imported values and drops unsafe targets and CSS payloads', () => {
@@ -34,8 +34,8 @@ test('normalizer clamps imported values and drops unsafe targets and CSS payload
       }
     },
     assignments: {
-      'panel:overview.assistant': { mode: 'gradient', gradientId: 'safe' },
-      'panel:overview.assistant > script': { mode: 'gradient', gradientId: 'safe' }
+      'panel:workbench.inspector': { mode: 'gradient', gradientId: 'safe' },
+      'panel:workbench.inspector > script': { mode: 'gradient', gradientId: 'safe' }
     }
   });
   assert.equal(profile.gradients.safe.type, 'linear');
@@ -43,17 +43,17 @@ test('normalizer clamps imported values and drops unsafe targets and CSS payload
   assert.deepEqual(profile.gradients.safe.stops.map((stop) => stop.position), [0, 100]);
   assert.deepEqual(profile.gradients.safe.stops.map((stop) => stop.opacity), [100, 0]);
   assert.equal(profile.gradients.safe.stops[0].color, '#12202A');
-  assert.equal(profile.assignments['panel:overview.assistant > script'], undefined);
+  assert.equal(profile.assignments['panel:workbench.inspector > script'], undefined);
 });
 
 test('panel resolution follows exact panel then page then app and solid blocks inheritance', () => {
   const profile = createDefaultProfile();
-  profile.assignments['panel:journal.assistant'] = { mode: 'inherit' };
-  assert.equal(resolveAssignment(profile, 'panel:journal.assistant').id, 'ocean-workspace');
-  profile.assignments['panel:journal.assistant'] = { mode: 'solid' };
-  assert.equal(resolveAssignment(profile, 'panel:journal.assistant'), undefined);
-  profile.assignments['panel:journal.assistant'] = { mode: 'gradient', gradientId: 'grove-workspace' };
-  assert.equal(resolveAssignment(profile, 'panel:journal.assistant').id, 'grove-workspace');
+  profile.assignments['panel:files.inspector'] = { mode: 'inherit' };
+  assert.equal(resolveAssignment(profile, 'panel:files.inspector').id, 'ocean-workspace');
+  profile.assignments['panel:files.inspector'] = { mode: 'solid' };
+  assert.equal(resolveAssignment(profile, 'panel:files.inspector'), undefined);
+  profile.assignments['panel:files.inspector'] = { mode: 'gradient', gradientId: 'grove-workspace' };
+  assert.equal(resolveAssignment(profile, 'panel:files.inspector').id, 'grove-workspace');
 });
 
 test('gradient CSS is linear, bounded, and alpha-aware', () => {
@@ -69,6 +69,6 @@ test('gradient CSS is linear, bounded, and alpha-aware', () => {
 test('CSS export contains named variables without arbitrary selectors', () => {
   const css = exportCss(createDefaultProfile());
   assert.match(css, /--gradient-warm-studio:/);
-  assert.match(css, /panel:overview\.assistant/);
+  assert.match(css, /panel:workbench\.inspector/);
   assert.doesNotMatch(css, /<script/i);
 });

@@ -2,9 +2,8 @@
 
 ## Comparison target
 
-- Reference: `C:\Users\Falab\.codex\generated_images\01a05bad-f356-7bb2-8ceb-5a18d843ce81\exec-08f5f43c-adc8-47c7-844a-0f59501d6102.png`
-- Rendered implementation: `.design-qa/final-studio.png`
-- Side-by-side comparison: `.design-qa/comparison-final.png`
+- Reference: author-provided concept-art snapshot, measured before implementation
+- Evidence: the geometry and responsive measurements below; local comparison captures are intentionally excluded from source control
 - Comparison viewport: 1487 × 1058 CSS px
 
 The in-app browser capture surface reported a 2× device pixel ratio while returning a 1487 × 1058 bitmap. The saved implementation image was corrected from the captured top-left 744 × 529 device-pixel quadrant back to the measured 1487 × 1058 CSS viewport. DOM geometry below is taken directly from the rendered page and was not inferred from the corrected bitmap.
@@ -47,11 +46,11 @@ None remaining.
 
 ## Intentional differences
 
-- The product is branded `SimpleGradient Studio`; no SimpleRAG or Hermes logo, name, data, or code is included.
-- The preview uses a neutral sample workspace. It preserves the reference's left rail, main canvas, quick-action group, composer, selected right panel, and page/panel targeting geometry without depending on SimpleRAG.
+- The product is branded `SimpleGradient Studio` and contains no source-application naming, copy, settings, or runtime dependencies.
+- The preview uses a neutral design-system workbench. It preserves the reference's navigation rail, editor canvas, component group, filter toolbar, selected inspector, and page/panel targeting geometry.
 - Fake operating-system caption buttons were removed. VS Code owns the real tab and floating-window chrome.
 - Detachment uses independent VS Code webview editor panels for Studio, Assignments, and Preview. Users can move those editor tabs into a floating VS Code window.
-- Codicons provide the interface iconography; there are no emoji placeholders, handcrafted SVG icons, or copied Hermes assets.
+- Codicons provide the interface iconography under the notices included in `THIRD_PARTY_NOTICES.md` and `licenses/`.
 
 ## Functional visual checks
 

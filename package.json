@@ -88,16 +88,6 @@
           "command": "simpleGradient.exportProfile"
         }
       ]
-    },
-    "configuration": {
-      "title": "SimpleGradient Studio",
-      "properties": {
-        "simpleGradient.rememberEditorState": {
-          "type": "boolean",
-          "default": true,
-          "description": "Restore the last selected page, target, and editor layout when Gradient Studio reopens."
-        }
-      }
     }
   },
   "scripts": {

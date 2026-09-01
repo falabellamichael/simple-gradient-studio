@@ -8,3 +8,5 @@
 - Added reusable presets and full stop editing.
 - Added synchronized Preview and Assignments editor panels.
 - Added JSON/CSS export, JSON import, deterministic installation, and complete installed-payload verification.
+- Added a neutral design-system workbench preview with no source-application copy or configuration.
+- Added a self-contained release installer and bundled Codicons attribution/license texts.

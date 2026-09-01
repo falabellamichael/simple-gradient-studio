@@ -3,7 +3,8 @@
 .github/**
 src/**
 test/**
-scripts/preview-server.cjs
+scripts/**
+install.ps1
 tsconfig.json
 *.vsix
 .design-qa/**

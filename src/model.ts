@@ -87,8 +87,8 @@ export function createDefaultProfile(): GradientProfile {
         { color: '#E86633', position: 100, opacity: 100 }
       ]
     },
-    'ember-assistant': {
-      id: 'ember-assistant',
+    'ember-focus': {
+      id: 'ember-focus',
       name: 'Ember Focus',
       type: 'linear',
       angle: 148,
@@ -144,18 +144,18 @@ export function createDefaultProfile(): GradientProfile {
     gradients,
     assignments: {
       app: { mode: 'gradient', gradientId: 'oled-ember' },
-      'page:overview': { mode: 'gradient', gradientId: 'warm-studio' },
-      'panel:overview.assistant': { mode: 'gradient', gradientId: 'warm-studio' },
-      'page:journal': { mode: 'gradient', gradientId: 'ocean-workspace' },
-      'page:tasks': { mode: 'gradient', gradientId: 'grove-workspace' },
-      'page:mail': { mode: 'inherit' },
-      'page:documents': { mode: 'inherit' },
-      'page:knowledge': { mode: 'inherit' },
-      'page:settings': { mode: 'inherit' }
+      'page:workbench': { mode: 'gradient', gradientId: 'warm-studio' },
+      'panel:workbench.inspector': { mode: 'gradient', gradientId: 'warm-studio' },
+      'page:files': { mode: 'gradient', gradientId: 'ocean-workspace' },
+      'page:search': { mode: 'gradient', gradientId: 'grove-workspace' },
+      'page:terminal': { mode: 'inherit' },
+      'page:debugger': { mode: 'inherit' },
+      'page:settings': { mode: 'inherit' },
+      'page:components': { mode: 'inherit' }
     },
     editor: {
-      activePage: 'overview',
-      activeTarget: 'panel:overview.assistant',
+      activePage: 'workbench',
+      activeTarget: 'panel:workbench.inspector',
       targetMode: true,
       zoom: 100
     }

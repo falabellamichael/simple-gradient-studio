@@ -20,14 +20,14 @@ Preview and Assignments open as independent VS Code editor panels. Move either e
 
 ## Install the exact packaged build
 
-1. Download `simple-gradient-studio-0.1.0.vsix` from the GitHub release and place it beside `install.ps1`.
+1. Download both `simple-gradient-studio-0.1.0.vsix` and `install.ps1` from the GitHub release into the same folder.
 2. Run:
 
 ```powershell
 .\install.ps1
 ```
 
-The installer does not choose the newest matching file. It installs the exact `0.1.0` artifact and then compares every file inside the VSIX with every file in the installed extension directory. Any missing, extra, or hash-mismatched file fails the installation check.
+The installer is self-contained: it does not depend on the repository's `scripts/` directory and never chooses the newest matching file. It installs the exact `0.1.0` artifact and then compares every file inside the VSIX with every file in the installed extension directory. Any missing, extra, or hash-mismatched file fails the installation check.
 
 Manual installation is also supported:
 
@@ -60,4 +60,4 @@ Imported profiles are normalized by the extension host:
 
 ## License
 
-MIT
+SimpleGradient Studio is MIT licensed. The bundled Codicons font and CSS retain their upstream Microsoft licenses and attribution; see `THIRD_PARTY_NOTICES.md` and `licenses/`.

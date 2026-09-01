@@ -16,37 +16,37 @@
       };
 
   const pages = [
-    { id: 'overview', label: 'Overview', icon: 'home' },
-    { id: 'journal', label: 'Journal', icon: 'book' },
-    { id: 'tasks', label: 'Tasks', icon: 'checklist' },
-    { id: 'mail', label: 'Mail', icon: 'mail' },
-    { id: 'documents', label: 'Documents', icon: 'file-pdf' },
-    { id: 'knowledge', label: 'Knowledge', icon: 'type-hierarchy-sub' },
-    { id: 'settings', label: 'Settings', icon: 'settings-gear' }
+    { id: 'workbench', label: 'Workbench', icon: 'layout' },
+    { id: 'files', label: 'Files', icon: 'files' },
+    { id: 'search', label: 'Search', icon: 'search' },
+    { id: 'terminal', label: 'Terminal', icon: 'terminal' },
+    { id: 'debugger', label: 'Debug', icon: 'debug-alt' },
+    { id: 'settings', label: 'Settings', icon: 'settings-gear' },
+    { id: 'components', label: 'Components', icon: 'extensions' }
   ];
 
   const surfaces = [
-    { id: 'history', label: 'Left rail' },
-    { id: 'canvas', label: 'Content' },
-    { id: 'actions', label: 'Inspector' },
-    { id: 'assistant', label: 'Assistant' },
-    { id: 'composer', label: 'Composer' }
+    { id: 'navigation', label: 'Navigation' },
+    { id: 'editor', label: 'Editor' },
+    { id: 'components', label: 'Components' },
+    { id: 'inspector', label: 'Inspector' },
+    { id: 'toolbar', label: 'Toolbar' }
   ];
 
   const targetLabels = {
     app: 'App default',
-    'page:overview': 'Overview',
-    'panel:overview.canvas': 'Workspace canvas',
-    'panel:overview.history': 'Workspaces & history',
-    'panel:overview.assistant': 'Assistant panel',
-    'panel:overview.actions': 'Quick actions',
-    'panel:overview.composer': 'Composer',
-    'page:journal': 'Journal',
-    'page:tasks': 'Tasks',
-    'page:mail': 'Mail',
-    'page:documents': 'Documents',
-    'page:knowledge': 'Knowledge',
-    'page:settings': 'Settings'
+    'page:workbench': 'Workbench',
+    'panel:workbench.navigation': 'Navigation rail',
+    'panel:workbench.editor': 'Editor canvas',
+    'panel:workbench.components': 'Component cards',
+    'panel:workbench.inspector': 'Properties inspector',
+    'panel:workbench.toolbar': 'Filter toolbar',
+    'page:files': 'Files',
+    'page:search': 'Search',
+    'page:terminal': 'Terminal',
+    'page:debugger': 'Debug',
+    'page:settings': 'Settings',
+    'page:components': 'Components'
   };
 
   const byId = (id) => document.getElementById(id);
@@ -67,7 +67,7 @@
           { color: '#F1D6C1', position: 76, opacity: 100 },
           { color: '#E86633', position: 100, opacity: 100 }
         ] },
-        'ember-assistant': { id: 'ember-assistant', name: 'Ember Focus', type: 'linear', angle: 148, stops: [
+        'ember-focus': { id: 'ember-focus', name: 'Ember Focus', type: 'linear', angle: 148, stops: [
           { color: '#171512', position: 0, opacity: 100 },
           { color: '#25221F', position: 44, opacity: 100 },
           { color: '#563022', position: 75, opacity: 100 },
@@ -94,16 +94,16 @@
       },
       assignments: {
         app: { mode: 'gradient', gradientId: 'oled-ember' },
-        'page:overview': { mode: 'gradient', gradientId: 'warm-studio' },
-        'panel:overview.assistant': { mode: 'gradient', gradientId: 'warm-studio' },
-        'page:journal': { mode: 'gradient', gradientId: 'ocean-workspace' },
-        'page:tasks': { mode: 'gradient', gradientId: 'grove-workspace' },
-        'page:mail': { mode: 'inherit' },
-        'page:documents': { mode: 'inherit' },
-        'page:knowledge': { mode: 'inherit' },
-        'page:settings': { mode: 'inherit' }
+        'page:workbench': { mode: 'gradient', gradientId: 'warm-studio' },
+        'panel:workbench.inspector': { mode: 'gradient', gradientId: 'warm-studio' },
+        'page:files': { mode: 'gradient', gradientId: 'ocean-workspace' },
+        'page:search': { mode: 'gradient', gradientId: 'grove-workspace' },
+        'page:terminal': { mode: 'inherit' },
+        'page:debugger': { mode: 'inherit' },
+        'page:settings': { mode: 'inherit' },
+        'page:components': { mode: 'inherit' }
       },
-      editor: { activePage: 'overview', activeTarget: 'panel:overview.assistant', targetMode: true, zoom: 100 }
+      editor: { activePage: 'workbench', activeTarget: 'panel:workbench.inspector', targetMode: true, zoom: 100 }
     };
   }
 
@@ -391,7 +391,7 @@
 
   function matrixTarget(pageId, surfaceId) {
     if (pageId === 'app') return 'app';
-    if (pageId === 'overview') return `panel:overview.${surfaceId}`;
+    if (pageId === 'workbench') return `panel:workbench.${surfaceId}`;
     return `page:${pageId}`;
   }
 
