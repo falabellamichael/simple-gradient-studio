@@ -1,0 +1,204 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import * as vscode from 'vscode';
+import {
+  createDefaultProfile,
+  exportCss,
+  GradientProfile,
+  normalizeProfile
+} from './model';
+
+type StudioView = 'studio' | 'assignments' | 'preview';
+
+const PROFILE_KEY = 'simpleGradient.profile.v1';
+const viewTitles: Record<StudioView, string> = {
+  studio: 'SimpleGradient Studio',
+  assignments: 'Gradient Assignments',
+  preview: 'Gradient Preview'
+};
+
+class GradientStudioController implements vscode.Disposable {
+  private readonly panels = new Map<StudioView, vscode.WebviewPanel>();
+  private readonly disposables: vscode.Disposable[] = [];
+  private profile: GradientProfile;
+  private statusBar: vscode.StatusBarItem;
+
+  constructor(private readonly context: vscode.ExtensionContext) {
+    this.profile = normalizeProfile(context.globalState.get(PROFILE_KEY) ?? createDefaultProfile());
+    this.statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 48);
+    this.statusBar.text = '$(symbol-color) Gradient Studio';
+    this.statusBar.tooltip = 'Open SimpleGradient Studio';
+    this.statusBar.command = 'simpleGradient.openStudio';
+    this.statusBar.show();
+    this.disposables.push(this.statusBar);
+  }
+
+  open(view: StudioView, column?: vscode.ViewColumn): void {
+    const existing = this.panels.get(view);
+    if (existing) {
+      existing.reveal(column ?? existing.viewColumn, true);
+      this.sendState(existing);
+      return;
+    }
+
+    const panel = vscode.window.createWebviewPanel(
+      `simpleGradient.${view}`,
+      viewTitles[view],
+      { viewColumn: column ?? vscode.ViewColumn.One, preserveFocus: false },
+      {
+        enableScripts: true,
+        retainContextWhenHidden: true,
+        localResourceRoots: [
+          vscode.Uri.joinPath(this.context.extensionUri, 'media'),
+          vscode.Uri.joinPath(this.context.extensionUri, 'node_modules', '@vscode', 'codicons', 'dist')
+        ]
+      }
+    );
+    this.panels.set(view, panel);
+    panel.iconPath = undefined;
+    panel.webview.html = this.renderHtml(panel.webview, view);
+    panel.onDidDispose(() => this.panels.delete(view), undefined, this.disposables);
+    panel.webview.onDidReceiveMessage((message) => void this.handleMessage(panel, message), undefined, this.disposables);
+  }
+
+  async importProfile(): Promise<void> {
+    const [uri] = await vscode.window.showOpenDialog({
+      canSelectMany: false,
+      filters: { 'Gradient profile': ['json'] },
+      openLabel: 'Import profile'
+    }) ?? [];
+    if (!uri) {
+      return;
+    }
+    try {
+      const bytes = await vscode.workspace.fs.readFile(uri);
+      this.profile = normalizeProfile(JSON.parse(Buffer.from(bytes).toString('utf8')));
+      await this.persistAndBroadcast();
+      void vscode.window.showInformationMessage(`Imported gradient profile “${this.profile.name}”.`);
+    } catch (error) {
+      void vscode.window.showErrorMessage(`Could not import gradient profile: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  async exportProfile(format: 'json' | 'css' = 'json'): Promise<void> {
+    const extension = format === 'css' ? 'css' : 'json';
+    const uri = await vscode.window.showSaveDialog({
+      defaultUri: vscode.Uri.file(path.join(this.context.globalStorageUri.fsPath, `simple-gradient-profile.${extension}`)),
+      filters: format === 'css' ? { CSS: ['css'] } : { 'Gradient profile': ['json'] },
+      saveLabel: `Export ${format.toUpperCase()}`
+    });
+    if (!uri) {
+      return;
+    }
+    const content = format === 'css' ? exportCss(this.profile) : `${JSON.stringify(this.profile, null, 2)}\n`;
+    await vscode.workspace.fs.writeFile(uri, Buffer.from(content, 'utf8'));
+    void vscode.window.showInformationMessage(`Exported ${format.toUpperCase()} to ${path.basename(uri.fsPath)}.`);
+  }
+
+  private async handleMessage(panel: vscode.WebviewPanel, message: unknown): Promise<void> {
+    if (!message || typeof message !== 'object') {
+      return;
+    }
+    const payload = message as Record<string, unknown>;
+    switch (payload.type) {
+      case 'ready':
+        this.sendState(panel);
+        break;
+      case 'updateProfile':
+        this.profile = normalizeProfile(payload.profile);
+        await this.persistAndBroadcast();
+        break;
+      case 'openView':
+        if (payload.view === 'assignments' || payload.view === 'preview' || payload.view === 'studio') {
+          this.open(payload.view, vscode.ViewColumn.Beside);
+        }
+        break;
+      case 'save':
+        await this.persistAndBroadcast();
+        void vscode.window.showInformationMessage('Gradient profile saved.');
+        break;
+      case 'reset':
+        this.profile = createDefaultProfile();
+        await this.persistAndBroadcast();
+        break;
+      case 'import':
+        await this.importProfile();
+        break;
+      case 'export':
+        await this.exportProfile(payload.format === 'css' ? 'css' : 'json');
+        break;
+      case 'copy':
+        if (typeof payload.text === 'string') {
+          await vscode.env.clipboard.writeText(payload.text);
+          void vscode.window.showInformationMessage('Copied gradient output to the clipboard.');
+        }
+        break;
+    }
+  }
+
+  private async persistAndBroadcast(): Promise<void> {
+    await this.context.globalState.update(PROFILE_KEY, this.profile);
+    for (const panel of this.panels.values()) {
+      this.sendState(panel);
+    }
+  }
+
+  private sendState(panel: vscode.WebviewPanel): void {
+    void panel.webview.postMessage({ type: 'state', profile: this.profile });
+  }
+
+  private renderHtml(webview: vscode.Webview, view: StudioView): string {
+    const templatePath = vscode.Uri.joinPath(this.context.extensionUri, 'media', 'studio.html').fsPath;
+    const template = fs.readFileSync(templatePath, 'utf8');
+    const nonce = getNonce();
+    const cssUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'studio.css'));
+    const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'studio.js'));
+    const codiconUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'node_modules', '@vscode', 'codicons', 'dist', 'codicon.css'));
+    return template
+      .replaceAll('{{view}}', view)
+      .replaceAll('{{cspSource}}', webview.cspSource)
+      .replaceAll('{{nonce}}', nonce)
+      .replaceAll('{{cssUri}}', cssUri.toString())
+      .replaceAll('{{scriptUri}}', scriptUri.toString())
+      .replaceAll('{{codiconUri}}', codiconUri.toString());
+  }
+
+  dispose(): void {
+    for (const panel of this.panels.values()) {
+      panel.dispose();
+    }
+    this.panels.clear();
+    for (const disposable of this.disposables) {
+      disposable.dispose();
+    }
+  }
+}
+
+function getNonce(): string {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let value = '';
+  for (let index = 0; index < 32; index += 1) {
+    value += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+  }
+  return value;
+}
+
+export function activate(context: vscode.ExtensionContext): void {
+  const controller = new GradientStudioController(context);
+  context.subscriptions.push(
+    controller,
+    vscode.commands.registerCommand('simpleGradient.openStudio', () => controller.open('studio')),
+    vscode.commands.registerCommand('simpleGradient.openAssignments', () => controller.open('assignments')),
+    vscode.commands.registerCommand('simpleGradient.openPreview', () => controller.open('preview')),
+    vscode.commands.registerCommand('simpleGradient.importProfile', () => controller.importProfile()),
+    vscode.commands.registerCommand('simpleGradient.exportProfile', () => controller.exportProfile('json')),
+    vscode.window.registerUriHandler({
+      handleUri: (uri) => {
+        const requested = uri.path.replace(/^\//, '');
+        controller.open(requested === 'assignments' || requested === 'preview' ? requested : 'studio');
+      }
+    })
+  );
+}
+
+export function deactivate(): void {}

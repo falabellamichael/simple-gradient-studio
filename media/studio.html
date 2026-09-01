@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src {{cspSource}} data:; font-src {{cspSource}}; style-src {{cspSource}}; script-src 'nonce-{{nonce}}';">
+  <link rel="stylesheet" href="{{codiconUri}}">
+  <link rel="stylesheet" href="{{cssUri}}?v=7">
+  <title>SimpleGradient Studio</title>
+</head>
+<body data-view="{{view}}">
+  <div class="studio-shell">
+    <header class="app-bar">
+      <div class="brand-block">
+        <span class="brand-mark codicon codicon-symbol-color" aria-hidden="true"></span>
+        <strong>SimpleGradient Studio</strong>
+        <span class="brand-divider" aria-hidden="true"></span>
+        <label class="theme-select">Theme:
+          <select id="profileSelect" aria-label="Active gradient profile">
+            <option>Warm Glass Workspace</option>
+          </select>
+        </label>
+      </div>
+      <nav class="top-actions" aria-label="Studio actions">
+        <button class="ghost-button" id="undoButton" type="button"><span class="codicon codicon-discard"></span>Undo</button>
+        <button class="ghost-button" id="redoButton" type="button" disabled><span class="codicon codicon-redo"></span>Redo</button>
+        <span class="action-divider" aria-hidden="true"></span>
+        <button class="ghost-button" id="saveButton" type="button"><span class="codicon codicon-save"></span>Save profile</button>
+        <div class="export-menu">
+          <button class="ghost-button" id="exportButton" type="button" aria-haspopup="menu" aria-expanded="false"><span class="codicon codicon-export"></span>Export<span class="codicon codicon-chevron-down"></span></button>
+          <div class="menu-popover" id="exportMenu" role="menu" hidden>
+            <button type="button" role="menuitem" data-export="json"><span class="codicon codicon-json"></span>Gradient profile (.json)</button>
+            <button type="button" role="menuitem" data-export="css"><span class="codicon codicon-symbol-variable"></span>CSS variables (.css)</button>
+            <button type="button" role="menuitem" data-copy-css><span class="codicon codicon-copy"></span>Copy current CSS</button>
+            <button type="button" role="menuitem" data-import><span class="codicon codicon-cloud-download"></span>Import profile</button>
+          </div>
+        </div>
+        <span class="action-divider" aria-hidden="true"></span>
+        <button class="icon-button scope-drawer-button" id="scopeDrawerButton" type="button" aria-label="Open target scope drawer" aria-expanded="false"><span class="codicon codicon-list-tree"></span></button>
+        <button class="icon-button" id="helpButton" type="button" aria-label="Show shortcuts and help"><span class="codicon codicon-question"></span></button>
+      </nav>
+    </header>
+
+    <main class="workbench">
+      <aside class="scope-panel section-panel" aria-labelledby="scopeHeading">
+        <div class="section-heading">
+          <div><span class="step-dot">1</span><h2 id="scopeHeading">Scope</h2></div>
+          <button class="icon-button detach" type="button" data-open-view="assignments" aria-label="Open assignments beside Studio" title="Open assignments beside Studio"><span class="codicon codicon-open-preview"></span></button>
+        </div>
+        <p>Choose where this gradient applies.</p>
+        <div class="scope-legend" aria-label="Assignment states">
+          <span><i class="legend-dot inherited"></i>Inherited</span>
+          <span><i class="legend-dot page"></i>Page override</span>
+          <span><i class="legend-dot panel"></i>Panel override</span>
+        </div>
+
+        <div class="scope-tree" role="tree" aria-label="Gradient target scopes">
+          <button class="scope-row" type="button" data-target="app" role="treeitem">
+            <span class="codicon codicon-chevron-down"></span><span class="codicon codicon-home"></span><b>App default</b><span class="scope-chip">Inherited</span>
+          </button>
+          <button class="scope-row" type="button" data-target="page:overview" role="treeitem" aria-expanded="true">
+            <span class="codicon codicon-chevron-down"></span><span class="codicon codicon-layout"></span><b>Overview</b><span class="scope-chip">Inherited</span>
+          </button>
+          <div class="scope-children" role="group">
+            <button class="scope-row child" type="button" data-target="panel:overview.canvas" role="treeitem"><span class="tree-line"></span><span class="codicon codicon-globe"></span><span>Workspace canvas</span><span class="scope-chip">Inherited</span></button>
+            <button class="scope-row child" type="button" data-target="panel:overview.history" role="treeitem"><span class="tree-line"></span><span class="codicon codicon-layers"></span><span>Workspaces &amp; history</span><span class="scope-chip">Inherited</span></button>
+            <button class="scope-row child selected" type="button" data-target="panel:overview.assistant" role="treeitem" aria-selected="true"><span class="tree-line"></span><span class="codicon codicon-circle-filled"></span><span>Assistant panel</span><span class="scope-chip panel">Panel override</span></button>
+            <button class="scope-row child" type="button" data-target="panel:overview.actions" role="treeitem"><span class="tree-line"></span><span class="codicon codicon-link"></span><span>Quick actions</span><span class="scope-chip">Inherited</span></button>
+            <button class="scope-row child" type="button" data-target="panel:overview.composer" role="treeitem"><span class="tree-line"></span><span class="codicon codicon-edit"></span><span>Composer</span><span class="scope-chip">Inherited</span></button>
+          </div>
+          <button class="scope-row" type="button" data-target="page:journal" role="treeitem"><span class="codicon codicon-chevron-right"></span><span class="codicon codicon-book"></span><b>Journal</b><span class="scope-chip">Inherited</span></button>
+          <button class="scope-row" type="button" data-target="page:tasks" role="treeitem"><span class="codicon codicon-chevron-right"></span><span class="codicon codicon-checklist"></span><b>Tasks</b><span class="scope-chip">Inherited</span></button>
+          <button class="scope-row" type="button" data-target="page:mail" role="treeitem"><span class="codicon codicon-chevron-right"></span><span class="codicon codicon-mail"></span><b>Mail</b><span class="scope-chip">Inherited</span></button>
+          <button class="scope-row" type="button" data-target="page:documents" role="treeitem"><span class="codicon codicon-chevron-right"></span><span class="codicon codicon-file-pdf"></span><b>Documents</b><span class="scope-chip">Inherited</span></button>
+          <button class="scope-row" type="button" data-target="page:knowledge" role="treeitem"><span class="codicon codicon-chevron-right"></span><span class="codicon codicon-type-hierarchy-sub"></span><b>Knowledge</b><span class="scope-chip">Inherited</span></button>
+          <button class="scope-row" type="button" data-target="page:settings" role="treeitem"><span class="codicon codicon-chevron-right"></span><span class="codicon codicon-settings-gear"></span><b>Settings</b><span class="scope-chip">Inherited</span></button>
+        </div>
+
+        <section class="scope-card">
+          <h3>Scope actions</h3>
+          <p id="scopeActionText">This panel has its own gradient override.</p>
+          <button class="outlined-accent" id="revertScopeButton" type="button"><span class="codicon codicon-debug-restart"></span>Revert to inherited</button>
+        </section>
+        <section class="scope-card">
+          <h3>Create new gradient</h3>
+          <p>Create and save a reusable gradient.</p>
+          <button class="outlined-accent" id="newGradientButton" type="button"><span class="codicon codicon-add"></span>New gradient</button>
+        </section>
+        <section class="scope-card scope-summary">
+          <h3>Scope summary</h3>
+          <div><span class="legend-dot inherited"></span>App default<span class="scope-chip">Inherited</span></div>
+          <div><span class="legend-dot inherited"></span>Overview (page)<span class="scope-chip">Inherited</span></div>
+          <div class="active"><span class="legend-dot panel"></span>Assistant panel<span class="scope-chip panel">Panel override</span></div>
+        </section>
+      </aside>
+
+      <section class="preview-region section-panel" aria-labelledby="previewHeading">
+        <div class="preview-toolbar">
+          <div class="preview-heading-wrap">
+            <div class="section-heading inline-heading"><div><span class="step-dot blue">2</span><h2 id="previewHeading">Preview</h2></div></div>
+            <p>Live workspace preview with your gradient applied.</p>
+          </div>
+          <label>Page:
+            <select id="pageSelect" aria-label="Preview page">
+              <option value="overview">⌂ Overview</option>
+              <option value="journal">Journal</option>
+              <option value="tasks">Tasks</option>
+              <option value="mail">Mail</option>
+              <option value="documents">Documents</option>
+              <option value="knowledge">Knowledge</option>
+              <option value="settings">Settings</option>
+            </select>
+          </label>
+          <label>Width:
+            <select id="widthSelect" aria-label="Preview width"><option value="1440">▣ 1440px</option><option value="1024">▣ 1024px</option><option value="768">▯ 768px</option><option value="390">▯ 390px</option></select>
+          </label>
+          <div class="zoom-control" aria-label="Preview zoom">
+            <span>Zoom:</span><output id="zoomOutput">100%</output><button type="button" data-zoom="-10" aria-label="Zoom out">−</button><button type="button" data-zoom="10" aria-label="Zoom in">+</button>
+          </div>
+          <button class="mode-button active" id="targetModeButton" type="button" aria-pressed="true"><span class="codicon codicon-inspect"></span>Target mode</button>
+          <button class="mode-button" id="compareButton" type="button" aria-pressed="false"><span class="codicon codicon-split-horizontal"></span>Compare</button>
+          <div class="selected-context"><span>Selected target:</span><b id="selectedContextName">Overview / Assistant panel</b><em id="selectedContextMode">Panel override</em></div>
+          <button class="context-action" id="useParentButton" type="button">Use page gradient</button>
+          <button class="context-action" id="revertDefaultButton" type="button"><span class="codicon codicon-debug-restart"></span>Revert to default</button>
+          <button class="icon-button detach preview-detach" type="button" data-open-view="preview" aria-label="Open preview beside Studio" title="Open preview beside Studio"><span class="codicon codicon-open-preview"></span></button>
+        </div>
+
+        <div class="preview-stage" id="previewStage">
+          <div class="sample-app" id="sampleApp">
+            <nav class="sample-topbar">
+              <div class="sample-brand"><span class="brand-mark small codicon codicon-symbol-color"></span><strong>Gradient Sandbox</strong></div>
+              <div class="sample-nav" aria-label="Sample workspace pages">
+                <button class="active" data-page-preview="overview"><span class="codicon codicon-home"></span>Overview</button>
+                <button data-page-preview="journal"><span class="codicon codicon-book"></span>Journal</button>
+                <button data-page-preview="tasks"><span class="codicon codicon-checklist"></span>Tasks</button>
+                <button data-page-preview="mail"><span class="codicon codicon-mail"></span>Mail</button>
+                <button data-page-preview="documents"><span class="codicon codicon-file-pdf"></span>Documents</button>
+                <button data-page-preview="knowledge"><span class="codicon codicon-type-hierarchy-sub"></span>Knowledge</button>
+                <button data-page-preview="settings"><span class="codicon codicon-settings-gear"></span>Settings</button>
+              </div>
+              <div class="sample-clock">06:28 p.m.<span class="sample-pill">Warm</span></div>
+            </nav>
+            <div class="sample-body" data-gradient-target="page:overview">
+              <aside class="sample-history targetable" data-gradient-target="panel:overview.history">
+                <div class="sample-card-title"><span class="codicon codicon-sparkle"></span><b>Workspaces</b><button type="button" aria-label="Pin workspaces"><span class="codicon codicon-pin"></span></button></div>
+                <div class="workspace-choice"><span class="codicon codicon-layout"></span>My workspace</div>
+                <button class="new-workspace" type="button"><span class="codicon codicon-add"></span>New workspace</button>
+                <div class="sample-history-actions"><button class="primary" type="button"><span class="codicon codicon-add"></span>New chat</button><button type="button"><span class="codicon codicon-link"></span>Context</button></div>
+                <small>CHAT HISTORY</small>
+                <ul>
+                  <li class="active"><b>Overview chat</b><span>Home · 4:26 p.m.</span></li>
+                  <li><b>Journal notes</b><span>Journal · Aug 6</span></li>
+                  <li><b>Task planning</b><span>Tasks · Aug 6</span></li>
+                  <li><b>Mail draft</b><span>Mail · Aug 6</span></li>
+                  <li><b>Document review</b><span>Documents · Aug 6</span></li>
+                  <li><b>Knowledge map</b><span>Knowledge · Aug 6</span></li>
+                </ul>
+              </aside>
+              <section class="sample-canvas targetable" data-gradient-target="panel:overview.canvas">
+                <div class="sample-kicker">ASSISTED WORKSPACE</div>
+                <h1>Good evening, ready when you are.</h1>
+                <p>One place to ask, plan, write, and understand.</p>
+                <div class="sample-composer targetable" data-gradient-target="panel:overview.composer">
+                  <span class="codicon codicon-search"></span><span>Ask across your complete workspace...</span><div><button>Web</button><button>Agent</button><button aria-label="Send"><span class="codicon codicon-send"></span></button></div>
+                </div>
+                <div class="quick-grid targetable" data-gradient-target="panel:overview.actions">
+                  <article><span class="codicon codicon-file-pdf"></span><b>Talk to document</b><small>4 indexed documents</small></article>
+                  <article><span class="codicon codicon-calendar"></span><b>Plan my day</b><small>0 open tasks</small></article>
+                  <article><span class="codicon codicon-mail"></span><b>Draft an email</b><small>2 saved messages</small></article>
+                  <article><span class="codicon codicon-type-hierarchy-sub"></span><b>Explore knowledge</b><small>Live workspace connections</small></article>
+                </div>
+                <div class="sample-lower-grid">
+                  <article><b>Open tasks</b><span class="empty-glyph codicon codicon-sparkle"></span><small>No open tasks.</small></article>
+                  <article><b>Recent activity</b><a>Open graph ›</a><p>Friday, Jul 31 — Untitled entry</p><p>Friday, Jul 31 — Untitled entry</p></article>
+                </div>
+              </section>
+              <aside class="sample-assistant targetable selected-target" data-gradient-target="panel:overview.assistant">
+                <span class="target-label">TARGET: PANEL OVERRIDE</span>
+                <div class="sample-card-title"><span class="codicon codicon-sparkle"></span><b>Assistant settings</b><button type="button" aria-label="Pin assistant"><span class="codicon codicon-pin"></span></button></div>
+                <div class="assistant-section-title"><b>Providers</b><button type="button">+ Add provider</button></div>
+                <p>Add and manage the services used by your assistant.</p>
+                <div class="provider-card"><b>Local model</b><span>Local · one click</span></div>
+                <div class="provider-card"><b>Cloud model</b><span>Account connected</span></div>
+                <div class="provider-card"><b>Private endpoint</b><span>Custom compatible API</span></div>
+                <label>Default provider<select><option>Local workspace · online</option></select></label>
+                <label>Default model<select><option>workspace-model</option></select></label>
+                <div class="provider-card live"><i></i><b>Local workspace:11434</b><span>local · model-small</span><button><span class="codicon codicon-refresh"></span></button></div>
+                <div class="provider-card live"><i></i><b>My provider</b><span>api · fast-model</span><button><span class="codicon codicon-refresh"></span></button></div>
+                <div class="provider-card live"><i></i><b>Team provider</b><span>api · balanced-model</span><button><span class="codicon codicon-refresh"></span></button></div>
+                <i class="target-handle tl"></i><i class="target-handle tr"></i><i class="target-handle bl"></i><i class="target-handle br"></i>
+              </aside>
+            </div>
+          </div>
+        </div>
+
+        <aside class="assignment-popout" id="assignmentPopout" aria-labelledby="assignmentsHeading">
+          <header>
+            <h2 id="assignmentsHeading">Gradient assignments</h2>
+            <div><button class="icon-button" type="button" title="Keep visible"><span class="codicon codicon-pin"></span></button><button class="icon-button" type="button" data-open-view="assignments" title="Open beside Studio"><span class="codicon codicon-open-preview"></span></button><button class="icon-button" type="button" data-open-view="assignments" title="Open assignments"><span class="codicon codicon-screen-full"></span></button><button class="icon-button" id="closeAssignments" type="button" title="Hide assignments"><span class="codicon codicon-close"></span></button></div>
+          </header>
+          <div class="assignment-legend"><span><i class="legend-dot inherited"></i>Inherited</span><span><i class="legend-dot panel"></i>Override</span><span><i class="slash-mark">∕</i>No gradient</span></div>
+          <div class="assignment-grid" role="grid" aria-label="Page and panel gradient assignments">
+            <div class="grid-head"></div><div class="grid-head">Left rail</div><div class="grid-head">Content</div><div class="grid-head">Inspector</div><div class="grid-head">Assistant</div><div class="grid-head">Composer</div>
+          </div>
+          <footer><span id="assignmentBreadcrumb">App default&nbsp; / &nbsp;Overview&nbsp; / &nbsp;Assistant</span><button id="revertAssignmentButton" type="button">Revert to inherited</button></footer>
+        </aside>
+      </section>
+
+      <section class="editor-dock section-panel" aria-label="Gradient editor">
+        <section class="gradient-library" aria-labelledby="libraryHeading">
+          <div class="dock-heading"><span class="step-dot">3</span><h2 id="libraryHeading">Gradient Library</h2><button class="icon-button" type="button" data-open-view="assignments" title="Open assignments"><span class="codicon codicon-open-preview"></span></button></div>
+          <div class="preset-list" id="presetList"></div>
+        </section>
+        <section class="stop-editor" aria-labelledby="stopEditorHeading">
+          <div class="dock-heading"><span class="step-dot">4</span><h2 id="stopEditorHeading">Stop editor</h2><button class="icon-button" type="button" data-open-view="preview" title="Open preview"><span class="codicon codicon-open-preview"></span></button></div>
+          <div class="mode-segments" role="group" aria-label="Assignment mode">
+            <button type="button" data-mode="inherit">Inherit</button><button class="active" type="button" data-mode="gradient">Gradient</button><button type="button" data-mode="solid">Solid</button>
+          </div>
+          <div class="stop-rail-wrap">
+            <div class="stop-rail" id="stopRail"></div>
+            <button class="add-stop" id="addStopButton" type="button"><span class="codicon codicon-add"></span>Add<br>stop</button>
+          </div>
+          <div class="stop-labels" id="stopLabels"></div>
+        </section>
+        <section class="property-grid">
+          <label class="angle-field">Angle<div class="angle-knob" id="angleKnob"><i></i><span></span></div><input id="angleInput" type="number" min="0" max="359" value="132" aria-label="Gradient angle"></label>
+          <label>Position<input id="positionInput" type="number" min="0" max="100" value="100"><span class="unit">%</span></label>
+          <label>Color<div class="color-input"><input id="colorInput" type="color" value="#e86633"><input id="hexInput" type="text" value="#E86633" maxlength="9"><button type="button" data-copy-color aria-label="Copy color"><span class="codicon codicon-copy"></span></button></div></label>
+          <label>Opacity<input id="opacityInput" type="number" min="0" max="100" value="100"><span class="unit">%</span></label>
+          <label class="blend-field">Blend strength<input id="blendInput" type="range" min="0" max="100" value="100"><output>100%</output></label>
+        </section>
+        <section class="contrast-panel"><span>Contrast</span><strong>AA</strong><b id="contrastRatio">4.8:1</b></section>
+        <section class="apply-panel">
+          <div class="dock-heading"><span class="step-dot">5</span><h2>Apply</h2><button class="icon-button" type="button" data-open-view="preview" title="Open preview"><span class="codicon codicon-open-preview"></span></button></div>
+          <p>Scope:<br><b id="applyScope">Overview / Assistant panel</b><br><span id="applyMode">Panel override</span></p>
+          <button class="primary-action" id="applyTargetButton" type="button">Apply to target</button>
+          <button class="secondary-action" id="applyGlobalButton" type="button">Apply globally</button>
+        </section>
+      </section>
+    </main>
+
+    <footer class="status-bar">
+      <div>Inheritance path:<span id="inheritancePath">App default&nbsp; › &nbsp;Overview (page)&nbsp; › &nbsp;<b>Assistant panel (panel override)</b></span></div>
+      <div><span class="pass-indicator"><span class="codicon codicon-pass-filled"></span>Contrast check passed</span><b>AA</b><span id="footerContrast">4.8:1</span><button type="button" data-open-view="preview"><span class="codicon codicon-eye"></span>Preview panel alone<span class="codicon codicon-open-preview"></span></button></div>
+    </footer>
+  </div>
+
+  <div class="modal-backdrop" id="stopModal" aria-hidden="true">
+    <section class="stop-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDescription">
+      <header><div><h2 id="modalTitle">Edit gradient stop</h2><p id="modalDescription">Warm Studio Canvas&nbsp; / &nbsp;Stop 4</p></div><button class="icon-button" id="closeModalButton" type="button" aria-label="Close stop editor"><span class="codicon codicon-close"></span></button></header>
+      <div class="modal-body">
+        <div class="color-picker-visual" id="colorPickerVisual"><i></i></div>
+        <div class="modal-fields">
+          <label>Hex<div class="modal-input"><input id="modalHex" type="text" value="#E86633" maxlength="9"><button type="button" data-copy-modal aria-label="Copy color"><span class="codicon codicon-copy"></span></button></div></label>
+          <label>Position<div class="modal-input"><input id="modalPosition" type="number" min="0" max="100" value="100"><span>%</span></div></label>
+          <label>Opacity<div class="modal-input"><input id="modalOpacity" type="number" min="0" max="100" value="100"><span>%</span></div></label>
+        </div>
+      </div>
+      <div class="hue-strip"><i></i></div>
+      <div class="alpha-strip"><i></i></div>
+      <div class="modal-tools"><button id="duplicateStopButton" type="button"><span class="codicon codicon-copy"></span>Duplicate</button><button class="danger" id="deleteStopButton" type="button"><span class="codicon codicon-trash"></span>Delete</button></div>
+      <footer><button id="cancelModalButton" type="button">Cancel</button><button class="primary-action" id="updateStopButton" type="button">Update stop</button></footer>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script nonce="{{nonce}}" src="{{scriptUri}}?v=10"></script>
+</body>
+</html>

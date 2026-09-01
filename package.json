@@ -1,0 +1,120 @@
+{
+  "name": "simple-gradient-studio",
+  "displayName": "SimpleGradient Studio",
+  "description": "A visual linear-gradient studio for reusable app, page, and panel color schemes.",
+  "version": "0.1.0",
+  "publisher": "falabella",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/falabellamichael/simple-gradient-studio.git"
+  },
+  "categories": [
+    "Themes",
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "gradient",
+    "theme",
+    "color",
+    "design tokens",
+    "visual editor",
+    "css"
+  ],
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "extensionKind": [
+    "ui"
+  ],
+  "activationEvents": [
+    "onCommand:simpleGradient.openStudio",
+    "onCommand:simpleGradient.openAssignments",
+    "onCommand:simpleGradient.openPreview",
+    "onCommand:simpleGradient.importProfile",
+    "onCommand:simpleGradient.exportProfile",
+    "onUri"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "simpleGradient.openStudio",
+        "title": "Open Gradient Studio",
+        "category": "SimpleGradient",
+        "icon": "$(symbol-color)"
+      },
+      {
+        "command": "simpleGradient.openAssignments",
+        "title": "Open Gradient Assignments",
+        "category": "SimpleGradient",
+        "icon": "$(layout)"
+      },
+      {
+        "command": "simpleGradient.openPreview",
+        "title": "Open Gradient Preview",
+        "category": "SimpleGradient",
+        "icon": "$(open-preview)"
+      },
+      {
+        "command": "simpleGradient.importProfile",
+        "title": "Import Gradient Profile...",
+        "category": "SimpleGradient",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "simpleGradient.exportProfile",
+        "title": "Export Gradient Profile...",
+        "category": "SimpleGradient",
+        "icon": "$(export)"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "simpleGradient.openStudio"
+        },
+        {
+          "command": "simpleGradient.openAssignments"
+        },
+        {
+          "command": "simpleGradient.openPreview"
+        },
+        {
+          "command": "simpleGradient.importProfile"
+        },
+        {
+          "command": "simpleGradient.exportProfile"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "SimpleGradient Studio",
+      "properties": {
+        "simpleGradient.rememberEditorState": {
+          "type": "boolean",
+          "default": true,
+          "description": "Restore the last selected page, target, and editor layout when Gradient Studio reopens."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "tsc -p ./",
+    "watch": "tsc --watch -p ./",
+    "test": "npm run build && node --test test/*.test.cjs",
+    "preview": "node scripts/preview-server.cjs",
+    "package": "vsce package --out simple-gradient-studio-0.1.0.vsix"
+  },
+  "dependencies": {
+    "@vscode/codicons": "^0.0.36"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "3.9.2",
+    "typescript": "^5.5.2"
+  }
+}

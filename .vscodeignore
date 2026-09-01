@@ -1,0 +1,13 @@
+.git/**
+.gitignore
+.github/**
+src/**
+test/**
+scripts/preview-server.cjs
+tsconfig.json
+*.vsix
+.design-qa/**
+design-qa.md
+node_modules/@vscode/codicons/**
+!node_modules/@vscode/codicons/dist/codicon.css
+!node_modules/@vscode/codicons/dist/codicon.ttf
