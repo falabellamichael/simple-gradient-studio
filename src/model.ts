@@ -48,6 +48,7 @@ export interface GradientProfile {
   };
   effects: GradientEffects;
   typography?: GradientTypography;
+  customPages?: Record<string, string>;
 }
 
 const SAFE_TARGET = /^(app|page:[a-z0-9-]+|panel:[a-z0-9-]+\.[a-z0-9-]+)$/;
@@ -243,6 +244,17 @@ function normalizeTypography(raw: unknown): GradientTypography | undefined {
   };
 }
 
+function normalizeCustomPages(raw: unknown): Record<string, string> | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const result: Record<string, string> = {};
+  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof key === 'string' && key.length < 100 && typeof value === 'string' && value.length < 100000) {
+      result[key] = value;
+    }
+  }
+  return Object.keys(result).length ? result : undefined;
+}
+
   return {
     schema: PROFILE_SCHEMA,
     version: PROFILE_VERSION,
@@ -257,7 +269,8 @@ function normalizeTypography(raw: unknown): GradientTypography | undefined {
       zoom: Math.round(clamp(Number(editor.zoom ?? 100), 70, 140))
     },
     effects: normalizeEffects(raw.effects),
-    typography: normalizeTypography((raw as Record<string, unknown>).typography)
+    typography: normalizeTypography((raw as Record<string, unknown>).typography),
+    customPages: normalizeCustomPages((raw as Record<string, unknown>).customPages)
   };
 }
 

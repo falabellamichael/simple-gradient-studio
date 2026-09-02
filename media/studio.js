@@ -1478,17 +1478,21 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     const catalogKey = profile.editor.targetCatalog;
     const activePageId = profile.editor.activePage;
     const body = app.querySelector('.sample-body');
+    const activePageKey = `${catalogKey}:${advancedMode ? 'adv' : 'comfy'}:${activePageId}`;
 
-    // Build dynamic high-fidelity page markup
+    // Use cached customized page HTML if user edited text/styling, otherwise use template
     let htmlContent = '';
-    if (catalogKey === 'simplerag') {
-      htmlContent = advancedMode ? getAdvancedPageHtml(activePageId) : getComfyPageHtml(activePageId);
+    if (profile.customPages && profile.customPages[activePageKey]) {
+      htmlContent = profile.customPages[activePageKey];
     } else {
-      htmlContent = getStudioWorkbenchPageHtml(activePageId);
+      if (catalogKey === 'simplerag') {
+        htmlContent = advancedMode ? getAdvancedPageHtml(activePageId) : getComfyPageHtml(activePageId);
+      } else {
+        htmlContent = getStudioWorkbenchPageHtml(activePageId);
+      }
+      // Include compatibility hidden contract anchor
+      htmlContent += '<div hidden data-gradient-target="panel:workbench.inspector">DESIGN SYSTEM WORKBENCH</div>';
     }
-
-    // Include compatibility hidden contract anchor
-    htmlContent += '<div hidden data-gradient-target="panel:workbench.inspector">DESIGN SYSTEM WORKBENCH</div>';
 
     if (body) {
       body.innerHTML = htmlContent;
@@ -1599,6 +1603,19 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     all('[data-page-preview]').forEach((button) => button.classList.toggle('active', button.dataset.pagePreview === profile.editor.activePage));
   }
 
+  function saveCurrentPageCustomContent() {
+    const app = byId('sampleApp');
+    const body = app?.querySelector('.sample-body');
+    if (body) {
+      const catalogKey = profile.editor.targetCatalog;
+      const activePageId = profile.editor.activePage;
+      const activePageKey = `${catalogKey}:${advancedMode ? 'adv' : 'comfy'}:${activePageId}`;
+      profile.customPages = profile.customPages || {};
+      profile.customPages[activePageKey] = body.innerHTML;
+      scheduleSend();
+    }
+  }
+
   function enableInlineTextEditing(root) {
     if (!root) return;
     const textSelectors = 'p, h1, h2, h3, h4, h5, h6, li, .thought-narrative, .chat-msg-body, .nav-item b, .nav-item small, .task-card b, .task-card small, .email-item b, .email-item small, .doc-card b, .doc-card span, .component-card b, .component-card small, .cal-event b, .cal-event small, .chip, .badge-active, .sample-pill, .card-eyebrow, .chat-tokens-stat, .inspector-field span, .scope-card p';
@@ -1608,6 +1625,13 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
         element.setAttribute('spellcheck', 'false');
       }
     });
+
+    const body = root.querySelector('.sample-body');
+    if (body && !body.__hasInputListener) {
+      body.__hasInputListener = true;
+      body.addEventListener('input', saveCurrentPageCustomContent);
+      body.addEventListener('blur', saveCurrentPageCustomContent, true);
+    }
   }
 
   function renderLibrary() {
@@ -1923,16 +1947,8 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
   });
   byId('saveButton').addEventListener('click', () => host.postMessage({ type: 'save' }));
   byId('installSimpleRagButton').addEventListener('click', () => {
+    saveCurrentPageCustomContent();
     host.postMessage({ type: 'installSimpleRag', profile });
-
-    try {
-      localStorage.setItem('simpleGradient.runtime.profileOverride.v1', JSON.stringify({
-        schema: 'simple-gradient-runtime-override',
-        version: 1,
-        installedFingerprint: '',
-        profile: clone(profile)
-      }));
-    } catch {}
 
     try {
       if (typeof window.parent?.SimpleGradientRuntime?.reapply === 'function') {
@@ -1943,7 +1959,7 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       }
     } catch {}
 
-    showToast('Applied gradients & typography to SimpleRAG!');
+    showToast('Applied custom gradient & typography to SimpleRAG!');
   });
   byId('targetCatalogSelect').addEventListener('change', (event) => {
     const nextCatalog = event.target.value === 'studio' ? 'studio' : 'simplerag';
@@ -2697,8 +2713,10 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
         sel.addRange(newRange);
         savedRange = newRange.cloneRange();
       }
+      saveCurrentPageCustomContent();
     } catch {
       document.execCommand('insertHTML', false, `<span class="sg-gradient-text" style="background: ${gradCss} !important; -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; background-clip: text !important; color: transparent !important; display: inline !important; font-weight: bold !important;">${selectedText}</span>`);
+      saveCurrentPageCustomContent();
     }
 
     showToast('Applied gradient text.');
@@ -2735,8 +2753,10 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
         sel.addRange(newRange);
         savedRange = newRange.cloneRange();
       }
+      saveCurrentPageCustomContent();
     } catch {
       document.execCommand('foreColor', false, colorHex);
+      saveCurrentPageCustomContent();
     }
 
     showToast(`Applied color ${colorHex}.`);
@@ -2773,6 +2793,7 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
         sel.addRange(newRange);
         savedRange = newRange.cloneRange();
       }
+      saveCurrentPageCustomContent();
     } catch {
       // fallback
     }
@@ -2806,6 +2827,7 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       });
     }
 
+    saveCurrentPageCustomContent();
     showToast('Cleared formatting.');
   }
 
@@ -2821,6 +2843,7 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     if (sel && sel.rangeCount > 0) {
       savedRange = sel.getRangeAt(0).cloneRange();
     }
+    saveCurrentPageCustomContent();
   }
 
   function updateTextSelectionToolbar() {

@@ -327,6 +327,17 @@
     };
   }
 
+  function normalizeCustomPages(value) {
+    if (!value || typeof value !== 'object') return undefined;
+    const result = {};
+    for (const [key, val] of Object.entries(value)) {
+      if (typeof key === 'string' && key.length < 100 && typeof val === 'string' && val.length < 100000) {
+        result[key] = val;
+      }
+    }
+    return Object.keys(result).length ? result : undefined;
+  }
+
   function normalizeProfile(value) {
     const fallback = clone(DEFAULT_PROFILE);
     if (!value || typeof value !== 'object') return fallback;
@@ -391,7 +402,8 @@
         zoom: Math.round(clamp(rawEditor.zoom == null ? 100 : rawEditor.zoom, 70, 140))
       },
       effects: normalizeEffects(value.effects),
-      typography: normalizeTypography(value.typography)
+      typography: normalizeTypography(value.typography),
+      customPages: normalizeCustomPages(value.customPages)
     };
   }
 
