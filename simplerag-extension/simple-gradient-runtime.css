@@ -145,8 +145,8 @@ html[data-simple-gradient-surface="glass"] .shell .main-stage .quick button,
 html[data-simple-gradient-surface="glass"] .shell .main-stage .quick>button,
 html[data-simple-gradient-surface="glass"] .shell .main-stage .dashboard article {
   background-color: rgba(255, 255, 255, 0.07) !important;
-  backdrop-filter: blur(18px) !important;
-  -webkit-backdrop-filter: blur(18px) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border: 1px solid rgba(255, 255, 255, 0.10) !important;
   border-radius: 14px !important;
   color: var(--text) !important;
@@ -156,9 +156,25 @@ html[data-simple-gradient-surface="glass"] .shell .main-stage .dashboard article
 html[data-simple-gradient-surface="glass"] .shell .main-stage .quick button:hover,
 html[data-simple-gradient-surface="glass"] .shell .main-stage .quick>button:hover,
 html[data-simple-gradient-surface="glass"] .shell .main-stage .dashboard article:hover {
-  background-color: rgba(255, 255, 255, 0.13) !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
   border-color: rgba(255, 255, 255, 0.22) !important;
   transform: translateY(-2px) !important;
+}
+
+.shell .main-stage .home-composer,
+.shell .main-stage .composer,
+.shell .main-stage .workspace,
+.shell .page-workspace-layout,
+.shell .main-stage .quick,
+.shell .main-stage .dashboard {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 /* Auto-blend: cards, bubbles, tiles and composers go see-through so the shell

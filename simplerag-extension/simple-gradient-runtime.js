@@ -169,10 +169,10 @@
         '.edge-right'
       ]),
       cards: Object.freeze([
-        '.main-stage .quick',
         '.main-stage .quick > button',
-        '.main-stage .dashboard',
+        '.main-stage .quick button',
         '.main-stage .dashboard > article',
+        '.main-stage .dashboard article',
         '.main-stage .home-welcome',
         '.main-stage .welcome',
         '.main-stage .chat-card',
@@ -193,8 +193,6 @@
       ]),
       composer: Object.freeze([
         '.main-stage .ask',
-        '.main-stage .composer',
-        '.main-stage .home-composer',
         '.assistant .assistant-composer',
         '.assistant form'
       ])
