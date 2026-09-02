@@ -1482,19 +1482,15 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     const body = app.querySelector('.sample-body');
     const activePageKey = `${catalogKey}:${advancedMode ? 'adv' : 'comfy'}:${activePageId}`;
 
-    // Use cached customized page HTML if user edited text/styling, otherwise use template
+    // Always use fresh canonical HTML templates for exact DOM rendering
     let htmlContent = '';
-    if (profile.customPages && profile.customPages[activePageKey]) {
-      htmlContent = profile.customPages[activePageKey];
+    if (catalogKey === 'simplerag') {
+      htmlContent = advancedMode ? getAdvancedPageHtml(activePageId) : getComfyPageHtml(activePageId);
     } else {
-      if (catalogKey === 'simplerag') {
-        htmlContent = advancedMode ? getAdvancedPageHtml(activePageId) : getComfyPageHtml(activePageId);
-      } else {
-        htmlContent = getStudioWorkbenchPageHtml(activePageId);
-      }
-      // Include compatibility hidden contract anchor
-      htmlContent += '<div hidden data-gradient-target="panel:workbench.inspector">DESIGN SYSTEM WORKBENCH</div>';
+      htmlContent = getStudioWorkbenchPageHtml(activePageId);
     }
+    // Include compatibility hidden contract anchor
+    htmlContent += '<div hidden data-gradient-target="panel:workbench.inspector">DESIGN SYSTEM WORKBENCH</div>';
 
     if (body) {
       body.innerHTML = htmlContent;

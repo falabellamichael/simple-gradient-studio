@@ -15,8 +15,8 @@
     },
     {
       "path": "simple-gradient-studio-bundle.js",
-      "sha256": "d7eb87f857c819da6a1ff0b7fd2b0b99a103aed2932d7f6b25f588eaa8987c95",
-      "size": 449148
+      "sha256": "279c17d95e5a1b70e44ad4de1e0f83f566da8ef0761fe1e1caa49cc63cc19fbb",
+      "size": 448968
     },
     {
       "path": "simple-gradient-runtime.js",
