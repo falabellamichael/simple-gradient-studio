@@ -10,8 +10,8 @@
   "scripts": [
     {
       "path": "profile.js",
-      "sha256": "31ee8b524e0552b2f44fa437a30fa59cb86cff20d482bc381fcd047b5fd985ed",
-      "size": 4042
+      "sha256": "246cd3c5025efe3ff4d731380f074f81475f5fc9833f3afcb54a580901e6b5d1",
+      "size": 4186
     },
     {
       "path": "simple-gradient-studio-bundle.js",
@@ -20,15 +20,15 @@
     },
     {
       "path": "simple-gradient-runtime.js",
-      "sha256": "3cd0a50808f655ed3ba34d7dfd0488ad80eb9a955433408d0e151b85590e2cae",
-      "size": 84491
+      "sha256": "6a8bc1be5d88448db47058c96bbf55d95d5ea1930ba5ec540db24da48660fdf4",
+      "size": 84745
     }
   ],
   "styles": [
     {
       "path": "simple-gradient-runtime.css",
-      "sha256": "0078965b6e77047ccc21b832d25115f09ec2d1db9cbdce9d1722ac3169f1b0af",
-      "size": 43302
+      "sha256": "7ddda5b5ae6d3726184f92eaf761850f7d0c01a335ed3536ea5356733aadd7d6",
+      "size": 43554
     }
   ]
 }

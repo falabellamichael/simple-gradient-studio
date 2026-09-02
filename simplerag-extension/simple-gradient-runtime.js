@@ -899,16 +899,18 @@
       documentObject.documentElement.setAttribute('data-simple-gradient-manual-override', String(state.manualOverride !== false));
       documentObject.documentElement.setAttribute('data-simple-gradient-surface', surfaceMode);
       documentObject.documentElement.setAttribute('data-simple-gradient-active', String(state.enabled && !effects.allOff));
-      if (profile.typography?.textGradient) {
+      const textGrad = profile.typography?.textGradient || gradientToCss(profile.gradients[profile.assignments.app?.gradientId] || Object.values(profile.gradients)[0]);
+      if (textGrad && textGrad !== 'none' && !effects.allOff && state.enabled) {
         documentObject.documentElement.setAttribute('data-simple-gradient-text', 'gradient');
-        documentObject.documentElement.style.setProperty('--simple-gradient-text-gradient', profile.typography.textGradient);
+        documentObject.documentElement.style.setProperty('--simple-gradient-text-gradient', textGrad);
       } else {
         documentObject.documentElement.removeAttribute('data-simple-gradient-text');
         documentObject.documentElement.style.removeProperty('--simple-gradient-text-gradient');
       }
-      if (profile.typography?.accentColor) {
-        documentObject.documentElement.style.setProperty('--accent', profile.typography.accentColor);
-        documentObject.documentElement.style.setProperty('--accent-color', profile.typography.accentColor);
+      const accent = profile.typography?.accentColor || (profile.gradients[profile.assignments.app?.gradientId]?.stops?.[0]?.color) || '#e86633';
+      if (accent) {
+        documentObject.documentElement.style.setProperty('--accent', accent);
+        documentObject.documentElement.style.setProperty('--accent-color', accent);
       }
     }
 

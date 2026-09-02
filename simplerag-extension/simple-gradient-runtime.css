@@ -1359,16 +1359,21 @@ html[data-simple-gradient-surface="solid"] .shell .main-stage .dashboard article
 }
 
 /* Typography & Gradient Text in SimpleRAG App */
-html[data-simple-gradient-text="gradient"] .shell .home-welcome h1,
-html[data-simple-gradient-text="gradient"] .shell .home-hero h1,
-html[data-simple-gradient-text="gradient"] .shell .brand-name,
-html[data-simple-gradient-text="gradient"] .shell .chat-title-brand,
-html[data-simple-gradient-text="gradient"] .shell .agent-highlight,
-html[data-simple-gradient-text="gradient"] .shell .gradient-text,
-html[data-simple-gradient-text="gradient"] .shell h1.hero-title,
+html[data-simple-gradient-text="gradient"] .home-welcome h1,
+html[data-simple-gradient-text="gradient"] .home-hero h1,
+html[data-simple-gradient-text="gradient"] .hero-title,
+html[data-simple-gradient-text="gradient"] .brand-name,
+html[data-simple-gradient-text="gradient"] .brand,
+html[data-simple-gradient-text="gradient"] .chat-title-brand,
+html[data-simple-gradient-text="gradient"] .agent-highlight,
+html[data-simple-gradient-text="gradient"] .gradient-text,
+html[data-simple-gradient-text="gradient"] .sg-gradient-text,
+html[data-simple-gradient-text="gradient"] .main-stage h1,
+html[data-simple-gradient-text="gradient"] .page-workspace-layout h1,
 html[data-simple-gradient-text="gradient"] .outlook-app .app-title h1,
 html[data-simple-gradient-text="gradient"] .outlook-app .hero-heading,
-html[data-simple-gradient-text="gradient"] .outlook-app .chat-session-title {
+html[data-simple-gradient-text="gradient"] .outlook-app .chat-session-title,
+html[data-simple-gradient-text="gradient"] #reading-pane h1 {
   background-image: var(--simple-gradient-text-gradient, linear-gradient(135deg, #FF6B4A, #E86633, #FFB020)) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;

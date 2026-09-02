@@ -202,5 +202,10 @@ window.__SIMPLE_GRADIENT_PROFILE__ = {
   "effects": {
     "allOff": false,
     "surface": "glass"
+  },
+  "typography": {
+    "textGradient": "linear-gradient(135deg, #FF6B4A, #E86633, #FFB020)",
+    "accentColor": "#E86633",
+    "glow": true
   }
 };
