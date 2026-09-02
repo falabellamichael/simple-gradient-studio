@@ -1626,6 +1626,9 @@ html[data-simple-gradient-autoblend="true"] .chat-card,
 html[data-simple-gradient-autoblend="true"] .message-card,
 html[data-simple-gradient-autoblend="true"] .msg-bubble,
 html[data-simple-gradient-autoblend="true"] .home-composer,
+html[data-simple-gradient-autoblend="true"] .quick button,
+html[data-simple-gradient-autoblend="true"] .quick>button,
+html[data-simple-gradient-autoblend="true"] .home-tiles button,
 html[data-simple-gradient-autoblend="true"] .doc-card,
 html[data-simple-gradient-autoblend="true"] .task-card,
 html[data-simple-gradient-autoblend="true"] .email-item,
@@ -1634,8 +1637,10 @@ html[data-simple-gradient-autoblend="true"] .plugin-card,
 html[data-simple-gradient-autoblend="true"] .settings-tile,
 html[data-simple-gradient-autoblend="true"] .component-card,
 html[data-simple-gradient-autoblend="true"] .nav-item {
-  background: rgba(255, 255, 255, var(--sg-card-alpha, 0.04)) !important;
-  backdrop-filter: blur(calc(var(--sg-glass-blur, 28px) * 0.5)) !important;
-  -webkit-backdrop-filter: blur(calc(var(--sg-glass-blur, 28px) * 0.5)) !important;
+  background: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border: 1px solid rgba(255, 255, 255, var(--sg-border-glow, 0.12)) !important;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.04) !important;
 }
