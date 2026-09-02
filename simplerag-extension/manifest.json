@@ -10,25 +10,25 @@
   "scripts": [
     {
       "path": "profile.js",
-      "sha256": "03069375c4d63bd0336ffc4c2c3996542d26badba71a3665850634ff3fc1d39b",
-      "size": 3978
+      "sha256": "31ee8b524e0552b2f44fa437a30fa59cb86cff20d482bc381fcd047b5fd985ed",
+      "size": 4042
     },
     {
       "path": "simple-gradient-studio-bundle.js",
-      "sha256": "d6871493414c35f411f45d6a8c2dbf16c5207c5a5a94545abca9b35e78ff049b",
-      "size": 402696
+      "sha256": "f92fe67bd762b26e1a8751097e1e9b6766361d0f7d47a7bf6a8a4f651490d86d",
+      "size": 417238
     },
     {
       "path": "simple-gradient-runtime.js",
-      "sha256": "4b4504cd65dd3cbaf2cab7dcfae53f906a93cb9c59da41bf168e6e5f748f0b41",
-      "size": 83005
+      "sha256": "d7b8bdedd784b4f077216cf6bb138b72a96a4225ddea91afb079ecaee57ea1f5",
+      "size": 82695
     }
   ],
   "styles": [
     {
       "path": "simple-gradient-runtime.css",
-      "sha256": "0b27f952217408c9f8144f7c9f75acecb1e123d77c1bc51314bdcf50febbe82e",
-      "size": 33965
+      "sha256": "23e05957690091346c7781a99bebe94f7d6fdf215f9a9f3291eb40a7e5911a62",
+      "size": 41861
     }
   ]
 }

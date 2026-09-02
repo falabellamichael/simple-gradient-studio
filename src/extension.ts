@@ -24,6 +24,7 @@ class GradientStudioController implements vscode.Disposable {
   private profile: GradientProfile;
   private statusBar: vscode.StatusBarItem;
   private simpleRagInstall: Promise<SimpleRagExtensionInstallResult> | undefined;
+  private viewWebview: vscode.Webview | undefined;
 
   constructor(private readonly context: vscode.ExtensionContext) {
     this.profile = normalizeProfile(context.globalState.get(PROFILE_KEY) ?? createDefaultProfile());
@@ -39,7 +40,7 @@ class GradientStudioController implements vscode.Disposable {
     const existing = this.panels.get(view);
     if (existing) {
       existing.reveal(column ?? existing.viewColumn, true);
-      this.sendState(existing);
+      this.sendState(existing.webview);
       return;
     }
 
@@ -47,20 +48,36 @@ class GradientStudioController implements vscode.Disposable {
       `simpleGradient.${view}`,
       viewTitles[view],
       { viewColumn: column ?? vscode.ViewColumn.One, preserveFocus: false },
-      {
-        enableScripts: true,
-        retainContextWhenHidden: true,
-        localResourceRoots: [
-          vscode.Uri.joinPath(this.context.extensionUri, 'media'),
-          vscode.Uri.joinPath(this.context.extensionUri, 'node_modules', '@vscode', 'codicons', 'dist')
-        ]
-      }
+      { ...this.webviewOptions(), retainContextWhenHidden: true }
     );
     this.panels.set(view, panel);
     panel.iconPath = undefined;
     panel.webview.html = this.renderHtml(panel.webview, view);
     panel.onDidDispose(() => this.panels.delete(view), undefined, this.disposables);
-    panel.webview.onDidReceiveMessage((message) => void this.handleMessage(panel, message), undefined, this.disposables);
+    panel.webview.onDidReceiveMessage((message) => void this.handleMessage(panel.webview, message), undefined, this.disposables);
+  }
+
+  registerView(view: vscode.WebviewView): void {
+    view.webview.options = this.webviewOptions();
+    view.webview.html = this.renderHtml(view.webview, 'studio');
+    this.viewWebview = view.webview;
+    view.webview.onDidReceiveMessage((message) => void this.handleMessage(view.webview, message), undefined, this.disposables);
+    view.onDidDispose(() => {
+      if (this.viewWebview === view.webview) {
+        this.viewWebview = undefined;
+      }
+    }, undefined, this.disposables);
+    this.sendState(view.webview);
+  }
+
+  private webviewOptions(): vscode.WebviewOptions {
+    return {
+      enableScripts: true,
+      localResourceRoots: [
+        vscode.Uri.joinPath(this.context.extensionUri, 'media'),
+        vscode.Uri.joinPath(this.context.extensionUri, 'node_modules', '@vscode', 'codicons', 'dist')
+      ]
+    };
   }
 
   async importProfile(): Promise<void> {
@@ -135,14 +152,14 @@ class GradientStudioController implements vscode.Disposable {
     }
   }
 
-  private async handleMessage(panel: vscode.WebviewPanel, message: unknown): Promise<void> {
+  private async handleMessage(webview: vscode.Webview, message: unknown): Promise<void> {
     if (!message || typeof message !== 'object') {
       return;
     }
     const payload = message as Record<string, unknown>;
     switch (payload.type) {
       case 'ready':
-        this.sendState(panel);
+        this.sendState(webview);
         break;
       case 'updateProfile':
         this.profile = normalizeProfile(payload.profile);
@@ -183,17 +200,23 @@ class GradientStudioController implements vscode.Disposable {
   private async persistAndBroadcast(): Promise<void> {
     await this.context.globalState.update(PROFILE_KEY, this.profile);
     for (const panel of this.panels.values()) {
-      this.sendState(panel);
+      this.sendState(panel.webview);
+    }
+    if (this.viewWebview) {
+      this.sendState(this.viewWebview);
     }
   }
 
-  private sendState(panel: vscode.WebviewPanel): void {
-    void panel.webview.postMessage({ type: 'state', profile: this.profile });
+  private sendState(webview: vscode.Webview): void {
+    void webview.postMessage({ type: 'state', profile: this.profile });
   }
 
   private broadcastSimpleRagIntegration(installed: boolean, message: string): void {
     for (const panel of this.panels.values()) {
       void panel.webview.postMessage({ type: 'simpleRagIntegration', installed, message });
+    }
+    if (this.viewWebview) {
+      void this.viewWebview.postMessage({ type: 'simpleRagIntegration', installed, message });
     }
   }
 
@@ -237,6 +260,9 @@ export function activate(context: vscode.ExtensionContext): void {
   const controller = new GradientStudioController(context);
   context.subscriptions.push(
     controller,
+    vscode.window.registerWebviewViewProvider('simpleGradient.studioView', {
+      resolveWebviewView: (view) => controller.registerView(view)
+    }, { webviewOptions: { retainContextWhenHidden: true } }),
     vscode.commands.registerCommand('simpleGradient.openStudio', () => controller.open('studio')),
     vscode.commands.registerCommand('simpleGradient.openAssignments', () => controller.open('assignments')),
     vscode.commands.registerCommand('simpleGradient.openPreview', () => controller.open('preview')),
@@ -252,4 +278,4 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 }
 
-export function deactivate(): void {}
+export function deactivate(): void { }

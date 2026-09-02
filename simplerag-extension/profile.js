@@ -198,5 +198,9 @@ window.__SIMPLE_GRADIENT_PROFILE__ = {
     "targetCatalog": "simplerag",
     "targetMode": true,
     "zoom": 100
+  },
+  "effects": {
+    "allOff": false,
+    "surface": "glass"
   }
 };

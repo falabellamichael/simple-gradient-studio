@@ -199,11 +199,20 @@
           </div>
           <label class="theme-select">Base:
             <select id="baseThemeSelect" aria-label="In-app theme base">
-              <option value="oled" selected>OLED Dark</option>
-              <option value="warm">Warm Sand</option>
-              <option value="granite">Granite Silver</option>
-              <option value="ocean">Ocean Breeze</option>
-              <option value="grove">Grove Forest</option>
+              <optgroup label="Comfy">
+                <option value="oled" selected>OLED Dark</option>
+                <option value="warm">Warm Sand</option>
+                <option value="granite">Granite Silver</option>
+                <option value="ocean">Ocean Breeze</option>
+                <option value="grove">Grove Forest</option>
+              </optgroup>
+              <optgroup label="Advanced">
+                <option value="advanced-graphite">Graphite</option>
+                <option value="advanced-midnight">Midnight</option>
+                <option value="advanced-soft-contrast">Soft Contrast</option>
+                <option value="advanced-oled">OLED Black</option>
+                <option value="advanced-warm-light">Warm Light</option>
+              </optgroup>
             </select>
           </label>
           <button class="mode-button active" id="manualOverrideButton" type="button" aria-pressed="true"
@@ -224,6 +233,12 @@
               class="codicon codicon-layers"></span>Shadows off</button>
           <button class="mode-button active" id="subtleToggleButton" type="button" aria-pressed="true"
             title="Subtle soft gradient tones"><span class="codicon codicon-sparkle"></span>Subtle</button>
+          <button class="mode-button" id="allOffToggleButton" type="button" aria-pressed="false"
+            title="Master switch: turn every gradient and glass effect off to show the bare base theme"><span
+              class="codicon codicon-circle-slash"></span>All off</button>
+          <button class="mode-button" id="surfaceToggleButton" type="button" aria-pressed="false"
+            title="Switch surfaces between translucent glass and opaque solid"><span
+              class="codicon codicon-window"></span>Surface: Glass</button>
           <div class="selected-context"><span>Selected target:</span><b id="selectedContextName">Workbench / Properties
               inspector</b><em id="selectedContextMode">Panel override</em></div>
           <button class="context-action" id="useParentButton" type="button">Use page gradient</button>
@@ -456,7 +471,7 @@
           <button class="ghost-button mini" id="reverseStopsButton" type="button" title="Reverse color stop order"><span
               class="codicon codicon-arrow-swap"></span>Reverse</button>
           <button class="ghost-button mini" id="randomHarmonicButton" type="button"
-            title="Generate a harmonious glass gradient palette"><span
+            title="Generate a gradient harmonized with the selected base theme"><span
               class="codicon codicon-sparkle"></span>Harmonize</button>
         </div>
         <section class="contrast-panel"><span>Contrast</span><strong>AA</strong><b id="contrastRatio">4.8:1</b>

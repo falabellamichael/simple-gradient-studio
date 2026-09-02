@@ -256,6 +256,51 @@ test('surface styling layers background images without changing native text colo
   assert.match(runtimeSource, /data-runtime-reapply/);
 });
 
+test('native runtime honors profile effects for all-off and solid surfaces', () => {
+  const profile = runtime.normalizeProfile({
+    gradients: {
+      base: {
+        stops: [
+          { color: '#11111166', position: 0, opacity: 40 },
+          { color: '#222222', position: 100, opacity: 40 }
+        ]
+      }
+    },
+    assignments: { app: { mode: 'gradient', gradientId: 'base' } },
+    effects: { allOff: true, surface: 'solid' }
+  });
+  assert.deepEqual(profile.effects, { allOff: true, surface: 'solid' });
+  assert.deepEqual(runtime.normalizeProfile({}).effects, { allOff: false, surface: 'glass' });
+
+  runtime.setSurfaceMode('solid');
+  assert.doesNotMatch(runtime.gradientToCss(profile.gradients.base), /rgba\(/);
+  runtime.setSurfaceMode('glass');
+  assert.match(runtime.gradientToCss(profile.gradients.base), /rgba\(/);
+  runtime.setSurfaceMode('not-a-mode');
+  assert.match(runtime.gradientToCss(profile.gradients.base), /rgba\(/);
+
+  assert.match(runtimeSource, /data-simple-gradient-surface/);
+  assert.match(runtimeSource, /effects\.allOff/);
+  assert.match(cssSource, /html\[data-simple-gradient-surface="glass"\]/);
+  assert.match(cssSource, /html\[data-simple-gradient-surface="solid"\]/);
+  assert.doesNotMatch(cssSource, /^\.shell \.edge-helper\.edge-left,/m);
+});
+
+test('preserves SimpleRAG wallpapers live through the --background-image custom property', () => {
+  assert.match(cssSource, /--background-image, none\) !important/);
+  assert.match(cssSource, /--background-size, cover\) !important/);
+  assert.match(cssSource, /--background-repeat, no-repeat\) !important/);
+  assert.match(cssSource, /--background-position, center\) !important/);
+  assert.match(runtimeSource, /getPropertyValue\('--background-image'\)/);
+  assert.doesNotMatch(runtimeSource, /originalNativeImages/);
+  assert.doesNotMatch(runtimeSource, /combinedImage/);
+  assert.match(runtimeSource, /category === 'composer' \|\| category === 'cards'/);
+  const tilesRule = cssSource.match(/html\[data-simple-gradient-surface="glass"\] \.shell \.main-stage \.quick button,[^}]+\}/);
+  assert.ok(tilesRule, 'glass quick-tiles rule exists');
+  assert.match(tilesRule[0], /background-color: rgba\(255, 255, 255, 0\.07\) !important/);
+  assert.doesNotMatch(tilesRule[0], /(^|[;\s])background: rgba/);
+});
+
 test('full editor is mounted only from active Settings Appearance surfaces', () => {
   assert.match(runtimeSource, /button\[data-tutorial-id="settings-tab-themes"\]/);
   assert.match(runtimeSource, /\.theme-settings\.settings-detail \[data-tutorial-id="settings-theme-presets"\]/);

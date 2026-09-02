@@ -22,6 +22,11 @@ export interface GradientAssignment {
   gradientId?: string;
 }
 
+export interface GradientEffects {
+  allOff: boolean;
+  surface: 'glass' | 'solid';
+}
+
 export interface GradientProfile {
   schema: typeof PROFILE_SCHEMA;
   version: typeof PROFILE_VERSION;
@@ -35,6 +40,7 @@ export interface GradientProfile {
     targetMode: boolean;
     zoom: number;
   };
+  effects: GradientEffects;
 }
 
 const SAFE_TARGET = /^(app|page:[a-z0-9-]+|panel:[a-z0-9-]+\.[a-z0-9-]+)$/;
@@ -160,7 +166,19 @@ export function createDefaultProfile(): GradientProfile {
       targetCatalog: 'studio',
       targetMode: true,
       zoom: 100
+    },
+    effects: {
+      allOff: false,
+      surface: 'glass'
     }
+  };
+}
+
+export function normalizeEffects(value: unknown): GradientEffects {
+  const raw = value && typeof value === 'object' ? value as Partial<GradientEffects> : {};
+  return {
+    allOff: raw.allOff === true,
+    surface: raw.surface === 'solid' ? 'solid' : 'glass'
   };
 }
 
@@ -220,7 +238,8 @@ export function normalizeProfile(value: unknown): GradientProfile {
       targetCatalog,
       targetMode: editor.targetMode !== false,
       zoom: Math.round(clamp(Number(editor.zoom ?? 100), 70, 140))
-    }
+    },
+    effects: normalizeEffects(raw.effects)
   };
 }
 

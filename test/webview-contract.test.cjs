@@ -36,6 +36,11 @@ test('selected concept structure and core interactions are present', () => {
   assert.match(html, /role="dialog" aria-modal="true"/);
   assert.match(html, /data-gradient-target="panel:workbench\.inspector"/);
   assert.match(script, /host\.postMessage\(\{ type: 'openView'/);
+  assert.match(script, /function harmonizedStops/);
+  assert.match(script, /Harmonized with \$\{theme\.label\}/);
+  assert.match(html, /<optgroup label="Advanced">/);
+  assert.match(script, /advanced-midnight/);
+  assert.match(script, /advanced-soft-contrast/);
   assert.match(script, /function openModal/);
   assert.match(script, /openModal\(handle\)/);
   assert.match(script, /classList\.add\('open'\)/);

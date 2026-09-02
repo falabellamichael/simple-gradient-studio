@@ -18,6 +18,9 @@
   const SAFE_TARGET = /^(app|page:[a-z0-9-]+|panel:[a-z0-9-]+\.[a-z0-9-]+)$/;
   const SAFE_HEX = /^#[0-9a-f]{6}([0-9a-f]{2})?$/i;
 
+  // 'glass' | 'solid' | 'off'; driven by the active profile's effects on each apply.
+  let activeSurfaceMode = 'glass';
+
   const DEFAULT_PROFILE = {
     schema: 'simple-gradient-profile',
     version: 1,
@@ -45,6 +48,10 @@
       targetCatalog: 'simplerag',
       targetMode: false,
       zoom: 100
+    },
+    effects: {
+      allOff: false,
+      surface: 'glass'
     }
   };
 
@@ -373,8 +380,21 @@
         targetCatalog: 'simplerag',
         targetMode: rawEditor.targetMode === true,
         zoom: Math.round(clamp(rawEditor.zoom == null ? 100 : rawEditor.zoom, 70, 140))
-      }
+      },
+      effects: normalizeEffects(value.effects)
     };
+  }
+
+  function normalizeEffects(value) {
+    const raw = value && typeof value === 'object' ? value : {};
+    return {
+      allOff: raw.allOff === true,
+      surface: raw.surface === 'solid' ? 'solid' : 'glass'
+    };
+  }
+
+  function setSurfaceMode(mode) {
+    activeSurfaceMode = mode === 'solid' || mode === 'off' ? mode : 'glass';
   }
 
   function canonicalJson(value) {
@@ -432,7 +452,9 @@
     const embeddedAlpha = stop.color.length === 9
       ? parseInt(stop.color.slice(7, 9), 16) / 255
       : 1;
-    const alpha = embeddedAlpha * clamp(stop.opacity, 0, 100) / 100;
+    const alpha = activeSurfaceMode === 'solid'
+      ? 1
+      : embeddedAlpha * clamp(stop.opacity, 0, 100) / 100;
     const color = alpha >= 0.999
       ? stop.color.slice(0, 7)
       : `rgba(${red}, ${green}, ${blue}, ${Number(alpha.toFixed(3))})`;
@@ -557,7 +579,8 @@
     pageTargetCandidates,
     panelTargetCandidates,
     resolveGradientForTargets,
-    detectContext
+    detectContext,
+    setSurfaceMode
   });
 
   if (typeof module === 'object' && module.exports) module.exports = testHooks;
@@ -605,7 +628,6 @@
     applyFrame: 0,
     appliedElements: new Set(),
     originalVariables: new WeakMap(),
-    originalNativeImages: new WeakMap(),
     ui: null,
     settingsEntry: null,
     comfyAppearanceTile: null,
@@ -714,8 +736,6 @@
     state.originalVariables.set(element, {
       layer: element.style.getPropertyValue('--simple-gradient-runtime-layer'),
       layerPriority: element.style.getPropertyPriority('--simple-gradient-runtime-layer'),
-      native: element.style.getPropertyValue('--simple-gradient-runtime-native-image'),
-      nativePriority: element.style.getPropertyPriority('--simple-gradient-runtime-native-image'),
       bgColor: element.style.getPropertyValue('background-color'),
       bgPriority: element.style.getPropertyPriority('background-color'),
       backdrop: element.style.getPropertyValue('backdrop-filter'),
@@ -737,19 +757,18 @@
     const original = state.originalVariables.get(element);
     if (original) {
       restoreVariable(element, '--simple-gradient-runtime-layer', original.layer, original.layerPriority);
-      restoreVariable(element, '--simple-gradient-runtime-native-image', original.native, original.nativePriority);
       restoreVariable(element, 'background-color', original.bgColor, original.bgPriority);
       restoreVariable(element, 'backdrop-filter', original.backdrop, original.backdropPriority);
       restoreVariable(element, '-webkit-backdrop-filter', original.webkitBackdrop, original.webkitBackdropPriority);
       state.originalVariables.delete(element);
     } else {
       element.style.removeProperty('--simple-gradient-runtime-layer');
-      element.style.removeProperty('--simple-gradient-runtime-native-image');
       element.style.removeProperty('background-color');
       element.style.removeProperty('backdrop-filter');
       element.style.removeProperty('-webkit-backdrop-filter');
     }
     element.style.removeProperty('background-image');
+    element.style.removeProperty('--simple-gradient-runtime-native-image');
   }
 
   function clearAppliedSurfaces() {
@@ -757,40 +776,19 @@
     state.appliedElements.clear();
   }
 
-  function findNativeBackgroundImage(element) {
-    if (state.originalNativeImages.has(element)) {
-      return state.originalNativeImages.get(element);
+  // SimpleRAG exposes the active wallpaper (built-in icon or a user photo from the
+  // Settings picker) as the --background-image custom property on <html>, consumed
+  // by the .shell stylesheet rule. Read it live on every apply so theme changes
+  // show immediately; the CSS layers it beneath the gradient via var() references.
+  function findNativeBackgroundImage() {
+    const root = documentObject.documentElement;
+    if (!root) return '';
+    let value = root.style?.getPropertyValue?.('--background-image') || '';
+    if (!value && typeof global.getComputedStyle === 'function') {
+      value = global.getComputedStyle(root).getPropertyValue('--background-image') || '';
     }
-    const candidates = [];
-    if (element) {
-      candidates.push(element.style.getPropertyValue('background-image'));
-      if (typeof global.getComputedStyle === 'function') {
-        candidates.push(global.getComputedStyle(element).backgroundImage);
-      }
-    }
-    if (documentObject.body) {
-      candidates.push(documentObject.body.style.getPropertyValue('background-image'));
-      if (typeof global.getComputedStyle === 'function') {
-        candidates.push(global.getComputedStyle(documentObject.body).backgroundImage);
-      }
-    }
-    if (documentObject.documentElement) {
-      candidates.push(documentObject.documentElement.style.getPropertyValue('background-image'));
-      if (typeof global.getComputedStyle === 'function') {
-        candidates.push(global.getComputedStyle(documentObject.documentElement).backgroundImage);
-      }
-    }
-    let found = '';
-    for (const image of candidates) {
-      if (typeof image === 'string' && image && image !== 'none' && !image.includes('simple-gradient')) {
-        if (image.includes('url(') || image.includes('data:')) {
-          found = image;
-          break;
-        }
-      }
-    }
-    state.originalNativeImages.set(element, found);
-    return found;
+    value = String(value).trim();
+    return value.includes('url(') || value.includes('data:') ? value : '';
   }
 
   function applyLayer(element, category, resolved) {
@@ -802,30 +800,24 @@
     const isManualOverride = state.manualOverride !== false;
     rememberOriginalVariables(element);
 
-    const nativeImage = isMasterApp ? findNativeBackgroundImage(element) : '';
+    const nativeImage = isMasterApp ? findNativeBackgroundImage() : '';
     if (nativeImage) {
-      element.style.setProperty('--simple-gradient-runtime-native-image', nativeImage);
       element.setAttribute('data-simple-gradient-has-native', 'true');
     } else {
-      element.style.removeProperty('--simple-gradient-runtime-native-image');
       element.removeAttribute('data-simple-gradient-has-native');
     }
 
     if (layer) {
       element.style.setProperty('--simple-gradient-runtime-layer', layer);
-      const combinedImage = nativeImage ? `${layer}, ${nativeImage}` : layer;
-      element.style.setProperty('background-image', combinedImage, 'important');
-    } else if (nativeImage && isMasterApp) {
-      element.style.removeProperty('--simple-gradient-runtime-layer');
-      element.style.setProperty('background-image', nativeImage, 'important');
     } else {
       element.style.removeProperty('--simple-gradient-runtime-layer');
-      element.style.setProperty('background-image', 'none', 'important');
     }
 
     if (isManualOverride) {
       if (category === 'app' || category === 'page' || category === 'cards' || !isExplicitPanel) {
         element.style.setProperty('background-color', 'transparent', 'important');
+      } else if (activeSurfaceMode === 'solid') {
+        element.style.setProperty('background-color', 'rgb(16, 18, 22)', 'important');
       } else {
         element.style.setProperty('background-color', 'rgba(16, 18, 22, 0.28)', 'important');
         element.style.setProperty('backdrop-filter', 'blur(28px) saturate(140%)', 'important');
@@ -845,9 +837,10 @@
       && !state.settingsEntry?.contains(element)
       && element !== state.settingsEntry
     ));
-    if (category === 'composer') {
-      // Composer selectors cover wrapper variants and the inner box; tagging a
-      // wrapper that contains the box paints the gradient outside its rounded border.
+    if (category === 'composer' || category === 'cards') {
+      // Card and composer selectors cover wrapper variants and the inner boxes;
+      // tagging a wrapper that contains the boxes paints the gradient outside
+      // their rounded borders, protruding as strips behind the tiles.
       elements = elements.filter((element) => !elements.some((other) => other !== element && element.contains(other)));
     }
     for (const element of elements) {
@@ -873,16 +866,20 @@
 
     const context = detectContext(documentObject);
     const profile = activeProfile();
+    const effects = normalizeEffects(profile.effects);
+    const surfaceMode = effects.allOff ? 'off' : effects.surface;
+    setSurfaceMode(surfaceMode);
     state.lastContext = context;
     state.lastProfile = profile;
     syncSettingsEntry(context);
 
     if (documentObject.documentElement) {
       documentObject.documentElement.setAttribute('data-simple-gradient-manual-override', String(state.manualOverride !== false));
+      documentObject.documentElement.setAttribute('data-simple-gradient-surface', surfaceMode);
     }
 
     let appliedCount = 0;
-    if (state.enabled && context) {
+    if (state.enabled && context && !effects.allOff) {
       const selectors = SURFACE_SELECTORS[context.surface];
       const pageTargets = pageTargetCandidates(context.surface, context.page);
       const appResolved = resolveGradientForTargets(profile, ['app'], []);
@@ -1922,6 +1919,7 @@
     state.ui = null;
     removeSettingsEntry();
     restoreComfyAppearanceTile();
+    documentObject.documentElement?.removeAttribute?.('data-simple-gradient-surface');
     documentObject.getElementById(ROOT_ID)?.remove();
     documentObject.removeEventListener('DOMContentLoaded', start);
     global.removeEventListener('hashchange', onNavigation);

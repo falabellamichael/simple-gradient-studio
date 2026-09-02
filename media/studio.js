@@ -133,7 +133,15 @@
         'page:settings': { mode: 'inherit' },
         'page:components': { mode: 'inherit' }
       },
-      editor: { activePage: 'workbench', activeTarget: 'panel:workbench.inspector', targetCatalog: 'studio', targetMode: true, zoom: 100 }
+      editor: { activePage: 'workbench', activeTarget: 'panel:workbench.inspector', targetCatalog: 'studio', targetMode: true, zoom: 100 },
+      effects: { allOff: false, surface: 'glass' }
+    };
+  }
+
+  function normalizeEffects(effects) {
+    return {
+      allOff: effects?.allOff === true,
+      surface: effects?.surface === 'solid' ? 'solid' : 'glass'
     };
   }
 
@@ -142,6 +150,7 @@
   const legacyState = host.getState();
   let profile = clone((useFreshPreview ? null : legacyState?.profile) || defaultProfile());
   profile.editor.targetCatalog = 'simplerag';
+  profile.effects = normalizeEffects(profile.effects);
   if (!catalogs.simplerag.pages.some(p => p.id === profile.editor.activePage)) {
     profile.editor.activePage = 'home';
     profile.editor.activeTarget = 'app';
@@ -160,17 +169,66 @@
   let blendStrength = 100;
   let shadowsOff = true;
   let subtleMode = true;
+  let allOff = false;
+  let solidMode = false;
   let scopeDrawerOpen = false;
   let baseTheme = 'oled';
   let manualOverride = true;
   let sendTimer = 0;
 
+  // Base themes mirror SimpleRAG's Comfy presets and Advanced workspace presets.
+  // palette = curated harmonizing surface colors; accents = edge-stop candidates.
   const IN_APP_THEMES = {
-    oled: { id: 'oled', label: 'OLED Dark', ribbon: '#000000', ribbonText: '#ffffff', background: '#000000', card: '#0b0b0d', accent: '#e86633', text: '#f5f5f7', muted: '#8e8e93', border: '#222226', assistant: '#050507' },
-    warm: { id: 'warm', label: 'Warm Sand', ribbon: '#201e1c', ribbonText: '#ffffff', background: '#f8efe3', card: '#fffaf4', accent: '#e86633', text: '#2e2925', muted: '#796f67', border: '#dfd1c3', assistant: '#25221f' },
-    granite: { id: 'granite', label: 'Granite Silver', ribbon: '#292c30', ribbonText: '#ffffff', background: '#e4e6e8', card: '#f8f8f7', accent: '#59636e', text: '#25282b', muted: '#626970', border: '#c6cacf', assistant: '#30343a' },
-    ocean: { id: 'ocean', label: 'Ocean Breeze', ribbon: '#12202a', ribbonText: '#ffffff', background: '#e8f0f2', card: '#f8fcfc', accent: '#167c8c', text: '#162b31', muted: '#61777b', border: '#c5d8da', assistant: '#172b33' },
-    grove: { id: 'grove', label: 'Grove Forest', ribbon: '#17231c', ribbonText: '#ffffff', background: '#edf1e7', card: '#fbfcf6', accent: '#4d7c58', text: '#243127', muted: '#6b796d', border: '#ccd7c9', assistant: '#1d2a21' }
+    oled: {
+      id: 'oled', label: 'OLED Dark', ribbon: '#000000', ribbonText: '#ffffff', background: '#000000', card: '#0b0b0d', accent: '#e86633', text: '#f5f5f7', muted: '#8e8e93', border: '#222226', assistant: '#050507',
+      palette: ['#000000', '#0B0B0D', '#141416', '#1C1714', '#241A15', '#2A1710', '#331E15', '#1D130F', '#101014', '#191512'],
+      accents: ['#E86633', '#F97316', '#FF9742', '#FFB020', '#D94F30', '#FF6B4A']
+    },
+    warm: {
+      id: 'warm', label: 'Warm Sand', ribbon: '#201e1c', ribbonText: '#ffffff', background: '#f8efe3', card: '#fffaf4', accent: '#e86633', text: '#2e2925', muted: '#796f67', border: '#dfd1c3', assistant: '#25221f',
+      palette: ['#FFF9F2', '#F8EFE3', '#F1D6C1', '#FFFAF4', '#F5E3D0', '#EAD2B8', '#E8C4A0', '#F3D9C4', '#FCE8D8', '#EFDCC6'],
+      accents: ['#E86633', '#D97706', '#C2571B', '#E45A58', '#B45309', '#F97316']
+    },
+    granite: {
+      id: 'granite', label: 'Granite Silver', ribbon: '#292c30', ribbonText: '#ffffff', background: '#e4e6e8', card: '#f8f8f7', accent: '#59636e', text: '#25282b', muted: '#626970', border: '#c6cacf', assistant: '#30343a',
+      palette: ['#F8F8F7', '#E4E6E8', '#D5D9DD', '#C6CACF', '#B9BEC5', '#AEB4BC', '#EDEEF0', '#DFE2E5', '#CFD4D9', '#BFC5CB'],
+      accents: ['#59636E', '#475569', '#64748B', '#334155', '#708090', '#5B6B7C']
+    },
+    ocean: {
+      id: 'ocean', label: 'Ocean Breeze', ribbon: '#12202a', ribbonText: '#ffffff', background: '#e8f0f2', card: '#f8fcfc', accent: '#167c8c', text: '#162b31', muted: '#61777b', border: '#c5d8da', assistant: '#172b33',
+      palette: ['#F8FCFC', '#E8F0F2', '#D3E4E7', '#BFD8DC', '#A9CDD3', '#9BCBD1', '#CDE2E5', '#DFF0F2', '#B4D6DB', '#C2DEE2'],
+      accents: ['#167C8C', '#0E7490', '#0891B2', '#14B8A6', '#2C7A8C', '#06B6D4']
+    },
+    grove: {
+      id: 'grove', label: 'Grove Forest', ribbon: '#17231c', ribbonText: '#ffffff', background: '#edf1e7', card: '#fbfcf6', accent: '#4d7c58', text: '#243127', muted: '#6b796d', border: '#ccd7c9', assistant: '#1d2a21',
+      palette: ['#FBFCF6', '#EDF1E7', '#DDE7D5', '#CBDBC2', '#B8CFAD', '#A6C39A', '#E3EBDA', '#D2E0C6', '#C4D6B6', '#E8EFE0'],
+      accents: ['#4D7C58', '#3E6B4A', '#5E9B6E', '#2F5D3A', '#7BA07A', '#6FA07A']
+    },
+    'advanced-graphite': {
+      id: 'advanced-graphite', label: 'Graphite (Advanced)', ribbon: '#111111', ribbonText: '#ffffff', background: '#1f1f1f', card: '#202020', accent: '#0f6cbd', text: '#ffffff', muted: '#888888', border: '#3b3b3b', assistant: '#282828',
+      palette: ['#1F1F1F', '#282828', '#202020', '#333333', '#2B2B2B', '#171717', '#3B3B3B', '#242424', '#2E2E2E', '#1B1B1B'],
+      accents: ['#FF9742', '#0F6CBD', '#F97316', '#E86633', '#FFC169', '#38BDF8']
+    },
+    'advanced-midnight': {
+      id: 'advanced-midnight', label: 'Midnight (Advanced)', ribbon: '#0b111d', ribbonText: '#f5f7fb', background: '#111827', card: '#141c2a', accent: '#0f6cbd', text: '#f5f7fb', muted: '#7f8da4', border: '#30405a', assistant: '#182234',
+      palette: ['#111827', '#182234', '#141C2A', '#202C40', '#0B111D', '#1A2436', '#243249', '#101828', '#1E293B', '#16202E'],
+      accents: ['#62A8FF', '#0F6CBD', '#38BDF8', '#7DD3FC', '#93C5FD', '#E86633']
+    },
+    'advanced-soft-contrast': {
+      id: 'advanced-soft-contrast', label: 'Soft Contrast (Advanced)', ribbon: '#232323', ribbonText: '#f4f1eb', background: '#292929', card: '#2d2d2d', accent: '#0f6cbd', text: '#f4f1eb', muted: '#96918a', border: '#474747', assistant: '#313131',
+      palette: ['#292929', '#313131', '#2D2D2D', '#383838', '#232323', '#3B3B3B', '#474747', '#2F2E2B', '#34322F', '#262523'],
+      accents: ['#D99024', '#C77E1B', '#E8A33D', '#0F6CBD', '#F0B45B', '#E86633']
+    },
+    'advanced-oled': {
+      id: 'advanced-oled', label: 'OLED Black (Advanced)', ribbon: '#000000', ribbonText: '#ffffff', background: '#000000', card: '#030303', accent: '#0f6cbd', text: '#ffffff', muted: '#7a7a7a', border: '#282828', assistant: '#080808',
+      palette: ['#000000', '#080808', '#030303', '#101010', '#181818', '#0D0D0D', '#282828', '#141414', '#1F1F1F', '#0A0A0A'],
+      accents: ['#FF9742', '#E86633', '#F97316', '#0F6CBD', '#FFB020', '#FF6B4A']
+    },
+    'advanced-warm-light': {
+      id: 'advanced-warm-light', label: 'Warm Light (Advanced)', ribbon: '#201e1c', ribbonText: '#ffffff', background: '#f8efe3', card: '#f3e9db', accent: '#e86633', text: '#2e2925', muted: '#796f67', border: '#dfd1c3', assistant: '#fffaf4',
+      palette: ['#F8EFE3', '#FFFAF4', '#F3E9DB', '#EFE2D0', '#EADFCD', '#E5D6BE', '#DFD1C3', '#F6EBDD', '#EFE0CC', '#E9D8C0'],
+      accents: ['#E86633', '#D97706', '#C2571B', '#0F6CBD', '#B45309', '#F97316']
+    }
   };
 
   function activeCatalog() {
@@ -195,7 +253,9 @@
     if (!gradient) return 'none';
     const stops = gradient.stops.map((stop) => {
       let opacity = clamp(stop.opacity, 0, 100);
-      if (forceSubtle && opacity > 65) {
+      if (solidMode) {
+        opacity = 100;
+      } else if (forceSubtle && opacity > 65) {
         opacity = Math.round(opacity * 0.78);
       }
       const alpha = Math.floor((opacity * 255 + 50) / 100).toString(16).padStart(2, '0').toUpperCase();
@@ -379,6 +439,9 @@
   }
 
   function render() {
+    profile.effects = normalizeEffects(profile.effects);
+    allOff = profile.effects.allOff;
+    solidMode = profile.effects.surface === 'solid';
     syncCatalog();
     renderCatalog();
     renderScope();
@@ -1443,6 +1506,8 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     app.classList.toggle('advanced-mode', advancedMode);
     app.classList.toggle('no-shadows', shadowsOff);
     app.classList.toggle('unified-blend', blendMode);
+    app.classList.toggle('solid-surfaces', solidMode);
+    app.classList.toggle('all-off', allOff);
 
     app.dataset.baseTheme = baseTheme;
     app.dataset.manualOverride = String(manualOverride);
@@ -1473,13 +1538,24 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
         ? '<span class="codicon codicon-shield"></span>Override: ON'
         : '<span class="codicon codicon-shield"></span>Override: OFF';
     }
+    if (byId('allOffToggleButton')) {
+      byId('allOffToggleButton').classList.toggle('active', allOff);
+      byId('allOffToggleButton').setAttribute('aria-pressed', String(allOff));
+    }
+    if (byId('surfaceToggleButton')) {
+      byId('surfaceToggleButton').classList.toggle('active', solidMode);
+      byId('surfaceToggleButton').setAttribute('aria-pressed', String(solidMode));
+      byId('surfaceToggleButton').innerHTML = solidMode
+        ? '<span class="codicon codicon-primitive-square"></span>Surface: Solid'
+        : '<span class="codicon codicon-window"></span>Surface: Glass';
+    }
 
     const pageGradient = resolveGradient(`page:${profile.editor.activePage}`) || resolveGradient('app');
-    const masterGradientCss = (pageGradient && !compareMode) ? gradientCss(pageGradient) : 'none';
+    const masterGradientCss = (pageGradient && !compareMode && !allOff) ? gradientCss(pageGradient) : 'none';
     app.style.setProperty('--sg-app-gradient', masterGradientCss);
 
     if (body) {
-      body.style.backgroundImage = blendMode ? 'none' : (masterGradientCss !== 'none' ? masterGradientCss : '');
+      body.style.backgroundImage = (allOff || blendMode) ? 'none' : (masterGradientCss !== 'none' ? masterGradientCss : '');
     }
 
     all('[data-gradient-target]', app).forEach((element) => {
@@ -1488,6 +1564,11 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       const selected = target === profile.editor.activeTarget;
       const assignment = assignmentFor(target);
       element.classList.toggle('selected-target', selected);
+
+      if (allOff) {
+        if (element !== body) element.style.backgroundImage = '';
+        return;
+      }
 
       const isExplicitPanelOverride = assignment.mode === 'gradient' && Boolean(assignment.gradientId);
       const isDetachedSidePanel = element.classList.contains('edge-helper') ||
@@ -1780,6 +1861,11 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     if (row) setTarget(row.dataset.target);
   });
   byId('sampleApp').addEventListener('click', (event) => {
+    const selection = window.getSelection?.();
+    if (selection && selection.toString().trim().length > 0) {
+      return;
+    }
+
     const pageButton = event.target.closest('[data-page-preview]');
     const target = event.target.closest('[data-gradient-target]');
 
@@ -1792,8 +1878,6 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     }
 
     if (target) {
-      event.preventDefault();
-      event.stopPropagation();
       setTarget(target.dataset.gradientTarget);
       if (pageButton) {
         profile.editor.activePage = pageButton.dataset.pagePreview;
@@ -1973,6 +2057,24 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     subtleMode = !subtleMode;
     renderPreview();
   });
+  byId('allOffToggleButton')?.addEventListener('click', () => {
+    commit((draft) => {
+      draft.effects = normalizeEffects(draft.effects);
+      draft.effects.allOff = !draft.effects.allOff;
+    });
+    showToast(profile.effects.allOff
+      ? 'All gradient and glass effects are off — bare base theme.'
+      : 'Gradient and glass effects restored.');
+  });
+  byId('surfaceToggleButton')?.addEventListener('click', () => {
+    commit((draft) => {
+      draft.effects = normalizeEffects(draft.effects);
+      draft.effects.surface = draft.effects.surface === 'solid' ? 'glass' : 'solid';
+    });
+    showToast(profile.effects.surface === 'solid'
+      ? 'Solid surfaces: opaque panels, no backdrop blur.'
+      : 'Glass surfaces: translucent panels with backdrop blur.');
+  });
   byId('pageSelect').addEventListener('change', (event) => {
     profile.editor.activePage = event.target.value;
     profile.editor.activeTarget = `page:${event.target.value}`;
@@ -1989,45 +2091,53 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     scheduleSend();
   }));
 
-  let harmonicIndex = 0;
-  const HARMONIC_PALETTES = [
-    [
-      { color: '#090514', position: 0, opacity: 95 },
-      { color: '#1A0F30', position: 45, opacity: 85 },
-      { color: '#441B6D', position: 75, opacity: 60 },
-      { color: '#9B51E0', position: 100, opacity: 28 }
-    ],
-    [
-      { color: '#050811', position: 0, opacity: 95 },
-      { color: '#0C192E', position: 48, opacity: 85 },
-      { color: '#0D3B66', position: 78, opacity: 55 },
-      { color: '#00E5FF', position: 100, opacity: 25 }
-    ],
-    [
-      { color: '#14080C', position: 0, opacity: 95 },
-      { color: '#29101B', position: 46, opacity: 88 },
-      { color: '#521B33', position: 76, opacity: 60 },
-      { color: '#EB5757', position: 100, opacity: 26 }
-    ],
-    [
-      { color: '#040D0E', position: 0, opacity: 95 },
-      { color: '#092327', position: 46, opacity: 85 },
-      { color: '#0E494D', position: 76, opacity: 55 },
-      { color: '#27AE60', position: 100, opacity: 25 }
-    ],
-    [
-      { color: '#08090C', position: 0, opacity: 95 },
-      { color: '#121622', position: 48, opacity: 88 },
-      { color: '#1E293B', position: 75, opacity: 65 },
-      { color: '#38BDF8', position: 100, opacity: 24 }
-    ],
-    [
-      { color: '#11100F', position: 0, opacity: 95 },
-      { color: '#1C1714', position: 44, opacity: 88 },
-      { color: '#331E15', position: 75, opacity: 60 },
-      { color: '#E86633', position: 100, opacity: 25 }
-    ]
-  ];
+  function mixHex(a, b, t) {
+    const from = hexToRgb(a);
+    const to = hexToRgb(b);
+    return rgbToHex(
+      from.r + (to.r - from.r) * t,
+      from.g + (to.g - from.g) * t,
+      from.b + (to.b - from.b) * t
+    );
+  }
+
+  const randInt = (minimum, maximum) => Math.round(minimum + Math.random() * (maximum - minimum));
+  const pick = (items) => items[Math.floor(Math.random() * items.length)];
+
+  function shuffled(items) {
+    const result = items.slice();
+    for (let index = result.length - 1; index > 0; index -= 1) {
+      const swap = Math.floor(Math.random() * (index + 1));
+      [result[index], result[swap]] = [result[swap], result[index]];
+    }
+    return result;
+  }
+
+  // Builds a randomized four-stop palette from the selected base theme's curated
+  // colors: three mix-and-matched surface stops (ordered into a smooth ramp) plus
+  // an edge stop that sometimes uses the theme's current accent.
+  function harmonizedStops(theme) {
+    const dark = relativeLuminance(theme.background) < 0.2;
+    const pool = shuffled(theme.palette?.length ? theme.palette : [theme.background, theme.card, mixHex(theme.card, theme.accent, 0.3)]);
+    let body = pool.slice(0, 3).sort((a, b) => relativeLuminance(a) - relativeLuminance(b));
+    if (!dark) body = body.reverse();
+    const accentPool = theme.accents?.length ? theme.accents : [theme.accent];
+    const accent = safeHex(Math.random() < 0.5 ? theme.accent : pick(accentPool));
+    if (dark) {
+      return [
+        { color: safeHex(body[0]), position: randInt(0, 8), opacity: randInt(90, 96) },
+        { color: safeHex(body[1]), position: randInt(40, 58), opacity: randInt(80, 90) },
+        { color: mixHex(body[2], accent, 0.35), position: randInt(70, 84), opacity: randInt(50, 66) },
+        { color: accent, position: 100, opacity: randInt(20, 30) }
+      ];
+    }
+    return [
+      { color: safeHex(body[0]), position: randInt(0, 8), opacity: randInt(20, 28) },
+      { color: safeHex(body[1]), position: randInt(36, 50), opacity: randInt(24, 32) },
+      { color: mixHex(body[2], accent, 0.3), position: randInt(68, 82), opacity: randInt(28, 38) },
+      { color: accent, position: 100, opacity: randInt(18, 26) }
+    ];
+  }
 
   byId('flipAngleButton')?.addEventListener('click', () => commit(() => {
     const gradient = ensureTargetGradient();
@@ -2043,13 +2153,14 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     selectedStopIndex = Math.min(selectedStopIndex, gradient.stops.length - 1);
   }, 'Reversed gradient color stop order.'));
 
-  byId('randomHarmonicButton')?.addEventListener('click', () => commit(() => {
-    const gradient = ensureTargetGradient();
-    const palette = HARMONIC_PALETTES[harmonicIndex % HARMONIC_PALETTES.length];
-    harmonicIndex += 1;
-    gradient.stops = clone(palette);
-    selectedStopIndex = 0;
-  }, 'Generated a harmonious glass gradient palette.'));
+  byId('randomHarmonicButton')?.addEventListener('click', () => {
+    const theme = IN_APP_THEMES[baseTheme] || IN_APP_THEMES.oled;
+    commit(() => {
+      const gradient = ensureTargetGradient();
+      gradient.stops = harmonizedStops(theme);
+      selectedStopIndex = 0;
+    }, `Harmonized with ${theme.label}.`);
+  });
 
   byId('revertScopeButton').addEventListener('click', () => commit((draft) => {
     if (draft.editor.activeTarget !== 'app') draft.assignments[draft.editor.activeTarget] = { mode: 'inherit' };

@@ -77,6 +77,25 @@
         "icon": "$(plug)"
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "simpleGradientStudio",
+          "title": "SimpleGradient Studio",
+          "icon": "media/simple-gradient.svg"
+        }
+      ]
+    },
+    "views": {
+      "simpleGradientStudio": [
+        {
+          "type": "webview",
+          "id": "simpleGradient.studioView",
+          "name": "Studio",
+          "icon": "media/simple-gradient.svg"
+        }
+      ]
+    },
     "menus": {
       "commandPalette": [
         {

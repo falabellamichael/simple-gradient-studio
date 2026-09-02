@@ -3,10 +3,20 @@
   background-image: var(--simple-gradient-runtime-layer, none) !important;
 }
 
+/* SimpleRAG wallpapers (built-in icon or user photos) live in --background-image
+   on <html>. Layer them live beneath the gradient, keeping the app's own overlay
+   and fit/position settings; the three image layers line up with the three
+   size/repeat/position entries below. */
 [data-simple-gradient-runtime-surface][data-simple-gradient-has-native] {
   background-image:
     var(--simple-gradient-runtime-layer, none),
-    var(--simple-gradient-runtime-native-image, none) !important;
+    linear-gradient(color-mix(in srgb, var(--background, #14161c) calc(var(--background-overlay, 0.1) * 100%), transparent),
+      color-mix(in srgb, var(--background, #14161c) calc(var(--background-overlay, 0.1) * 100%), transparent)),
+    var(--background-image, none) !important;
+  background-size: cover, cover, var(--background-size, cover) !important;
+  background-repeat: no-repeat, no-repeat, var(--background-repeat, no-repeat) !important;
+  background-position: center, center, var(--background-position, center) !important;
+  background-attachment: fixed, fixed, fixed !important;
 }
 
 .shell[data-simple-gradient-runtime-surface],
@@ -16,55 +26,55 @@
   background-repeat: no-repeat !important;
 }
 
-/* Base Glassmorphism & Panoramic Transparency for SimpleRAG Stage Elements */
-.shell .main-stage,
-.shell .main-stage > .home,
-.shell .home,
-.shell .home.chatting,
-.shell .home-chat,
-.shell .home-hero,
-.shell .expanded-home-chat,
-.shell .page-workspace-layout,
-.shell .workspace,
-.shell .page,
-.shell .chat-container,
-.shell .chat-content,
-.shell .chat-layout,
-.shell .chat-stream,
-.shell .chat-stage,
-.shell .ai-home-container,
-.shell .ai-home,
-.shell #home-view,
-.shell .home-view,
-.shell .expanded-chat-canvas,
-.shell .main-stage > div {
+/* Panoramic Transparency for SimpleRAG Stage Elements (glass and solid modes) */
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .main-stage,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .main-stage>.home,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .home,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .home.chatting,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .home-chat,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .home-hero,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .expanded-home-chat,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .page-workspace-layout,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .workspace,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .page,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .chat-container,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .chat-content,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .chat-layout,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .chat-stream,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .chat-stage,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .ai-home-container,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .ai-home,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell #home-view,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .home-view,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .expanded-chat-canvas,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .main-stage>div {
   background-color: transparent !important;
   background-image: none !important;
 }
 
-/* Side Helper Rails: Left Workspace Rail & Right AI Endpoints */
-.shell .edge-helper.edge-left,
-.shell .edge-helper.edge-left .helper-panel,
-.shell .edge-helper.edge-left .chat-rail,
-.shell .edge-left,
-.shell .edge-helper.edge-right,
-.shell .edge-helper.edge-right .helper-panel,
-.shell .edge-helper.edge-right .endpoint-helper,
-.shell .endpoint-settings,
-.shell .ai-settings-panel,
-.shell .edge-right,
-.shell aside.assistant {
+/* Side Helper Rails: Left Workspace Rail & Right AI Endpoints (glass mode) */
+html[data-simple-gradient-surface="glass"] .shell .edge-helper.edge-left,
+html[data-simple-gradient-surface="glass"] .shell .edge-helper.edge-left .helper-panel,
+html[data-simple-gradient-surface="glass"] .shell .edge-helper.edge-left .chat-rail,
+html[data-simple-gradient-surface="glass"] .shell .edge-left,
+html[data-simple-gradient-surface="glass"] .shell .edge-helper.edge-right,
+html[data-simple-gradient-surface="glass"] .shell .edge-helper.edge-right .helper-panel,
+html[data-simple-gradient-surface="glass"] .shell .edge-helper.edge-right .endpoint-helper,
+html[data-simple-gradient-surface="glass"] .shell .endpoint-settings,
+html[data-simple-gradient-surface="glass"] .shell .ai-settings-panel,
+html[data-simple-gradient-surface="glass"] .shell .edge-right,
+html[data-simple-gradient-surface="glass"] .shell aside.assistant {
   background-color: rgba(14, 16, 22, 0.45) !important;
   backdrop-filter: blur(28px) saturate(140%) !important;
   -webkit-backdrop-filter: blur(28px) saturate(140%) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
-/* Home Welcome Banner in Comfy */
-.shell .home-welcome,
-.shell .main-stage .welcome,
-.shell .main-stage .home-hero {
-  background: rgba(255, 255, 255, 0.07) !important;
+/* Home Welcome Banner in Comfy (glass mode) */
+html[data-simple-gradient-surface="glass"] .shell .home-welcome,
+html[data-simple-gradient-surface="glass"] .shell .main-stage .welcome,
+html[data-simple-gradient-surface="glass"] .shell .main-stage .home-hero {
+  background-color: rgba(255, 255, 255, 0.07) !important;
   backdrop-filter: blur(20px) saturate(130%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(130%) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
@@ -72,11 +82,11 @@
 }
 
 /* Answer Layout Wrapper: Completely transparent so the background shines through */
-.shell .main-stage .answer,
-.shell .answer,
-.shell .main-stage .chat-box,
-.shell .main-stage .chat-history,
-.shell .main-stage .conversation-container {
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .main-stage .answer,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .answer,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .main-stage .chat-box,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .main-stage .chat-history,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"]) .shell .main-stage .conversation-container {
   background: transparent !important;
   background-color: transparent !important;
   background-image: none !important;
@@ -86,13 +96,13 @@
   box-shadow: none !important;
 }
 
-/* Chat Message Bubbles & Cards inside AI Conversation */
-.shell .main-stage .msg-bubble,
-.shell .main-stage .message-row > article,
-.shell .main-stage .chat-card,
-.shell .main-stage .chat-msg-card,
-.shell .main-stage .message-card {
-  background: rgba(16, 18, 24, 0.65) !important;
+/* Chat Message Bubbles & Cards inside AI Conversation (glass mode) */
+html[data-simple-gradient-surface="glass"] .shell .main-stage .msg-bubble,
+html[data-simple-gradient-surface="glass"] .shell .main-stage .message-row>article,
+html[data-simple-gradient-surface="glass"] .shell .main-stage .chat-card,
+html[data-simple-gradient-surface="glass"] .shell .main-stage .chat-msg-card,
+html[data-simple-gradient-surface="glass"] .shell .main-stage .message-card {
+  background-color: rgba(16, 18, 24, 0.65) !important;
   backdrop-filter: blur(24px) saturate(140%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
@@ -100,18 +110,18 @@
   box-shadow: 0 10px 32px rgba(0, 0, 0, 0.25) !important;
 }
 
-/* Prompt and Response details */
-.shell .main-stage .prompt-quote,
-.shell .main-stage .prompt-label {
-  background: rgba(255, 255, 255, 0.04) !important;
+/* Prompt and Response details (glass mode) */
+html[data-simple-gradient-surface="glass"] .shell .main-stage .prompt-quote,
+html[data-simple-gradient-surface="glass"] .shell .main-stage .prompt-label {
+  background-color: rgba(255, 255, 255, 0.04) !important;
   border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-/* Chat Header Controls & Metadata Pills */
-.shell .main-stage .answer > .chat-header button,
-.shell .main-stage .answer .home-new-chat,
-.shell .main-stage .metadata span {
-  background: rgba(255, 255, 255, 0.08) !important;
+/* Chat Header Controls & Metadata Pills (glass mode) */
+html[data-simple-gradient-surface="glass"] .shell .main-stage .answer>.chat-header button,
+html[data-simple-gradient-surface="glass"] .shell .main-stage .answer .home-new-chat,
+html[data-simple-gradient-surface="glass"] .shell .main-stage .metadata span {
+  background-color: rgba(255, 255, 255, 0.08) !important;
   backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
   border: 1px solid rgba(255, 255, 255, 0.10) !important;
@@ -119,10 +129,10 @@
   color: var(--text) !important;
 }
 
-/* Floating Composer in Comfy Home */
-.shell .main-stage .ask,
-.shell .main-stage .home-composer .ask {
-  background: rgba(18, 20, 26, 0.70) !important;
+/* Floating Composer in Comfy Home (glass mode) */
+html[data-simple-gradient-surface="glass"] .shell .main-stage .ask,
+html[data-simple-gradient-surface="glass"] .shell .main-stage .home-composer .ask {
+  background-color: rgba(18, 20, 26, 0.70) !important;
   backdrop-filter: blur(28px) saturate(150%) !important;
   -webkit-backdrop-filter: blur(28px) saturate(150%) !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
@@ -130,11 +140,11 @@
   box-shadow: 0 14px 44px rgba(0, 0, 0, 0.35) !important;
 }
 
-/* 4 Quick Action Tiles */
-.shell .main-stage .quick button,
-.shell .main-stage .quick > button,
-.shell .main-stage .dashboard article {
-  background: rgba(255, 255, 255, 0.07) !important;
+/* 4 Quick Action Tiles (glass mode) */
+html[data-simple-gradient-surface="glass"] .shell .main-stage .quick button,
+html[data-simple-gradient-surface="glass"] .shell .main-stage .quick>button,
+html[data-simple-gradient-surface="glass"] .shell .main-stage .dashboard article {
+  background-color: rgba(255, 255, 255, 0.07) !important;
   backdrop-filter: blur(18px) !important;
   -webkit-backdrop-filter: blur(18px) !important;
   border: 1px solid rgba(255, 255, 255, 0.10) !important;
@@ -143,12 +153,59 @@
   transition: all 0.2s ease !important;
 }
 
-.shell .main-stage .quick button:hover,
-.shell .main-stage .quick > button:hover,
-.shell .main-stage .dashboard article:hover {
-  background: rgba(255, 255, 255, 0.13) !important;
+html[data-simple-gradient-surface="glass"] .shell .main-stage .quick button:hover,
+html[data-simple-gradient-surface="glass"] .shell .main-stage .quick>button:hover,
+html[data-simple-gradient-surface="glass"] .shell .main-stage .dashboard article:hover {
+  background-color: rgba(255, 255, 255, 0.13) !important;
   border-color: rgba(255, 255, 255, 0.22) !important;
   transform: translateY(-2px) !important;
+}
+
+/* Solid surface mode: opaque panels and cards, no backdrop blur */
+html[data-simple-gradient-surface="solid"] .shell .edge-helper.edge-left,
+html[data-simple-gradient-surface="solid"] .shell .edge-helper.edge-left .helper-panel,
+html[data-simple-gradient-surface="solid"] .shell .edge-helper.edge-left .chat-rail,
+html[data-simple-gradient-surface="solid"] .shell .edge-left,
+html[data-simple-gradient-surface="solid"] .shell .edge-helper.edge-right,
+html[data-simple-gradient-surface="solid"] .shell .edge-helper.edge-right .helper-panel,
+html[data-simple-gradient-surface="solid"] .shell .edge-helper.edge-right .endpoint-helper,
+html[data-simple-gradient-surface="solid"] .shell .endpoint-settings,
+html[data-simple-gradient-surface="solid"] .shell .ai-settings-panel,
+html[data-simple-gradient-surface="solid"] .shell .edge-right,
+html[data-simple-gradient-surface="solid"] .shell aside.assistant,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .msg-bubble,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .message-row>article,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .chat-card,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .chat-msg-card,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .message-card,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .ask,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .home-composer .ask {
+  background-color: rgb(16, 18, 24) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html[data-simple-gradient-surface="solid"] .shell .home-welcome,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .welcome,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .home-hero,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .prompt-quote,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .prompt-label,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .answer>.chat-header button,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .answer .home-new-chat,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .metadata span,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .quick button,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .quick>button,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .dashboard article {
+  background-color: rgb(32, 35, 42) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html[data-simple-gradient-surface="solid"] .shell .main-stage .quick button:hover,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .quick>button:hover,
+html[data-simple-gradient-surface="solid"] .shell .main-stage .dashboard article:hover {
+  background-color: rgb(40, 44, 52) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
 }
 
 #simple-gradient-runtime-root,
@@ -200,7 +257,7 @@
   display: none !important;
 }
 
-.simple-gradient-runtime__dialog > header {
+.simple-gradient-runtime__dialog>header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -208,7 +265,7 @@
   margin-bottom: 12px;
 }
 
-.simple-gradient-runtime__dialog > header > div {
+.simple-gradient-runtime__dialog>header>div {
   min-width: 0;
   display: grid;
   gap: 2px;
@@ -311,6 +368,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   #simple-gradient-runtime-root *,
   #simple-gradient-runtime-root *::before,
   #simple-gradient-runtime-root *::after {
@@ -341,16 +399,22 @@
   color: var(--text, #f4f5f7);
 }
 
-.simple-gradient-settings-entry--comfy > header { margin-bottom: 14px; }
+.simple-gradient-settings-entry--comfy>header {
+  margin-bottom: 14px;
+}
+
 .simple-gradient-settings-entry--comfy h3,
-.simple-gradient-settings-entry--comfy p { margin: 0; }
+.simple-gradient-settings-entry--comfy p {
+  margin: 0;
+}
+
 .simple-gradient-settings-entry--comfy p {
   margin-top: 4px;
   color: var(--muted, #aeb3bd);
   font-size: 12px;
 }
 
-.simple-gradient-settings-entry--advanced .settings-section-title > i {
+.simple-gradient-settings-entry--advanced .settings-section-title>i {
   width: 30px;
   height: 30px;
   display: grid;
@@ -377,10 +441,25 @@
   cursor: pointer;
 }
 
-.simple-gradient-settings-entry__open > span:first-child { display: grid; gap: 2px; }
-.simple-gradient-settings-entry__open strong { font-size: 13px; }
-.simple-gradient-settings-entry__open small { color: var(--muted, #aeb3bd); font-size: 11px; }
-.simple-gradient-settings-entry__open > span:last-child { color: var(--accent, #e86633); font-size: 23px; }
+.simple-gradient-settings-entry__open>span:first-child {
+  display: grid;
+  gap: 2px;
+}
+
+.simple-gradient-settings-entry__open strong {
+  font-size: 13px;
+}
+
+.simple-gradient-settings-entry__open small {
+  color: var(--muted, #aeb3bd);
+  font-size: 11px;
+}
+
+.simple-gradient-settings-entry__open>span:last-child {
+  color: var(--accent, #e86633);
+  font-size: 23px;
+}
+
 .simple-gradient-settings-entry__open:hover {
   border-color: var(--accent, #e86633);
   background: color-mix(in srgb, var(--accent, #e86633) 16%, var(--card, #1f2228));
@@ -431,6 +510,7 @@
   border: 0;
   min-height: 0;
 }
+
 #simple-gradient-runtime-root {
   position: fixed;
   inset: 0;
@@ -449,7 +529,9 @@
 #simple-gradient-runtime-root input,
 #simple-gradient-runtime-root select,
 #simple-gradient-runtime-root output,
-#simple-gradient-runtime-root code { font: inherit; }
+#simple-gradient-runtime-root code {
+  font: inherit;
+}
 
 #simple-gradient-runtime-root .simple-gradient-runtime__dialog {
   width: min(1080px, calc(100vw - 48px));
@@ -467,7 +549,10 @@
   pointer-events: auto;
 }
 
-#simple-gradient-runtime-root[data-size="fullscreen"] { padding: 0; }
+#simple-gradient-runtime-root[data-size="fullscreen"] {
+  padding: 0;
+}
+
 #simple-gradient-runtime-root[data-size="fullscreen"] .simple-gradient-runtime__dialog {
   width: 100vw;
   height: 100vh;
@@ -491,20 +576,25 @@
 .simple-gradient-editor__window-actions,
 .simple-gradient-editor__topline,
 .simple-gradient-editor__footer,
-.simple-gradient-editor__footer > div,
+.simple-gradient-editor__footer>div,
 .simple-gradient-editor__angle,
 .simple-gradient-editor__stops-header,
-.simple-gradient-editor__stops-header > div {
+.simple-gradient-editor__stops-header>div {
   display: flex;
   align-items: center;
 }
 
-.simple-gradient-editor__brand { min-width: 0; gap: 11px; }
-#simple-gradient-runtime-root .simple-gradient-runtime__dialog > header > .simple-gradient-editor__brand {
+.simple-gradient-editor__brand {
+  min-width: 0;
+  gap: 11px;
+}
+
+#simple-gradient-runtime-root .simple-gradient-runtime__dialog>header>.simple-gradient-editor__brand {
   display: flex;
   align-items: center;
 }
-.simple-gradient-editor__brand > span {
+
+.simple-gradient-editor__brand>span {
   width: 38px;
   height: 38px;
   flex: 0 0 auto;
@@ -515,19 +605,34 @@
   color: var(--sgr-accent);
   font-size: 25px;
 }
-.simple-gradient-editor__brand > div { min-width: 0; display: grid; gap: 2px; }
-.simple-gradient-editor__brand strong { font-size: 15px; }
+
+.simple-gradient-editor__brand>div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.simple-gradient-editor__brand strong {
+  font-size: 15px;
+}
+
 .simple-gradient-editor__brand small,
 .simple-gradient-editor__topline p,
 .simple-gradient-editor__target-list small,
 .simple-gradient-editor__target-list em,
 .simple-gradient-editor__preview small,
-.simple-gradient-editor__footer output { color: var(--sgr-muted); }
+.simple-gradient-editor__footer output {
+  color: var(--sgr-muted);
+}
 
-.simple-gradient-editor__window-actions { gap: 7px; }
-#simple-gradient-runtime-root .simple-gradient-runtime__dialog > header > .simple-gradient-editor__window-actions {
+.simple-gradient-editor__window-actions {
+  gap: 7px;
+}
+
+#simple-gradient-runtime-root .simple-gradient-runtime__dialog>header>.simple-gradient-editor__window-actions {
   display: flex;
 }
+
 .simple-gradient-editor__window-actions button,
 .simple-gradient-editor__footer button,
 .simple-gradient-editor__stops-header button {
@@ -539,6 +644,7 @@
   color: var(--sgr-text);
   cursor: pointer;
 }
+
 .simple-gradient-editor__window-actions [data-runtime-close] {
   width: 34px;
   padding: 0;
@@ -552,6 +658,7 @@
   padding: 8px 16px;
   border-bottom: 1px solid var(--sgr-border);
 }
+
 .simple-gradient-editor__topline p {
   min-width: 0;
   margin: 0;
@@ -559,6 +666,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 #simple-gradient-runtime-root .simple-gradient-runtime__enabled {
   min-height: 0;
   padding: 0;
@@ -571,12 +679,14 @@
   display: grid;
   grid-template-columns: 250px minmax(0, 1fr);
 }
+
 .simple-gradient-editor__targets,
 .simple-gradient-editor__controls {
   min-height: 0;
   overflow: auto;
   overscroll-behavior: contain;
 }
+
 .simple-gradient-editor__targets {
   padding: 14px;
   border-right: 1px solid var(--sgr-border);
@@ -584,7 +694,13 @@
 }
 
 .simple-gradient-editor__page,
-.simple-gradient-editor__preset { display: grid; gap: 6px; color: var(--sgr-muted); font-weight: 600; }
+.simple-gradient-editor__preset {
+  display: grid;
+  gap: 6px;
+  color: var(--sgr-muted);
+  font-weight: 600;
+}
+
 .simple-gradient-editor__page select,
 .simple-gradient-editor__preset select,
 .simple-gradient-editor__angle input[type="number"],
@@ -595,10 +711,19 @@
   background: var(--sgr-surface-raised);
   color: var(--sgr-text);
 }
-.simple-gradient-editor__page select,
-.simple-gradient-editor__preset select { width: 100%; padding: 6px 30px 6px 9px; }
 
-.simple-gradient-editor__target-list { display: grid; gap: 6px; margin-top: 12px; }
+.simple-gradient-editor__page select,
+.simple-gradient-editor__preset select {
+  width: 100%;
+  padding: 6px 30px 6px 9px;
+}
+
+.simple-gradient-editor__target-list {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+}
+
 .simple-gradient-editor__target-list button {
   min-width: 0;
   display: grid;
@@ -613,17 +738,39 @@
   text-align: left;
   cursor: pointer;
 }
-.simple-gradient-editor__target-list button:hover { background: color-mix(in srgb, var(--sgr-text) 6%, transparent); }
+
+.simple-gradient-editor__target-list button:hover {
+  background: color-mix(in srgb, var(--sgr-text) 6%, transparent);
+}
+
 .simple-gradient-editor__target-list button.active {
   border-color: color-mix(in srgb, var(--sgr-accent) 56%, var(--sgr-border));
   background: color-mix(in srgb, var(--sgr-accent) 13%, var(--sgr-surface));
 }
-.simple-gradient-editor__target-list button > span { min-width: 0; display: grid; gap: 1px; }
-.simple-gradient-editor__target-list strong,
-.simple-gradient-editor__target-list small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.simple-gradient-editor__target-list em { font-size: 9px; font-style: normal; text-transform: uppercase; }
 
-.simple-gradient-editor__controls { padding: 18px; }
+.simple-gradient-editor__target-list button>span {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.simple-gradient-editor__target-list strong,
+.simple-gradient-editor__target-list small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.simple-gradient-editor__target-list em {
+  font-size: 9px;
+  font-style: normal;
+  text-transform: uppercase;
+}
+
+.simple-gradient-editor__controls {
+  padding: 18px;
+}
+
 .simple-gradient-editor__assignment {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -631,7 +778,13 @@
   gap: 18px;
   margin-bottom: 16px;
 }
-.simple-gradient-editor__assignment h2 { margin: 2px 0 0; color: var(--sgr-text); font-size: 20px; }
+
+.simple-gradient-editor__assignment h2 {
+  margin: 2px 0 0;
+  color: var(--sgr-text);
+  font-size: 20px;
+}
+
 .simple-gradient-editor__eyebrow {
   color: var(--sgr-accent);
   font-size: 10px;
@@ -641,7 +794,12 @@
 }
 
 .simple-gradient-editor__modes,
-.simple-gradient-editor__gradient-controls { margin: 0; border: 0; padding: 0; }
+.simple-gradient-editor__gradient-controls {
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
 .simple-gradient-editor__modes {
   display: flex;
   padding: 3px;
@@ -649,8 +807,9 @@
   border-radius: 10px;
   background: var(--sgr-surface);
 }
+
 .simple-gradient-editor__modes legend,
-.simple-gradient-editor__gradient-controls > legend {
+.simple-gradient-editor__gradient-controls>legend {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -658,8 +817,17 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
-.simple-gradient-editor__modes label { cursor: pointer; }
-.simple-gradient-editor__modes input { position: absolute; opacity: 0; pointer-events: none; }
+
+.simple-gradient-editor__modes label {
+  cursor: pointer;
+}
+
+.simple-gradient-editor__modes input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .simple-gradient-editor__modes span {
   min-height: 30px;
   display: grid;
@@ -668,7 +836,11 @@
   border-radius: 7px;
   color: var(--sgr-muted);
 }
-.simple-gradient-editor__modes input:checked + span { background: var(--sgr-accent); color: #fff; }
+
+.simple-gradient-editor__modes input:checked+span {
+  background: var(--sgr-accent);
+  color: #fff;
+}
 
 .simple-gradient-editor__gradient-controls {
   display: grid;
@@ -676,7 +848,11 @@
   gap: 14px 18px;
   transition: opacity 120ms ease;
 }
-.simple-gradient-editor__gradient-controls:disabled { opacity: .42; }
+
+.simple-gradient-editor__gradient-controls:disabled {
+  opacity: .42;
+}
+
 .simple-gradient-editor__preview {
   min-height: 96px;
   display: flex;
@@ -686,7 +862,8 @@
   border-radius: 12px;
   background-color: var(--sgr-surface);
 }
-.simple-gradient-editor__preview > span {
+
+.simple-gradient-editor__preview>span {
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -695,18 +872,58 @@
   background: rgba(0, 0, 0, .52);
   color: #fff;
 }
-.simple-gradient-editor__preview small { color: rgba(255, 255, 255, .74); }
+
+.simple-gradient-editor__preview small {
+  color: rgba(255, 255, 255, .74);
+}
+
 .simple-gradient-editor__angle,
 .simple-gradient-editor__stops-header,
-.simple-gradient-editor__stops { grid-column: 1 / -1; }
-.simple-gradient-editor__angle { gap: 10px; }
-.simple-gradient-editor__angle > label { min-width: 42px; color: var(--sgr-muted); font-weight: 600; }
-.simple-gradient-editor__angle input[type="range"] { min-width: 120px; flex: 1; accent-color: var(--sgr-accent); }
-.simple-gradient-editor__angle input[type="number"] { width: 74px; padding: 5px 7px; }
-.simple-gradient-editor__stops-header { justify-content: space-between; gap: 12px; padding-top: 2px; }
-.simple-gradient-editor__stops-header > div { gap: 8px; }
-.simple-gradient-editor__stops-header span { color: var(--sgr-muted); font-size: 10px; }
-.simple-gradient-editor__stops { display: grid; gap: 7px; }
+.simple-gradient-editor__stops {
+  grid-column: 1 / -1;
+}
+
+.simple-gradient-editor__angle {
+  gap: 10px;
+}
+
+.simple-gradient-editor__angle>label {
+  min-width: 42px;
+  color: var(--sgr-muted);
+  font-weight: 600;
+}
+
+.simple-gradient-editor__angle input[type="range"] {
+  min-width: 120px;
+  flex: 1;
+  accent-color: var(--sgr-accent);
+}
+
+.simple-gradient-editor__angle input[type="number"] {
+  width: 74px;
+  padding: 5px 7px;
+}
+
+.simple-gradient-editor__stops-header {
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 2px;
+}
+
+.simple-gradient-editor__stops-header>div {
+  gap: 8px;
+}
+
+.simple-gradient-editor__stops-header span {
+  color: var(--sgr-muted);
+  font-size: 10px;
+}
+
+.simple-gradient-editor__stops {
+  display: grid;
+  gap: 7px;
+}
+
 .simple-gradient-editor__stop {
   display: grid;
   grid-template-columns: minmax(170px, 1fr) 92px 92px 34px;
@@ -717,9 +934,25 @@
   border-radius: 9px;
   background: color-mix(in srgb, var(--sgr-surface) 80%, transparent);
 }
-.simple-gradient-editor__stop label { min-width: 0; display: grid; gap: 3px; color: var(--sgr-muted); font-size: 10px; }
-.simple-gradient-editor__color { grid-template-columns: auto minmax(0, 1fr) auto !important; align-items: center; gap: 7px !important; }
-.simple-gradient-editor__color > span { grid-column: 1 / -1; }
+
+.simple-gradient-editor__stop label {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  color: var(--sgr-muted);
+  font-size: 10px;
+}
+
+.simple-gradient-editor__color {
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  align-items: center;
+  gap: 7px !important;
+}
+
+.simple-gradient-editor__color>span {
+  grid-column: 1 / -1;
+}
+
 .simple-gradient-editor__color input {
   width: 44px;
   height: 36px;
@@ -728,9 +961,20 @@
   border-radius: 8px;
   background: var(--sgr-surface-raised);
 }
-.simple-gradient-editor__color code { min-width: 0; color: var(--sgr-muted); overflow: hidden; text-overflow: ellipsis; }
-.simple-gradient-editor__stop input[type="number"] { width: 100%; padding: 5px 7px; }
-.simple-gradient-editor__stop > button {
+
+.simple-gradient-editor__color code {
+  min-width: 0;
+  color: var(--sgr-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.simple-gradient-editor__stop input[type="number"] {
+  width: 100%;
+  padding: 5px 7px;
+}
+
+.simple-gradient-editor__stop>button {
   width: 34px;
   height: 36px;
   border: 1px solid var(--sgr-border);
@@ -740,10 +984,18 @@
   font-size: 18px;
   cursor: pointer;
 }
-.simple-gradient-editor__stop > button:hover:not(:disabled) { border-color: #c95555; color: #e87878; }
-.simple-gradient-editor__stop > button:disabled,
+
+.simple-gradient-editor__stop>button:hover:not(:disabled) {
+  border-color: #c95555;
+  color: #e87878;
+}
+
+.simple-gradient-editor__stop>button:disabled,
 .simple-gradient-editor__stops-header button:disabled,
-.simple-gradient-editor__footer button:disabled { opacity: .42; cursor: not-allowed; }
+.simple-gradient-editor__footer button:disabled {
+  opacity: .42;
+  cursor: not-allowed;
+}
 
 .simple-gradient-editor__footer {
   min-height: 58px;
@@ -753,16 +1005,30 @@
   border-top: 1px solid var(--sgr-border);
   background: color-mix(in srgb, var(--sgr-surface) 84%, transparent);
 }
-.simple-gradient-editor__footer output { min-width: 0; margin: 0; overflow-wrap: anywhere; }
-.simple-gradient-editor__footer > div { flex: 0 0 auto; gap: 7px; }
+
+.simple-gradient-editor__footer output {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.simple-gradient-editor__footer>div {
+  flex: 0 0 auto;
+  gap: 7px;
+}
+
 .simple-gradient-editor__footer button.primary {
   border-color: var(--sgr-accent);
   background: var(--sgr-accent);
   color: #fff;
   font-weight: 700;
 }
+
 #simple-gradient-runtime-root button:hover:not(:disabled),
-#simple-gradient-runtime-root select:hover:not(:disabled) { border-color: var(--sgr-accent); }
+#simple-gradient-runtime-root select:hover:not(:disabled) {
+  border-color: var(--sgr-accent);
+}
+
 #simple-gradient-runtime-root :focus-visible,
 .simple-gradient-settings-entry :focus-visible {
   outline: 2px solid var(--sgr-accent, var(--accent, #e86633));
@@ -793,7 +1059,7 @@
   box-shadow: var(--sgr-shadow);
 }
 
-#simple-gradient-runtime-root .simple-gradient-runtime__dialog > header {
+#simple-gradient-runtime-root .simple-gradient-runtime__dialog>header {
   border-bottom: 1px solid var(--sgr-line);
 }
 
@@ -803,7 +1069,7 @@
   background: linear-gradient(90deg, color-mix(in srgb, var(--sgr-surface) 88%, transparent), color-mix(in srgb, var(--sgr-surface-raised) 84%, transparent));
 }
 
-#simple-gradient-runtime-root .simple-gradient-editor__brand > span {
+#simple-gradient-runtime-root .simple-gradient-editor__brand>span {
   width: 40px;
   height: 40px;
   border-radius: 12px;
@@ -861,11 +1127,12 @@
   background:
     linear-gradient(120deg,
       color-mix(in srgb, var(--sgr-accent) 14%, var(--sgr-surface)),
-      color-mix(in srgb, var(--sgr-accent) 8%, transparent)
-    );
+      color-mix(in srgb, var(--sgr-accent) 8%, transparent));
 }
 
-#simple-gradient-runtime-root .simple-gradient-editor__controls { padding: 20px; }
+#simple-gradient-runtime-root .simple-gradient-editor__controls {
+  padding: 20px;
+}
 
 #simple-gradient-runtime-root .simple-gradient-editor__assignment h2 {
   font-size: 21px;
@@ -881,7 +1148,7 @@
   border-radius: 8px;
 }
 
-#simple-gradient-runtime-root .simple-gradient-editor__modes input:checked + span {
+#simple-gradient-runtime-root .simple-gradient-editor__modes input:checked+span {
   background: linear-gradient(120deg, color-mix(in srgb, var(--sgr-accent) 96%, #fff), var(--sgr-accent));
 }
 
@@ -898,7 +1165,7 @@
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sgr-border) 86%, transparent);
 }
 
-#simple-gradient-runtime-root .simple-gradient-editor__preview > span {
+#simple-gradient-runtime-root .simple-gradient-editor__preview>span {
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.58));
   backdrop-filter: blur(5px);
 }
@@ -919,7 +1186,7 @@
   background: color-mix(in srgb, var(--sgr-surface) 86%, transparent);
 }
 
-#simple-gradient-runtime-root .simple-gradient-editor__stop > button {
+#simple-gradient-runtime-root .simple-gradient-editor__stop>button {
   border-radius: 8px;
 }
 
@@ -946,8 +1213,7 @@
   background:
     linear-gradient(135deg,
       color-mix(in srgb, var(--accent, #e86633) 14%, var(--card, #1f2228)),
-      color-mix(in srgb, var(--accent, #e86633) 4%, var(--card, #1f2228))
-    );
+      color-mix(in srgb, var(--accent, #e86633) 4%, var(--card, #1f2228)));
 }
 
 .simple-gradient-settings-entry__open {
@@ -956,8 +1222,7 @@
   background:
     linear-gradient(90deg,
       color-mix(in srgb, var(--accent, #e86633) 10%, var(--card, #1f2228)),
-      color-mix(in srgb, var(--accent, #e86633) 3%, var(--card, #1f2228))
-    );
+      color-mix(in srgb, var(--accent, #e86633) 3%, var(--card, #1f2228)));
 }
 
 .simple-gradient-settings-entry__open:hover {
@@ -966,25 +1231,55 @@
 }
 
 #simple-gradient-runtime-root button:hover:not(:disabled),
-#simple-gradient-runtime-root select:hover:not(:disabled) { border-color: var(--sgr-accent); }
+#simple-gradient-runtime-root select:hover:not(:disabled) {
+  border-color: var(--sgr-accent);
+}
 
 @media (max-width: 800px) {
-  #simple-gradient-runtime-root { padding: 10px; }
-  #simple-gradient-runtime-root .simple-gradient-runtime__dialog { width: calc(100vw - 20px); height: calc(100vh - 20px); }
-  .simple-gradient-editor__workspace { grid-template-columns: 210px minmax(0, 1fr); }
-  .simple-gradient-editor__assignment { grid-template-columns: 1fr; align-items: start; }
-  .simple-gradient-editor__modes { width: fit-content; }
-  .simple-gradient-editor__gradient-controls { grid-template-columns: 1fr; }
+  #simple-gradient-runtime-root {
+    padding: 10px;
+  }
+
+  #simple-gradient-runtime-root .simple-gradient-runtime__dialog {
+    width: calc(100vw - 20px);
+    height: calc(100vh - 20px);
+  }
+
+  .simple-gradient-editor__workspace {
+    grid-template-columns: 210px minmax(0, 1fr);
+  }
+
+  .simple-gradient-editor__assignment {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .simple-gradient-editor__modes {
+    width: fit-content;
+  }
+
+  .simple-gradient-editor__gradient-controls {
+    grid-template-columns: 1fr;
+  }
+
   .simple-gradient-editor__preset,
   .simple-gradient-editor__preview,
   .simple-gradient-editor__angle,
   .simple-gradient-editor__stops-header,
-  .simple-gradient-editor__stops { grid-column: 1; }
-  .simple-gradient-editor__stop { grid-template-columns: minmax(145px, 1fr) 80px 80px 34px; }
+  .simple-gradient-editor__stops {
+    grid-column: 1;
+  }
+
+  .simple-gradient-editor__stop {
+    grid-template-columns: minmax(145px, 1fr) 80px 80px 34px;
+  }
 }
 
 @media (max-width: 580px) {
-  #simple-gradient-runtime-root { padding: 0; }
+  #simple-gradient-runtime-root {
+    padding: 0;
+  }
+
   #simple-gradient-runtime-root .simple-gradient-runtime__dialog {
     width: 100vw;
     height: 100vh;
@@ -992,25 +1287,73 @@
     border: 0;
     border-radius: 0;
   }
-  .simple-gradient-editor__window-actions [data-runtime-expand] { display: none; }
-  .simple-gradient-editor__topline { align-items: flex-start; flex-direction: column; gap: 4px; }
-  .simple-gradient-editor__workspace { display: block; overflow: auto; }
+
+  .simple-gradient-editor__window-actions [data-runtime-expand] {
+    display: none;
+  }
+
+  .simple-gradient-editor__topline {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .simple-gradient-editor__workspace {
+    display: block;
+    overflow: auto;
+  }
+
   .simple-gradient-editor__targets,
-  .simple-gradient-editor__controls { overflow: visible; }
-  .simple-gradient-editor__targets { border-right: 0; border-bottom: 1px solid var(--sgr-border); }
-  .simple-gradient-editor__target-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .simple-gradient-editor__controls { padding: 14px; }
-  .simple-gradient-editor__modes { width: 100%; }
-  .simple-gradient-editor__modes label { flex: 1; }
-  .simple-gradient-editor__stop { grid-template-columns: minmax(0, 1fr) minmax(70px, .45fr) minmax(70px, .45fr) 34px; }
-  .simple-gradient-editor__color code { display: none; }
-  .simple-gradient-editor__footer { align-items: stretch; flex-direction: column; }
-  .simple-gradient-editor__footer > div { display: grid; grid-template-columns: 1fr 1fr; }
-  .simple-gradient-editor__footer button.primary { grid-column: 1 / -1; }
+  .simple-gradient-editor__controls {
+    overflow: visible;
+  }
+
+  .simple-gradient-editor__targets {
+    border-right: 0;
+    border-bottom: 1px solid var(--sgr-border);
+  }
+
+  .simple-gradient-editor__target-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .simple-gradient-editor__controls {
+    padding: 14px;
+  }
+
+  .simple-gradient-editor__modes {
+    width: 100%;
+  }
+
+  .simple-gradient-editor__modes label {
+    flex: 1;
+  }
+
+  .simple-gradient-editor__stop {
+    grid-template-columns: minmax(0, 1fr) minmax(70px, .45fr) minmax(70px, .45fr) 34px;
+  }
+
+  .simple-gradient-editor__color code {
+    display: none;
+  }
+
+  .simple-gradient-editor__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .simple-gradient-editor__footer>div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .simple-gradient-editor__footer button.primary {
+    grid-column: 1 / -1;
+  }
 }
 
 @media print {
-  .simple-gradient-settings-entry { display: none !important; }
+  .simple-gradient-settings-entry {
+    display: none !important;
+  }
 }
-
-

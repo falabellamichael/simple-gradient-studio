@@ -48,16 +48,20 @@ test('normalizer clamps imported values and drops unsafe targets and CSS payload
 });
 
 test('normalizer retains only the supported editor target catalogs', () => {
-  const simpleRag = normalizeProfile({ ...createDefaultProfile(), editor: {
-    ...createDefaultProfile().editor,
-    targetCatalog: 'simplerag'
-  } });
+  const simpleRag = normalizeProfile({
+    ...createDefaultProfile(), editor: {
+      ...createDefaultProfile().editor,
+      targetCatalog: 'simplerag'
+    }
+  });
   assert.equal(simpleRag.editor.targetCatalog, 'simplerag');
 
-  const unsafe = normalizeProfile({ ...createDefaultProfile(), editor: {
-    ...createDefaultProfile().editor,
-    targetCatalog: '<script>'
-  } });
+  const unsafe = normalizeProfile({
+    ...createDefaultProfile(), editor: {
+      ...createDefaultProfile().editor,
+      targetCatalog: '<script>'
+    }
+  });
   assert.equal(unsafe.editor.targetCatalog, 'studio');
 });
 
@@ -79,6 +83,18 @@ test('gradient CSS is linear, bounded, and alpha-aware', () => {
   assert.match(css, /^linear-gradient\(132deg,/);
   assert.match(css, /#FFF9F280 0%/);
   assert.doesNotMatch(css, /url\(/i);
+});
+
+test('effects normalize to safe all-off and surface switches', () => {
+  assert.deepEqual(createDefaultProfile().effects, { allOff: false, surface: 'glass' });
+  assert.deepEqual(
+    normalizeProfile({ effects: { allOff: 'yes', surface: 'crystal' } }).effects,
+    { allOff: false, surface: 'glass' }
+  );
+  assert.deepEqual(
+    normalizeProfile({ effects: { allOff: true, surface: 'solid' } }).effects,
+    { allOff: true, surface: 'solid' }
+  );
 });
 
 test('CSS export contains named variables without arbitrary selectors', () => {

@@ -30,6 +30,18 @@
 
 * {
   box-sizing: border-box;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--sg-accent, #e85a29) 45%, #e85a29);
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background: color-mix(in srgb, var(--sg-accent, #e85a29) 45%, #e85a29);
+  color: #ffffff;
 }
 
 html,
@@ -38,12 +50,53 @@ body {
   height: 100%;
   margin: 0;
   overflow: hidden;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 body {
   background: var(--sg-window);
   color: var(--sg-text);
   font: 12px/1.4 var(--sg-font-ui);
+}
+
+button,
+select,
+.icon-button,
+.mode-button,
+.ghost-button,
+.scope-row,
+.preset-card,
+.stop-rail,
+.angle-knob {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.sample-app,
+.sample-body,
+.exact-workspace-page,
+.workspace,
+.chat-msg-card,
+.chat-msg-body,
+.edge-helper,
+.assistant,
+.sample-editor,
+.sample-inspector,
+.component-grid,
+.doc-card,
+.task-card,
+.email-item,
+.cal-event,
+.thought-box,
+.thought-narrative,
+.ai-summary,
+.bubble,
+.reply-bullet-list,
+.reply-bullet-list li,
+p, span, b, strong, em, small, h1, h2, h3, h4, code, pre, input, textarea {
+  user-select: text !important;
+  -webkit-user-select: text !important;
 }
 
 button,
@@ -2668,6 +2721,158 @@ body[data-view="preview"] .sample-app {
   backdrop-filter: blur(18px) !important;
   -webkit-backdrop-filter: blur(18px) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Solid and All-off surface modes follow the in-app base theme text tokens */
+.sample-app.solid-surfaces,
+.sample-app.all-off {
+  --sg-foreground: var(--in-app-text, #f5f5f7);
+  --sg-muted: var(--in-app-muted, #8e8e93);
+}
+
+/* Solid surface mode: opaque base-theme panels and cards with no backdrop blur.
+   The gradient itself stays applied as an opaque layer behind the surfaces. */
+.sample-app.solid-surfaces .edge-helper,
+.sample-app.solid-surfaces .workspace,
+.sample-app.solid-surfaces .assistant,
+.sample-app.solid-surfaces #app-bar,
+.sample-app.solid-surfaces .ribbon,
+.sample-app.solid-surfaces #list-pane,
+.sample-app.solid-surfaces .content-pane,
+.sample-app.solid-surfaces #ai-sidebar,
+.sample-app.solid-surfaces .sample-navigation,
+.sample-app.solid-surfaces .sample-editor,
+.sample-app.solid-surfaces .sample-inspector,
+.sample-app.solid-surfaces .sample-topbar {
+  background: var(--in-app-card, #0b0b0d) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: var(--in-app-border, #222226) !important;
+  box-shadow: none !important;
+  color: var(--in-app-text, #f5f5f7) !important;
+}
+
+.sample-app.solid-surfaces .chat-msg-card,
+.sample-app.solid-surfaces .home-welcome,
+.sample-app.solid-surfaces .exact-chat-card,
+.sample-app.solid-surfaces .exact-home-composer,
+.sample-app.solid-surfaces .exact-home-tiles button,
+.sample-app.solid-surfaces .doc-card,
+.sample-app.solid-surfaces .task-card,
+.sample-app.solid-surfaces .email-item,
+.sample-app.solid-surfaces .cal-event,
+.sample-app.solid-surfaces .pdf-page-mock,
+.sample-app.solid-surfaces .plugin-card,
+.sample-app.solid-surfaces .settings-tile,
+.sample-app.solid-surfaces .component-card {
+  background: var(--in-app-card, #0b0b0d) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: var(--in-app-border, #222226) !important;
+  box-shadow: none !important;
+  color: var(--in-app-text, #f5f5f7) !important;
+}
+
+.sample-app.solid-surfaces .nav-item {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: var(--in-app-border, #222226) !important;
+  box-shadow: none !important;
+}
+
+.sample-app.solid-surfaces .workspace-format-toolbar,
+.sample-app.solid-surfaces .tasks-toolbar,
+.sample-app.solid-surfaces .email-toolbar,
+.sample-app.solid-surfaces .calendar-toolbar,
+.sample-app.solid-surfaces .pdf-toolbar,
+.sample-app.solid-surfaces .kg-toolbar,
+.sample-app.solid-surfaces .plugins-toolbar,
+.sample-app.solid-surfaces .settings-toolbar {
+  background: var(--in-app-card, #0b0b0d) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: var(--in-app-border, #222226) !important;
+}
+
+/* Master kill switch: every gradient and glass effect is off, showing only the
+   bare in-app base theme without translucency, blur, or shadows. */
+.sample-app.all-off {
+  background-image: none !important;
+  background-color: var(--in-app-bg, #000000) !important;
+  color: var(--in-app-text, #f5f5f7) !important;
+}
+
+.sample-app.all-off .sample-body {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+.sample-app.all-off .edge-helper,
+.sample-app.all-off .workspace,
+.sample-app.all-off .assistant,
+.sample-app.all-off #app-bar,
+.sample-app.all-off .ribbon,
+.sample-app.all-off #list-pane,
+.sample-app.all-off .content-pane,
+.sample-app.all-off #ai-sidebar,
+.sample-app.all-off .sample-navigation,
+.sample-app.all-off .sample-editor,
+.sample-app.all-off .sample-inspector,
+.sample-app.all-off .sample-topbar {
+  background: var(--in-app-card, #0b0b0d) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: var(--in-app-border, #222226) !important;
+  box-shadow: none !important;
+  color: var(--in-app-text, #f5f5f7) !important;
+}
+
+.sample-app.all-off .chat-msg-card,
+.sample-app.all-off .home-welcome,
+.sample-app.all-off .exact-chat-card,
+.sample-app.all-off .exact-home-composer,
+.sample-app.all-off .exact-home-tiles button,
+.sample-app.all-off .doc-card,
+.sample-app.all-off .task-card,
+.sample-app.all-off .email-item,
+.sample-app.all-off .cal-event,
+.sample-app.all-off .pdf-page-mock,
+.sample-app.all-off .plugin-card,
+.sample-app.all-off .settings-tile,
+.sample-app.all-off .component-card {
+  background: var(--in-app-card, #0b0b0d) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: var(--in-app-border, #222226) !important;
+  box-shadow: none !important;
+  color: var(--in-app-text, #f5f5f7) !important;
+}
+
+.sample-app.all-off .nav-item {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: var(--in-app-border, #222226) !important;
+  box-shadow: none !important;
+}
+
+.sample-app.all-off .workspace-format-toolbar,
+.sample-app.all-off .tasks-toolbar,
+.sample-app.all-off .email-toolbar,
+.sample-app.all-off .calendar-toolbar,
+.sample-app.all-off .pdf-toolbar,
+.sample-app.all-off .kg-toolbar,
+.sample-app.all-off .plugins-toolbar,
+.sample-app.all-off .settings-toolbar {
+  background: var(--in-app-card, #0b0b0d) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: var(--in-app-border, #222226) !important;
 }
 
 /* Advanced Outlook-style 3-column preview layout */
