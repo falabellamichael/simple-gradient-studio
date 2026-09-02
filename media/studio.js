@@ -1593,9 +1593,21 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     if (app) {
       app.style.transform = (profile.editor.zoom && profile.editor.zoom !== 100) ? `scale(${profile.editor.zoom / 100})` : '';
       app.style.transformOrigin = 'top center';
+      enableInlineTextEditing(app);
     }
 
     all('[data-page-preview]').forEach((button) => button.classList.toggle('active', button.dataset.pagePreview === profile.editor.activePage));
+  }
+
+  function enableInlineTextEditing(root) {
+    if (!root) return;
+    const textSelectors = 'p, h1, h2, h3, h4, h5, h6, li, .thought-narrative, .chat-msg-body, .nav-item b, .nav-item small, .task-card b, .task-card small, .email-item b, .email-item small, .doc-card b, .doc-card span, .component-card b, .component-card small, .cal-event b, .cal-event small, .chip, .badge-active, .sample-pill, .card-eyebrow, .chat-tokens-stat, .inspector-field span, .scope-card p';
+    root.querySelectorAll(textSelectors).forEach((element) => {
+      if (!element.closest('button, select, [data-page-preview]')) {
+        element.setAttribute('contenteditable', 'true');
+        element.setAttribute('spellcheck', 'false');
+      }
+    });
   }
 
   function renderLibrary() {
@@ -2620,6 +2632,65 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       showToast('Profile ready for SimpleRAG. Apply via VS Code extension or install-simplerag.ps1.');
     }
   });
+
+  const textToolbar = byId('textSelectionToolbar');
+
+  function updateTextSelectionToolbar() {
+    if (!textToolbar) return;
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed || !selection.toString().trim()) {
+      textToolbar.hidden = true;
+      return;
+    }
+
+    const range = selection.getRangeAt(0);
+    const container = range.commonAncestorContainer;
+    const app = byId('sampleApp');
+    if (!app || (!app.contains(container) && !document.querySelector('.preview-region')?.contains(container))) {
+      textToolbar.hidden = true;
+      return;
+    }
+
+    const rect = range.getBoundingClientRect();
+    if (rect.width === 0 && rect.height === 0) {
+      textToolbar.hidden = true;
+      return;
+    }
+
+    textToolbar.hidden = false;
+    const toolbarWidth = textToolbar.offsetWidth || 340;
+    const toolbarHeight = textToolbar.offsetHeight || 36;
+    const left = Math.max(8, Math.min(window.innerWidth - toolbarWidth - 8, rect.left + rect.width / 2 - toolbarWidth / 2));
+    const top = rect.top - toolbarHeight - 8 < 8 ? rect.bottom + 8 : rect.top - toolbarHeight - 8;
+    textToolbar.style.left = `${left}px`;
+    textToolbar.style.top = `${top}px`;
+  }
+
+  document.addEventListener('selectionchange', updateTextSelectionToolbar);
+  document.addEventListener('mouseup', () => setTimeout(updateTextSelectionToolbar, 20));
+  document.addEventListener('keyup', () => setTimeout(updateTextSelectionToolbar, 20));
+
+  if (textToolbar) {
+    textToolbar.addEventListener('mousedown', (event) => {
+      event.preventDefault();
+    });
+
+    textToolbar.addEventListener('click', (event) => {
+      const btn = event.target.closest('button');
+      if (!btn) return;
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (btn.dataset.format) {
+        document.execCommand(btn.dataset.format, false, null);
+      } else if (btn.dataset.color) {
+        document.execCommand('foreColor', false, btn.dataset.color);
+      } else if (btn.dataset.highlight) {
+        document.execCommand('hiliteColor', false, btn.dataset.highlight);
+      }
+      setTimeout(updateTextSelectionToolbar, 10);
+    });
+  }
 
   render();
   host.postMessage({ type: 'ready', view: document.body.dataset.view, protocol: 1 });

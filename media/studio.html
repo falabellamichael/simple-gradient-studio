@@ -529,6 +529,23 @@
       <footer><button id="cancelModalButton" type="button">Cancel</button><button class="primary-action"
           id="updateStopButton" type="button">Update stop</button></footer>
     </section>
+  <div class="text-selection-toolbar" id="textSelectionToolbar" role="toolbar" aria-label="Text Formatting" hidden>
+    <button type="button" class="format-btn" data-format="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+    <button type="button" class="format-btn" data-format="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+    <button type="button" class="format-btn" data-format="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+    <button type="button" class="format-btn" data-format="strikeThrough" title="Strikethrough"><s>S</s></button>
+    <span class="toolbar-divider" aria-hidden="true"></span>
+    <button type="button" class="format-btn color-btn" data-color="#e86633" title="Amber Accent" style="--color-preview: #e86633;"><span class="color-dot"></span></button>
+    <button type="button" class="format-btn color-btn" data-color="#167c8c" title="Cyan Accent" style="--color-preview: #167c8c;"><span class="color-dot"></span></button>
+    <button type="button" class="format-btn color-btn" data-color="#4d7c58" title="Green Accent" style="--color-preview: #4d7c58;"><span class="color-dot"></span></button>
+    <button type="button" class="format-btn color-btn" data-color="#ffffff" title="White / High Contrast" style="--color-preview: #ffffff;"><span class="color-dot"></span></button>
+    <button type="button" class="format-btn color-btn" data-color="#8e8e93" title="Muted Gray" style="--color-preview: #8e8e93;"><span class="color-dot"></span></button>
+    <span class="toolbar-divider" aria-hidden="true"></span>
+    <button type="button" class="format-btn highlight-btn" data-highlight="rgba(232, 102, 51, 0.35)" title="Highlight Amber"><span class="highlight-swatch amber"></span></button>
+    <button type="button" class="format-btn highlight-btn" data-highlight="rgba(22, 124, 140, 0.35)" title="Highlight Cyan"><span class="highlight-swatch cyan"></span></button>
+    <button type="button" class="format-btn highlight-btn" data-highlight="rgba(255, 255, 255, 0.2)" title="Highlight Glass"><span class="highlight-swatch glass"></span></button>
+    <span class="toolbar-divider" aria-hidden="true"></span>
+    <button type="button" class="format-btn" data-format="removeFormat" title="Clear formatting"><span class="codicon codicon-clear-all"></span></button>
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>

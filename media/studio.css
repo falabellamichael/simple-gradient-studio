@@ -4852,3 +4852,85 @@ body[data-view="preview"] .sample-app {
   font-size: 8px;
   color: var(--sg-muted);
 }
+
+/* Floating Text Selection Toolbar */
+.text-selection-toolbar {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 6px;
+  background: var(--sg-panel-raised, #1b1d1d);
+  border: 1px solid var(--sg-border-strong, #454848);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  pointer-events: auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.text-selection-toolbar[hidden] {
+  display: none !important;
+}
+
+.format-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 5px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--sg-text, #f1f3f3);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.format-btn:hover {
+  background: var(--sg-control-hover, #2a2d2d);
+  border-color: var(--sg-border, #343737);
+  color: #ffffff;
+}
+
+.format-btn:active {
+  transform: scale(0.95);
+}
+
+.color-btn .color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-preview);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.highlight-btn .highlight-swatch {
+  width: 14px;
+  height: 10px;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.highlight-swatch.amber { background: rgba(232, 102, 51, 0.6); }
+.highlight-swatch.cyan { background: rgba(22, 124, 140, 0.6); }
+.highlight-swatch.glass { background: rgba(255, 255, 255, 0.3); }
+
+.toolbar-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--sg-border, #343737);
+  margin: 0 2px;
+}
+
+/* Inline Text Editing Active States */
+[contenteditable="true"]:focus {
+  outline: 1px dashed var(--sg-accent, #e85a29) !important;
+  outline-offset: 1px;
+  border-radius: 2px;
+}
