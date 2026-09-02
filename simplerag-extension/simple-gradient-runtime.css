@@ -1600,14 +1600,19 @@ html[data-simple-gradient-autoblend="true"] .outlook-app[data-simple-gradient-ha
 }
 
 html[data-simple-gradient-autoblend="true"] .page-workspace-layout,
+html[data-simple-gradient-autoblend="true"] .main-stage,
+html[data-simple-gradient-autoblend="true"] .workspace,
 html[data-simple-gradient-autoblend="true"] #main-body {
   background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 html[data-simple-gradient-autoblend="true"] .edge-helper,
 html[data-simple-gradient-autoblend="true"] .edge-left,
 html[data-simple-gradient-autoblend="true"] .edge-right,
-html[data-simple-gradient-autoblend="true"] .workspace,
 html[data-simple-gradient-autoblend="true"] .assistant,
 html[data-simple-gradient-autoblend="true"] #app-bar,
 html[data-simple-gradient-autoblend="true"] #nav-pane,
@@ -1621,11 +1626,25 @@ html[data-simple-gradient-autoblend="true"] #ai-sidebar {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
 }
 
+/* Layout wrappers around composer and tiles must NEVER have borders or backgrounds */
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"], [data-simple-gradient-autoblend="true"], [data-simple-gradient-blend="true"]) .shell .main-stage .home-composer,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"], [data-simple-gradient-autoblend="true"], [data-simple-gradient-blend="true"]) .shell .main-stage .composer,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"], [data-simple-gradient-autoblend="true"], [data-simple-gradient-blend="true"]) .shell .main-stage .quick,
+html:is([data-simple-gradient-surface="glass"], [data-simple-gradient-surface="solid"], [data-simple-gradient-autoblend="true"], [data-simple-gradient-blend="true"]) .shell .main-stage .dashboard {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
 html[data-simple-gradient-autoblend="true"] .chat-msg-card,
 html[data-simple-gradient-autoblend="true"] .chat-card,
 html[data-simple-gradient-autoblend="true"] .message-card,
 html[data-simple-gradient-autoblend="true"] .msg-bubble,
-html[data-simple-gradient-autoblend="true"] .home-composer,
 html[data-simple-gradient-autoblend="true"] .quick button,
 html[data-simple-gradient-autoblend="true"] .quick>button,
 html[data-simple-gradient-autoblend="true"] .home-tiles button,

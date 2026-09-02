@@ -2726,7 +2726,6 @@ body[data-view="preview"] .sample-app {
 }
 
 .sample-app.unified-blend .edge-helper,
-.sample-app.unified-blend .workspace,
 .sample-app.unified-blend .assistant,
 .sample-app.unified-blend #app-bar,
 .sample-app.unified-blend .ribbon,
@@ -2743,9 +2742,21 @@ body[data-view="preview"] .sample-app {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
 }
 
+.sample-app.unified-blend .workspace,
+.sample-app.unified-blend .sample-body,
+.sample-app.unified-blend .page-workspace-layout,
+.sample-app.unified-blend .exact-home-composer {
+  background: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
 .sample-app.unified-blend .exact-chat-card,
 .sample-app.unified-blend .chat-msg-card,
-.sample-app.unified-blend .exact-home-composer,
 .sample-app.unified-blend .exact-home-tiles button,
 .sample-app.unified-blend .doc-card,
 .sample-app.unified-blend .task-card,
