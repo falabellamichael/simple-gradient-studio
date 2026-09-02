@@ -7,7 +7,7 @@
   <meta http-equiv="Content-Security-Policy"
     content="default-src 'none'; img-src {{cspSource}} data:; font-src {{cspSource}}; style-src {{cspSource}}; script-src 'nonce-{{nonce}}';">
   <link rel="stylesheet" href="{{codiconUri}}">
-  <link rel="stylesheet" href="{{cssUri}}?v=14">
+  <link rel="stylesheet" href="{{cssUri}}?v=15">
   <title>SimpleGradient Studio</title>
 </head>
 
@@ -529,6 +529,8 @@
       <footer><button id="cancelModalButton" type="button">Cancel</button><button class="primary-action"
           id="updateStopButton" type="button">Update stop</button></footer>
     </section>
+  </div>
+
   <div class="text-selection-toolbar" id="textSelectionToolbar" role="toolbar" aria-label="Text Formatting" hidden>
     <button type="button" class="format-btn" data-format="bold" title="Bold (Ctrl+B)"><b>B</b></button>
     <button type="button" class="format-btn" data-format="italic" title="Italic (Ctrl+I)"><i>I</i></button>
@@ -561,7 +563,7 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-  <script nonce="{{nonce}}" src="{{scriptUri}}?v=14"></script>
+  <script nonce="{{nonce}}" src="{{scriptUri}}?v=15"></script>
 </body>
 
 </html>

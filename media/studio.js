@@ -2734,32 +2734,47 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
   function updateTextSelectionToolbar() {
     if (!textToolbar) return;
     const selection = window.getSelection();
-    if (!selection || selection.isCollapsed || !selection.toString().trim()) {
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
       textToolbar.hidden = true;
+      textToolbar.setAttribute('hidden', '');
+      return;
+    }
+
+    const text = selection.toString().trim();
+    if (!text) {
+      textToolbar.hidden = true;
+      textToolbar.setAttribute('hidden', '');
       return;
     }
 
     const range = selection.getRangeAt(0);
-    const container = range.commonAncestorContainer;
-    const app = byId('sampleApp');
-    if (!app || (!app.contains(container) && !document.querySelector('.preview-region')?.contains(container))) {
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA') && activeEl.closest('.stop-modal, .app-bar')) {
       textToolbar.hidden = true;
+      textToolbar.setAttribute('hidden', '');
       return;
     }
 
     const rect = range.getBoundingClientRect();
     if (rect.width === 0 && rect.height === 0) {
       textToolbar.hidden = true;
+      textToolbar.setAttribute('hidden', '');
       return;
     }
 
     textToolbar.hidden = false;
-    const toolbarWidth = textToolbar.offsetWidth || 340;
+    textToolbar.removeAttribute('hidden');
+    textToolbar.style.display = 'flex';
+
+    const toolbarWidth = textToolbar.offsetWidth || 440;
     const toolbarHeight = textToolbar.offsetHeight || 36;
-    const left = Math.max(8, Math.min(window.innerWidth - toolbarWidth - 8, rect.left + rect.width / 2 - toolbarWidth / 2));
-    const top = rect.top - toolbarHeight - 8 < 8 ? rect.bottom + 8 : rect.top - toolbarHeight - 8;
-    textToolbar.style.left = `${left}px`;
-    textToolbar.style.top = `${top}px`;
+    const left = Math.max(10, Math.min(window.innerWidth - toolbarWidth - 10, rect.left + rect.width / 2 - toolbarWidth / 2));
+    const top = (rect.top - toolbarHeight - 10 < 10)
+      ? Math.min(window.innerHeight - toolbarHeight - 10, rect.bottom + 10)
+      : (rect.top - toolbarHeight - 10);
+
+    textToolbar.style.left = `${Math.round(left)}px`;
+    textToolbar.style.top = `${Math.round(top)}px`;
   }
 
   document.addEventListener('selectionchange', updateTextSelectionToolbar);

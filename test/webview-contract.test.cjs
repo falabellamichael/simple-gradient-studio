@@ -20,7 +20,7 @@ const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'))
 test('webview has a restrictive CSP and nonce-backed external script', () => {
   assert.match(html, /default-src 'none'/);
   assert.match(html, /script-src 'nonce-\{\{nonce\}\}'/);
-  assert.match(html, /<script nonce="\{\{nonce\}\}" src="\{\{scriptUri\}\}\?v=14"><\/script>/);
+  assert.match(html, /<script nonce="\{\{nonce\}\}" src="\{\{scriptUri\}\}\?v=\d+"><\/script>/);
   assert.doesNotMatch(html, /unsafe-inline|unsafe-eval/);
 });
 
