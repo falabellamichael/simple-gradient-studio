@@ -73,6 +73,7 @@ select,
   -webkit-user-select: none;
 }
 
+/* Granular Text Selection: Sentences, Paragraphs, Headings & Code */
 .sample-app,
 .sample-body,
 .exact-workspace-page,
@@ -94,9 +95,59 @@ select,
 .bubble,
 .reply-bullet-list,
 .reply-bullet-list li,
-p, span, b, strong, em, small, h1, h2, h3, h4, code, pre, input, textarea {
+.plugin-card,
+.settings-tile,
+.scope-card,
+.inspector-field,
+.property-card,
+.component-card,
+p, span, b, strong, em, small, h1, h2, h3, h4, h5, h6, li, code, pre, input, textarea {
   user-select: text !important;
   -webkit-user-select: text !important;
+  cursor: text;
+}
+
+/* Individual Selectable Paragraphs & Sentences */
+.reply-bullet-list li,
+.thought-narrative,
+.chat-msg-body p,
+.home-welcome p,
+.plugin-card p,
+.settings-tile p,
+.sample-editor p,
+.scope-card p,
+.inspector-field span,
+.property-card span {
+  display: block;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  cursor: text;
+}
+
+/* Single-Click Copyable Tokens (Individual badges, chips, hex codes & stats) */
+.chip,
+.badge-active,
+.sample-pill,
+.chat-tokens-stat,
+.card-eyebrow,
+.time-label,
+.scope-chip,
+.tag-chips .chip,
+.agent-mode-tag,
+.chat-msg-footer span,
+#contrastRatio,
+#footerContrast,
+#zoomOutput,
+#selectedContextName,
+#selectedContextMode,
+#inheritancePath b,
+#modalDescription,
+.unit,
+code,
+output {
+  user-select: all !important;
+  -webkit-user-select: all !important;
+  cursor: pointer;
 }
 
 button,
