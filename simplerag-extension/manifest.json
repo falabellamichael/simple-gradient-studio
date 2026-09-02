@@ -15,20 +15,20 @@
     },
     {
       "path": "simple-gradient-studio-bundle.js",
-      "sha256": "4a6a6a2f054293f45db97b88112d74b9c62d1e436bbf3914ef667f0ba2ead647",
-      "size": 438542
+      "sha256": "48177212582e721bcb85f84a48a9b9be46b5384b84d985fd380c368769a46c2e",
+      "size": 439798
     },
     {
       "path": "simple-gradient-runtime.js",
-      "sha256": "6a8bc1be5d88448db47058c96bbf55d95d5ea1930ba5ec540db24da48660fdf4",
-      "size": 84745
+      "sha256": "dc52c29ca3f1688187c90499912c436f2dce112781dc01b77e4f30f79dafb4eb",
+      "size": 86418
     }
   ],
   "styles": [
     {
       "path": "simple-gradient-runtime.css",
-      "sha256": "7ddda5b5ae6d3726184f92eaf761850f7d0c01a335ed3536ea5356733aadd7d6",
-      "size": 43554
+      "sha256": "4b450494a23050e9a73f5f28d4fe35b59b5728873fb58033daa6b8c70f71b980",
+      "size": 47042
     }
   ]
 }

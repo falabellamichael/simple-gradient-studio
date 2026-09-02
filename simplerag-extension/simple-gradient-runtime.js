@@ -338,6 +338,21 @@
     return Object.keys(result).length ? result : undefined;
   }
 
+  function normalizeTextStyles(value) {
+    if (!value || typeof value !== 'object') return undefined;
+    const result = {};
+    for (const [key, val] of Object.entries(value)) {
+      if (typeof key === 'string' && SAFE_ID.test(key) && val && typeof val === 'object') {
+        result[key] = {
+          textGradient: typeof val.textGradient === 'string' && val.textGradient.length < 500 ? val.textGradient : undefined,
+          color: typeof val.color === 'string' && SAFE_HEX.test(String(val.color)) ? String(val.color).toUpperCase() : undefined,
+          glow: val.glow === true
+        };
+      }
+    }
+    return Object.keys(result).length ? result : undefined;
+  }
+
   function normalizeProfile(value) {
     const fallback = clone(DEFAULT_PROFILE);
     if (!value || typeof value !== 'object') return fallback;
@@ -403,6 +418,7 @@
       },
       effects: normalizeEffects(value.effects),
       typography: normalizeTypography(value.typography),
+      textStyles: normalizeTextStyles(value.textStyles),
       customPages: normalizeCustomPages(value.customPages)
     };
   }
@@ -899,10 +915,27 @@
       documentObject.documentElement.setAttribute('data-simple-gradient-manual-override', String(state.manualOverride !== false));
       documentObject.documentElement.setAttribute('data-simple-gradient-surface', surfaceMode);
       documentObject.documentElement.setAttribute('data-simple-gradient-active', String(state.enabled && !effects.allOff));
-      const textGrad = profile.typography?.textGradient || gradientToCss(profile.gradients[profile.assignments.app?.gradientId] || Object.values(profile.gradients)[0]);
-      if (textGrad && textGrad !== 'none' && !effects.allOff && state.enabled) {
+
+      const categories = ['assistant', 'heading', 'brand', 'cards', 'navigation', 'workspace'];
+      for (const cat of categories) {
+        const catStyle = profile.textStyles?.[cat];
+        if (catStyle?.textGradient && state.enabled && !effects.allOff) {
+          documentObject.documentElement.setAttribute(`data-sg-text-${cat}`, 'gradient');
+          documentObject.documentElement.style.setProperty(`--sg-text-${cat}-gradient`, catStyle.textGradient);
+        } else if (catStyle?.color && state.enabled && !effects.allOff) {
+          documentObject.documentElement.setAttribute(`data-sg-text-${cat}`, 'color');
+          documentObject.documentElement.style.setProperty(`--sg-text-${cat}-color`, catStyle.color);
+        } else {
+          documentObject.documentElement.removeAttribute(`data-sg-text-${cat}`);
+          documentObject.documentElement.style.removeProperty(`--sg-text-${cat}-gradient`);
+          documentObject.documentElement.style.removeProperty(`--sg-text-${cat}-color`);
+        }
+      }
+
+      const defaultTextGrad = profile.typography?.textGradient;
+      if (defaultTextGrad && defaultTextGrad !== 'none' && !effects.allOff && state.enabled) {
         documentObject.documentElement.setAttribute('data-simple-gradient-text', 'gradient');
-        documentObject.documentElement.style.setProperty('--simple-gradient-text-gradient', textGrad);
+        documentObject.documentElement.style.setProperty('--simple-gradient-text-gradient', defaultTextGrad);
       } else {
         documentObject.documentElement.removeAttribute('data-simple-gradient-text');
         documentObject.documentElement.style.removeProperty('--simple-gradient-text-gradient');

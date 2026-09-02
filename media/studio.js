@@ -2680,6 +2680,18 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     return savedRange;
   }
 
+  function detectSemanticCategory(node) {
+    if (!node) return 'assistant';
+    const el = node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement;
+    if (!el) return 'assistant';
+    if (el.closest('.sample-assistant, .assistant, .chat-msg-body, .thought-narrative, .chat-panel, .chat-column')) return 'assistant';
+    if (el.closest('h1, h2, .home-welcome, .hero-title, .app-title')) return 'heading';
+    if (el.closest('.sample-cards, .component-card, .task-card, .doc-card, .email-item, .card-item')) return 'cards';
+    if (el.closest('.sample-navigation, .nav-item, #app-bar, .topbar nav, .nav-pane')) return 'navigation';
+    if (el.closest('.brand, .brand-name, .chat-title-brand')) return 'brand';
+    return 'assistant';
+  }
+
   function applyTextGradient(gradientString) {
     const range = getActiveOrSavedRange();
     if (!range) {
@@ -2688,9 +2700,13 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     }
 
     const gradCss = gradientString === 'current' ? gradientCss(activeGradient()) : gradientString;
+    const category = detectSemanticCategory(range.commonAncestorContainer);
 
-    profile.typography = profile.typography || {};
-    profile.typography.textGradient = gradCss;
+    profile.textStyles = profile.textStyles || {};
+    profile.textStyles[category] = {
+      ...(profile.textStyles[category] || {}),
+      textGradient: gradCss
+    };
     scheduleSend();
 
     const selectedText = range.toString();
@@ -2719,7 +2735,7 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       saveCurrentPageCustomContent();
     }
 
-    showToast('Applied gradient text.');
+    showToast(`Applied gradient to ${category} text.`);
   }
 
   function applyTextColor(colorHex) {
@@ -2729,8 +2745,13 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       return;
     }
 
-    profile.typography = profile.typography || {};
-    profile.typography.accentColor = colorHex;
+    const category = detectSemanticCategory(range.commonAncestorContainer);
+
+    profile.textStyles = profile.textStyles || {};
+    profile.textStyles[category] = {
+      ...(profile.textStyles[category] || {}),
+      color: colorHex
+    };
     scheduleSend();
 
     const selectedText = range.toString();
@@ -2759,7 +2780,7 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       saveCurrentPageCustomContent();
     }
 
-    showToast(`Applied color ${colorHex}.`);
+    showToast(`Applied color to ${category} text.`);
   }
 
   function applyTextGlow(glowType) {
@@ -2769,8 +2790,13 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       return;
     }
 
-    profile.typography = profile.typography || {};
-    profile.typography.glow = true;
+    const category = detectSemanticCategory(range.commonAncestorContainer);
+
+    profile.textStyles = profile.textStyles || {};
+    profile.textStyles[category] = {
+      ...(profile.textStyles[category] || {}),
+      glow: true
+    };
     scheduleSend();
 
     const selectedText = range.toString();
@@ -2798,7 +2824,7 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       // fallback
     }
 
-    showToast('Applied neon glow.');
+    showToast(`Applied neon glow to ${category} text.`);
   }
 
   function clearTextFormatting() {

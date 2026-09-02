@@ -33,6 +33,12 @@ export interface GradientTypography {
   glow?: boolean;
 }
 
+export interface TargetTextStyle {
+  textGradient?: string;
+  color?: string;
+  glow?: boolean;
+}
+
 export interface GradientProfile {
   schema: typeof PROFILE_SCHEMA;
   version: typeof PROFILE_VERSION;
@@ -48,6 +54,7 @@ export interface GradientProfile {
   };
   effects: GradientEffects;
   typography?: GradientTypography;
+  textStyles?: Record<string, TargetTextStyle>;
   customPages?: Record<string, string>;
 }
 
@@ -255,6 +262,22 @@ function normalizeCustomPages(raw: unknown): Record<string, string> | undefined 
   return Object.keys(result).length ? result : undefined;
 }
 
+function normalizeTextStyles(raw: unknown): Record<string, TargetTextStyle> | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const result: Record<string, TargetTextStyle> = {};
+  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof key === 'string' && SAFE_ID.test(key) && value && typeof value === 'object') {
+      const v = value as Record<string, unknown>;
+      result[key] = {
+        textGradient: typeof v.textGradient === 'string' && v.textGradient.length < 500 ? v.textGradient : undefined,
+        color: typeof v.color === 'string' && SAFE_HEX.test(String(v.color)) ? String(v.color).toUpperCase() : undefined,
+        glow: v.glow === true
+      };
+    }
+  }
+  return Object.keys(result).length ? result : undefined;
+}
+
   return {
     schema: PROFILE_SCHEMA,
     version: PROFILE_VERSION,
@@ -270,6 +293,7 @@ function normalizeCustomPages(raw: unknown): Record<string, string> | undefined 
     },
     effects: normalizeEffects(raw.effects),
     typography: normalizeTypography((raw as Record<string, unknown>).typography),
+    textStyles: normalizeTextStyles((raw as Record<string, unknown>).textStyles),
     customPages: normalizeCustomPages((raw as Record<string, unknown>).customPages)
   };
 }

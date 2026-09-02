@@ -1382,6 +1382,84 @@ html[data-simple-gradient-text="gradient"] #reading-pane h1 {
   display: inline-block;
 }
 
+/* AI Assistant & Response Text (Granular Target) */
+html[data-sg-text-assistant="gradient"] .assistant .chat-msg-body,
+html[data-sg-text-assistant="gradient"] .assistant .thought-narrative,
+html[data-sg-text-assistant="gradient"] .assistant p,
+html[data-sg-text-assistant="gradient"] .assistant li,
+html[data-sg-text-assistant="gradient"] #ai-sidebar .ai-chat-surface p,
+html[data-sg-text-assistant="gradient"] #ai-sidebar .chat-message,
+html[data-sg-text-assistant="gradient"] #ai-sidebar .thought-narrative {
+  background-image: var(--sg-text-assistant-gradient) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  display: inline;
+}
+
+html[data-sg-text-assistant="color"] .assistant .chat-msg-body,
+html[data-sg-text-assistant="color"] .assistant .thought-narrative,
+html[data-sg-text-assistant="color"] #ai-sidebar .chat-message {
+  color: var(--sg-text-assistant-color) !important;
+  -webkit-text-fill-color: var(--sg-text-assistant-color) !important;
+}
+
+/* Headings & Hero Titles (Granular Target) */
+html[data-sg-text-heading="gradient"] .home-welcome h1,
+html[data-sg-text-heading="gradient"] .home-hero h1,
+html[data-sg-text-heading="gradient"] .hero-title,
+html[data-sg-text-heading="gradient"] .main-stage h1,
+html[data-sg-text-heading="gradient"] .page-workspace-layout h1,
+html[data-sg-text-heading="gradient"] .outlook-app .app-title h1,
+html[data-sg-text-heading="gradient"] .outlook-app .hero-heading,
+html[data-sg-text-heading="gradient"] #reading-pane h1 {
+  background-image: var(--sg-text-heading-gradient) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  display: inline-block;
+}
+
+html[data-sg-text-heading="color"] .home-welcome h1,
+html[data-sg-text-heading="color"] .home-hero h1,
+html[data-sg-text-heading="color"] .hero-title,
+html[data-sg-text-heading="color"] .main-stage h1,
+html[data-sg-text-heading="color"] .outlook-app .app-title h1 {
+  color: var(--sg-text-heading-color) !important;
+  -webkit-text-fill-color: var(--sg-text-heading-color) !important;
+}
+
+/* Cards & Modals (Granular Target) */
+html[data-sg-text-cards="gradient"] .task-card b,
+html[data-sg-text-cards="gradient"] .doc-card b,
+html[data-sg-text-cards="gradient"] .email-item b,
+html[data-sg-text-cards="gradient"] .cal-event b,
+html[data-sg-text-cards="gradient"] .component-card b,
+html[data-sg-text-cards="gradient"] #reading-pane .plugin-card b,
+html[data-sg-text-cards="gradient"] #reading-pane .settings-card b {
+  background-image: var(--sg-text-cards-gradient) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  display: inline-block;
+}
+
+/* Navigation & Badges (Granular Target) */
+html[data-sg-text-navigation="gradient"] .sample-navigation .nav-item b,
+html[data-sg-text-navigation="gradient"] .topbar nav button,
+html[data-sg-text-navigation="gradient"] #app-bar .app-icon,
+html[data-sg-text-navigation="gradient"] #nav-pane .nav-item {
+  background-image: var(--sg-text-navigation-gradient) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  display: inline-block;
+}
+
 /* Custom Text Selection Highlight in SimpleRAG */
 html[data-simple-gradient-active="true"] ::selection {
   background: color-mix(in srgb, var(--accent, #e86633) 45%, #e86633) !important;
