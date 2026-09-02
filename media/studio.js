@@ -2653,70 +2653,88 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
   });
 
   const textToolbar = byId('textSelectionToolbar');
+  let savedRange = null;
+  let isToolbarInteracting = false;
+
+  function getActiveOrSavedRange() {
+    const selection = window.getSelection();
+    if (selection && !selection.isCollapsed && selection.rangeCount > 0 && selection.toString().trim()) {
+      return selection.getRangeAt(0);
+    }
+    return savedRange;
+  }
 
   function applyTextGradient(gradientString) {
-    const selection = window.getSelection();
-    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
-    const range = selection.getRangeAt(0);
+    const range = getActiveOrSavedRange();
+    if (!range) {
+      showToast('Please highlight some text first.');
+      return;
+    }
+
     const gradCss = gradientString === 'current' ? gradientCss(activeGradient()) : gradientString;
 
     profile.typography = profile.typography || {};
     profile.typography.textGradient = gradCss;
     scheduleSend();
 
-    const selectedText = selection.toString();
+    const selectedText = range.toString();
     if (!selectedText) return;
 
-    const span = document.createElement('span');
-    span.className = 'sg-gradient-text';
-    span.style.setProperty('background-image', gradCss, 'important');
-    span.style.setProperty('background', gradCss, 'important');
-    span.style.setProperty('-webkit-background-clip', 'text', 'important');
-    span.style.setProperty('-webkit-text-fill-color', 'transparent', 'important');
-    span.style.setProperty('background-clip', 'text', 'important');
-    span.style.setProperty('color', 'transparent', 'important');
-    span.style.setProperty('display', 'inline', 'important');
-    span.style.setProperty('font-weight', 'bold', 'important');
-
     try {
-      span.appendChild(range.extractContents());
+      const span = document.createElement('span');
+      span.className = 'sg-gradient-text';
+      span.style.cssText = `background-image: ${gradCss} !important; background: ${gradCss} !important; -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; background-clip: text !important; color: transparent !important; display: inline !important; font-weight: bold !important;`;
+
+      const contents = range.extractContents();
+      span.appendChild(contents);
       range.insertNode(span);
-      selection.removeAllRanges();
-      const newRange = document.createRange();
-      newRange.selectNodeContents(span);
-      selection.addRange(newRange);
+
+      const sel = window.getSelection();
+      if (sel) {
+        sel.removeAllRanges();
+        const newRange = document.createRange();
+        newRange.selectNodeContents(span);
+        sel.addRange(newRange);
+        savedRange = newRange.cloneRange();
+      }
     } catch {
       document.execCommand('insertHTML', false, `<span class="sg-gradient-text" style="background: ${gradCss} !important; -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; background-clip: text !important; color: transparent !important; display: inline !important; font-weight: bold !important;">${selectedText}</span>`);
     }
 
-    showToast('Applied gradient to selected text.');
+    showToast('Applied gradient text.');
   }
 
   function applyTextColor(colorHex) {
-    const selection = window.getSelection();
-    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
-    const range = selection.getRangeAt(0);
+    const range = getActiveOrSavedRange();
+    if (!range) {
+      showToast('Please highlight some text first.');
+      return;
+    }
 
     profile.typography = profile.typography || {};
     profile.typography.accentColor = colorHex;
     scheduleSend();
 
-    const selectedText = selection.toString();
+    const selectedText = range.toString();
     if (!selectedText) return;
 
-    const span = document.createElement('span');
-    span.className = 'sg-color-text';
-    span.style.setProperty('color', colorHex, 'important');
-    span.style.setProperty('-webkit-text-fill-color', colorHex, 'important');
-    span.style.setProperty('display', 'inline', 'important');
-
     try {
-      span.appendChild(range.extractContents());
+      const span = document.createElement('span');
+      span.className = 'sg-color-text';
+      span.style.cssText = `color: ${colorHex} !important; -webkit-text-fill-color: ${colorHex} !important; display: inline !important;`;
+
+      const contents = range.extractContents();
+      span.appendChild(contents);
       range.insertNode(span);
-      selection.removeAllRanges();
-      const newRange = document.createRange();
-      newRange.selectNodeContents(span);
-      selection.addRange(newRange);
+
+      const sel = window.getSelection();
+      if (sel) {
+        sel.removeAllRanges();
+        const newRange = document.createRange();
+        newRange.selectNodeContents(span);
+        sel.addRange(newRange);
+        savedRange = newRange.cloneRange();
+      }
     } catch {
       document.execCommand('foreColor', false, colorHex);
     }
@@ -2725,45 +2743,57 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
   }
 
   function applyTextGlow(glowType) {
-    const selection = window.getSelection();
-    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
-    const range = selection.getRangeAt(0);
+    const range = getActiveOrSavedRange();
+    if (!range) {
+      showToast('Please highlight some text first.');
+      return;
+    }
 
     profile.typography = profile.typography || {};
     profile.typography.glow = true;
     scheduleSend();
 
-    const selectedText = selection.toString();
+    const selectedText = range.toString();
     if (!selectedText) return;
 
-    const span = document.createElement('span');
-    span.className = 'sg-glow-text';
-    span.style.setProperty('text-shadow', '0 0 10px rgba(232, 102, 51, 0.9), 0 0 20px rgba(232, 102, 51, 0.6)', 'important');
-    span.style.setProperty('display', 'inline', 'important');
-
     try {
-      span.appendChild(range.extractContents());
+      const span = document.createElement('span');
+      span.className = 'sg-glow-text';
+      span.style.cssText = `text-shadow: 0 0 10px rgba(232, 102, 51, 0.95), 0 0 22px rgba(232, 102, 51, 0.65) !important; display: inline !important;`;
+
+      const contents = range.extractContents();
+      span.appendChild(contents);
       range.insertNode(span);
-      selection.removeAllRanges();
-      const newRange = document.createRange();
-      newRange.selectNodeContents(span);
-      selection.addRange(newRange);
+
+      const sel = window.getSelection();
+      if (sel) {
+        sel.removeAllRanges();
+        const newRange = document.createRange();
+        newRange.selectNodeContents(span);
+        sel.addRange(newRange);
+        savedRange = newRange.cloneRange();
+      }
     } catch {
       // fallback
     }
 
-    showToast('Applied neon glow to selected text.');
+    showToast('Applied neon glow.');
   }
 
   function clearTextFormatting() {
-    const selection = window.getSelection();
-    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
-    const range = selection.getRangeAt(0);
+    const range = getActiveOrSavedRange();
+    if (!range) return;
+
+    const sel = window.getSelection();
+    if (sel) {
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+    document.execCommand('removeFormat', false, null);
+
     const container = range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE 
       ? range.commonAncestorContainer 
       : range.commonAncestorContainer.parentElement;
-
-    document.execCommand('removeFormat', false, null);
 
     if (container) {
       const styledSpans = Array.from(container.querySelectorAll('.sg-gradient-text, .sg-color-text, .sg-glow-text, span[style]'));
@@ -2779,8 +2809,24 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     showToast('Cleared formatting.');
   }
 
+  function applyRichFormat(formatCommand, value) {
+    const range = getActiveOrSavedRange();
+    if (!range) return;
+    const sel = window.getSelection();
+    if (sel) {
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+    document.execCommand(formatCommand, false, value);
+    if (sel && sel.rangeCount > 0) {
+      savedRange = sel.getRangeAt(0).cloneRange();
+    }
+  }
+
   function updateTextSelectionToolbar() {
     if (!textToolbar) return;
+    if (isToolbarInteracting) return;
+
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
       textToolbar.hidden = true;
@@ -2796,6 +2842,8 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     }
 
     const range = selection.getRangeAt(0);
+    savedRange = range.cloneRange();
+
     const activeEl = document.activeElement;
     if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA') && activeEl.closest('.stop-modal, .app-bar')) {
       textToolbar.hidden = true;
@@ -2830,8 +2878,10 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
   document.addEventListener('keyup', () => setTimeout(updateTextSelectionToolbar, 20));
 
   if (textToolbar) {
+    textToolbar.addEventListener('mouseenter', () => { isToolbarInteracting = true; });
+    textToolbar.addEventListener('mouseleave', () => { isToolbarInteracting = false; });
     textToolbar.addEventListener('mousedown', (event) => {
-      // Allow color picker interaction without preventing default
+      isToolbarInteracting = true;
       if (event.target.tagName !== 'INPUT') {
         event.preventDefault();
       }
@@ -2850,11 +2900,11 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       } else if (btn.dataset.textGlow) {
         applyTextGlow(btn.dataset.textGlow);
       } else if (btn.dataset.format) {
-        document.execCommand(btn.dataset.format, false, null);
+        applyRichFormat(btn.dataset.format);
       } else if (btn.dataset.color) {
         applyTextColor(btn.dataset.color);
       } else if (btn.dataset.highlight) {
-        document.execCommand('hiliteColor', false, btn.dataset.highlight);
+        applyRichFormat('hiliteColor', btn.dataset.highlight);
       }
       setTimeout(updateTextSelectionToolbar, 10);
     });
