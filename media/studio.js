@@ -628,7 +628,7 @@
             </div>
           </div>
 
-          <div class="workspace exact-comfy-home targetable" data-gradient-target="panel:home.workspace">
+          <div class="workspace exact-comfy-home">
             <!-- Hero Welcome Banner -->
             <div class="home-welcome targetable" data-gradient-target="panel:home.cards">
               <span class="eyebrow">AI HOME</span>
@@ -668,9 +668,9 @@
             </div>
 
             <!-- Source Pills -->
-            <div class="chat-source-pills-row targetable" data-gradient-target="panel:home.cards">
-              <span class="source-bubble"><span class="source-bullet">●</span> 6 workspace sources</span>
-              <span class="source-bubble"><span class="source-bullet">●</span> semantic</span>
+            <div class="chat-source-pills-row">
+              <span class="source-bubble targetable" data-gradient-target="panel:home.cards"><span class="source-bullet">●</span> 6 workspace sources</span>
+              <span class="source-bubble targetable" data-gradient-target="panel:home.cards"><span class="source-bullet">●</span> semantic</span>
             </div>
 
             <!-- Composer Bar -->
@@ -682,11 +682,11 @@
             </div>
 
             <!-- Quick Navigation Tiles -->
-            <div class="exact-home-tiles targetable" data-gradient-target="panel:home.cards">
-              <button type="button"><span class="codicon codicon-file-pdf"></span><div><b>Document Hub</b><small>7 indexed files</small></div></button>
-              <button type="button"><span class="codicon codicon-calendar"></span><div><b>Daily Planner</b><small>0 open items</small></div></button>
-              <button type="button"><span class="codicon codicon-mail"></span><div><b>Inbox Stream</b><small>0 saved messages</small></div></button>
-              <button type="button"><span class="codicon codicon-type-hierarchy"></span><div><b>Graph Network</b><small>Live connections</small></div></button>
+            <div class="exact-home-tiles">
+              <button type="button" class="targetable" data-gradient-target="panel:home.cards"><span class="codicon codicon-file-pdf"></span><div><b>Document Hub</b><small>7 indexed files</small></div></button>
+              <button type="button" class="targetable" data-gradient-target="panel:home.cards"><span class="codicon codicon-calendar"></span><div><b>Daily Planner</b><small>0 open items</small></div></button>
+              <button type="button" class="targetable" data-gradient-target="panel:home.cards"><span class="codicon codicon-mail"></span><div><b>Inbox Stream</b><small>0 saved messages</small></div></button>
+              <button type="button" class="targetable" data-gradient-target="panel:home.cards"><span class="codicon codicon-type-hierarchy"></span><div><b>Graph Network</b><small>Live connections</small></div></button>
             </div>
           </div>
 
