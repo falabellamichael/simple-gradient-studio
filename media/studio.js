@@ -2656,27 +2656,27 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
 
   function applyTextGradient(gradientString) {
     const selection = window.getSelection();
-    if (!selection || selection.isCollapsed) return;
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
     const range = selection.getRangeAt(0);
     const gradCss = gradientString === 'current' ? gradientCss(activeGradient()) : gradientString;
 
     profile.typography = profile.typography || {};
     profile.typography.textGradient = gradCss;
-    commit((draft) => {
-      draft.typography = draft.typography || {};
-      draft.typography.textGradient = gradCss;
-    }, 'Applied gradient text style to profile.');
+    scheduleSend();
+
+    const selectedText = selection.toString();
+    if (!selectedText) return;
 
     const span = document.createElement('span');
     span.className = 'sg-gradient-text';
-    span.style.backgroundImage = gradCss;
-    span.style.background = gradCss;
-    span.style.webkitBackgroundClip = 'text';
-    span.style.webkitTextFillColor = 'transparent';
-    span.style.backgroundClip = 'text';
-    span.style.color = 'transparent';
-    span.style.display = 'inline';
-    span.style.fontWeight = 'bold';
+    span.style.setProperty('background-image', gradCss, 'important');
+    span.style.setProperty('background', gradCss, 'important');
+    span.style.setProperty('-webkit-background-clip', 'text', 'important');
+    span.style.setProperty('-webkit-text-fill-color', 'transparent', 'important');
+    span.style.setProperty('background-clip', 'text', 'important');
+    span.style.setProperty('color', 'transparent', 'important');
+    span.style.setProperty('display', 'inline', 'important');
+    span.style.setProperty('font-weight', 'bold', 'important');
 
     try {
       span.appendChild(range.extractContents());
@@ -2686,27 +2686,29 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       newRange.selectNodeContents(span);
       selection.addRange(newRange);
     } catch {
-      document.execCommand('insertHTML', false, `<span class="sg-gradient-text" style="background: ${gradCss}; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent; display: inline; font-weight: bold;">${selection.toString()}</span>`);
+      document.execCommand('insertHTML', false, `<span class="sg-gradient-text" style="background: ${gradCss} !important; -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; background-clip: text !important; color: transparent !important; display: inline !important; font-weight: bold !important;">${selectedText}</span>`);
     }
+
+    showToast('Applied gradient to selected text.');
   }
 
   function applyTextColor(colorHex) {
     const selection = window.getSelection();
-    if (!selection || selection.isCollapsed) return;
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
     const range = selection.getRangeAt(0);
 
     profile.typography = profile.typography || {};
     profile.typography.accentColor = colorHex;
-    commit((draft) => {
-      draft.typography = draft.typography || {};
-      draft.typography.accentColor = colorHex;
-    }, `Applied text color ${colorHex} to profile.`);
+    scheduleSend();
+
+    const selectedText = selection.toString();
+    if (!selectedText) return;
 
     const span = document.createElement('span');
     span.className = 'sg-color-text';
-    span.style.color = colorHex;
-    span.style.webkitTextFillColor = colorHex;
-    span.style.display = 'inline';
+    span.style.setProperty('color', colorHex, 'important');
+    span.style.setProperty('-webkit-text-fill-color', colorHex, 'important');
+    span.style.setProperty('display', 'inline', 'important');
 
     try {
       span.appendChild(range.extractContents());
@@ -2718,17 +2720,26 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     } catch {
       document.execCommand('foreColor', false, colorHex);
     }
+
+    showToast(`Applied color ${colorHex}.`);
   }
 
   function applyTextGlow(glowType) {
     const selection = window.getSelection();
-    if (!selection || selection.isCollapsed) return;
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
     const range = selection.getRangeAt(0);
+
+    profile.typography = profile.typography || {};
+    profile.typography.glow = true;
+    scheduleSend();
+
+    const selectedText = selection.toString();
+    if (!selectedText) return;
 
     const span = document.createElement('span');
     span.className = 'sg-glow-text';
-    span.style.textShadow = '0 0 10px rgba(232, 102, 51, 0.75), 0 0 20px rgba(232, 102, 51, 0.45)';
-    span.style.display = 'inline';
+    span.style.setProperty('text-shadow', '0 0 10px rgba(232, 102, 51, 0.9), 0 0 20px rgba(232, 102, 51, 0.6)', 'important');
+    span.style.setProperty('display', 'inline', 'important');
 
     try {
       span.appendChild(range.extractContents());
@@ -2740,11 +2751,13 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     } catch {
       // fallback
     }
+
+    showToast('Applied neon glow to selected text.');
   }
 
   function clearTextFormatting() {
     const selection = window.getSelection();
-    if (!selection || selection.isCollapsed) return;
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
     const range = selection.getRangeAt(0);
     const container = range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE 
       ? range.commonAncestorContainer 
@@ -2762,6 +2775,8 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
         }
       });
     }
+
+    showToast('Cleared formatting.');
   }
 
   function updateTextSelectionToolbar() {
