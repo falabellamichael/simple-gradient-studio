@@ -201,7 +201,8 @@ window.__SIMPLE_GRADIENT_PROFILE__ = {
   },
   "effects": {
     "allOff": false,
-    "surface": "glass"
+    "surface": "glass",
+    "autoBlend": true
   },
   "typography": {
     "textGradient": "linear-gradient(135deg, #FF6B4A, #E86633, #FFB020)",

@@ -134,14 +134,15 @@
         'page:components': { mode: 'inherit' }
       },
       editor: { activePage: 'workbench', activeTarget: 'panel:workbench.inspector', targetCatalog: 'studio', targetMode: true, zoom: 100 },
-      effects: { allOff: false, surface: 'glass' }
+      effects: { allOff: false, surface: 'glass', autoBlend: true }
     };
   }
 
   function normalizeEffects(effects) {
     return {
       allOff: effects?.allOff === true,
-      surface: effects?.surface === 'solid' ? 'solid' : 'glass'
+      surface: effects?.surface === 'solid' ? 'solid' : 'glass',
+      autoBlend: effects?.autoBlend !== false
     };
   }
 
@@ -442,6 +443,7 @@
     profile.effects = normalizeEffects(profile.effects);
     allOff = profile.effects.allOff;
     solidMode = profile.effects.surface === 'solid';
+    blendMode = profile.effects.autoBlend !== false;
     syncCatalog();
     renderCatalog();
     renderScope();
@@ -1510,11 +1512,31 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     app.classList.toggle('advanced-mode', advancedMode);
     app.classList.toggle('no-shadows', shadowsOff);
     app.classList.toggle('unified-blend', blendMode);
-    app.classList.toggle('solid-surfaces', solidMode);
+    // Auto-blend is the panoramic glass mode; it takes priority over Solid so
+    // profiles saved with surface:'solid' still blend when Auto-blend is on.
+    app.classList.toggle('solid-surfaces', solidMode && !blendMode);
     app.classList.toggle('all-off', allOff);
 
     app.dataset.baseTheme = baseTheme;
     app.dataset.manualOverride = String(manualOverride);
+
+    // Live category text theming: each semantic group (AI response, user prompt,
+    // thought, headings...) gets its own gradient/color from profile.textStyles.
+    const TEXT_CATEGORIES = ['chat-all', 'ai-response', 'user-response', 'ai-thought', 'heading', 'cards', 'navigation', 'brand'];
+    for (const cat of TEXT_CATEGORIES) {
+      const style = profile.textStyles?.[cat];
+      if (style?.textGradient) {
+        app.setAttribute(`data-sg-text-${cat}`, 'gradient');
+        app.style.setProperty(`--sg-text-${cat}-gradient`, style.textGradient);
+      } else if (style?.color) {
+        app.setAttribute(`data-sg-text-${cat}`, 'color');
+        app.style.setProperty(`--sg-text-${cat}-color`, style.color);
+      } else {
+        app.removeAttribute(`data-sg-text-${cat}`);
+        app.style.removeProperty(`--sg-text-${cat}-gradient`);
+        app.style.removeProperty(`--sg-text-${cat}-color`);
+      }
+    }
 
     const themeObj = IN_APP_THEMES[baseTheme] || IN_APP_THEMES.oled;
     app.style.setProperty('--in-app-bg', themeObj.background);
@@ -1552,6 +1574,16 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       byId('surfaceToggleButton').innerHTML = solidMode
         ? '<span class="codicon codicon-primitive-square"></span>Surface: Solid'
         : '<span class="codicon codicon-window"></span>Surface: Glass';
+    }
+    if (byId('blendModeButton')) {
+      byId('blendModeButton').classList.toggle('active', blendMode);
+      byId('blendModeButton').setAttribute('aria-pressed', String(blendMode));
+    }
+    if (byId('blendInput')) {
+      byId('blendInput').value = String(blendStrength);
+      if (byId('blendInput').nextElementSibling) {
+        byId('blendInput').nextElementSibling.textContent = `${blendStrength}%`;
+      }
     }
 
     const pageGradient = resolveGradient(`page:${profile.editor.activePage}`) || resolveGradient('app');
@@ -1957,7 +1989,7 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       if (typeof window.SimpleGradientRuntime?.reapply === 'function') {
         window.SimpleGradientRuntime.reapply('studio-apply');
       }
-    } catch {}
+    } catch { }
 
     showToast('Applied custom gradient & typography to SimpleRAG!');
   });
@@ -2093,8 +2125,10 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     scheduleSend();
   });
   byId('blendModeButton')?.addEventListener('click', () => {
-    blendMode = !blendMode;
-    renderPreview();
+    commit((draft) => {
+      draft.effects = normalizeEffects(draft.effects);
+      draft.effects.autoBlend = !draft.effects.autoBlend;
+    });
   });
   byId('shadowsToggleButton')?.addEventListener('click', () => {
     shadowsOff = !shadowsOff;
@@ -2260,11 +2294,16 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     }
   });
   byId('hexInput').addEventListener('change', (event) => updateSelectedStop('color', safeHex(event.target.value, activeGradient().stops[selectedStopIndex].color)));
-  all('[data-copy-color]').forEach((button) => button.addEventListener('click', () => host.postMessage({ type: 'copy', text: activeGradient().stops[selectedStopIndex].color })));
-  byId('blendInput').addEventListener('input', (event) => {
-    blendStrength = Math.round(clamp(event.target.value, 0, 100));
-    event.target.nextElementSibling.textContent = `${blendStrength}%`;
-    renderPreview();
+  byId('blendInput')?.addEventListener('input', (event) => {
+    const nextVal = Math.round(clamp(Number(event.target.value), 0, 100));
+    blendStrength = nextVal;
+    if (event.target.nextElementSibling) {
+      event.target.nextElementSibling.textContent = `${nextVal}%`;
+    }
+    commit((draft) => {
+      draft.effects = normalizeEffects(draft.effects);
+      draft.effects.blendStrength = nextVal;
+    });
   });
 
   const knob = byId('angleKnob');
@@ -2847,8 +2886,8 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     }
     document.execCommand('removeFormat', false, null);
 
-    const container = range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE 
-      ? range.commonAncestorContainer 
+    const container = range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
+      ? range.commonAncestorContainer
       : range.commonAncestorContainer.parentElement;
 
     if (container) {

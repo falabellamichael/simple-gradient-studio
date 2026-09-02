@@ -101,7 +101,23 @@ select,
 .inspector-field,
 .property-card,
 .component-card,
-p, span, b, strong, em, small, h1, h2, h3, h4, h5, h6, li, code, pre, input, textarea {
+p,
+span,
+b,
+strong,
+em,
+small,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+li,
+code,
+pre,
+input,
+textarea {
   user-select: text !important;
   -webkit-user-select: text !important;
   cursor: text;
@@ -5000,11 +5016,25 @@ body[data-view="preview"] .sample-app {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
 }
 
-.gradient-dot.ember { background: linear-gradient(135deg, #FF6B4A, #E86633, #FFB020); }
-.gradient-dot.sunset { background: linear-gradient(135deg, #FBBF24, #F97316, #EF4444); }
-.gradient-dot.ocean { background: linear-gradient(135deg, #38BDF8, #0EA5E9, #14B8A6); }
-.gradient-dot.violet { background: linear-gradient(135deg, #C084FC, #A855F7, #EC4899); }
-.gradient-dot.emerald { background: linear-gradient(135deg, #4ADE80, #22C55E, #10B981); }
+.gradient-dot.ember {
+  background: linear-gradient(135deg, #FF6B4A, #E86633, #FFB020);
+}
+
+.gradient-dot.sunset {
+  background: linear-gradient(135deg, #FBBF24, #F97316, #EF4444);
+}
+
+.gradient-dot.ocean {
+  background: linear-gradient(135deg, #38BDF8, #0EA5E9, #14B8A6);
+}
+
+.gradient-dot.violet {
+  background: linear-gradient(135deg, #C084FC, #A855F7, #EC4899);
+}
+
+.gradient-dot.emerald {
+  background: linear-gradient(135deg, #4ADE80, #22C55E, #10B981);
+}
 
 .glow-btn {
   font-size: 9px;
@@ -5020,9 +5050,17 @@ body[data-view="preview"] .sample-app {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.highlight-swatch.amber { background: rgba(232, 102, 51, 0.6); }
-.highlight-swatch.cyan { background: rgba(22, 124, 140, 0.6); }
-.highlight-swatch.glass { background: rgba(255, 255, 255, 0.3); }
+.highlight-swatch.amber {
+  background: rgba(232, 102, 51, 0.6);
+}
+
+.highlight-swatch.cyan {
+  background: rgba(22, 124, 140, 0.6);
+}
+
+.highlight-swatch.glass {
+  background: rgba(255, 255, 255, 0.3);
+}
 
 .toolbar-divider {
   width: 1px;
@@ -5056,4 +5094,89 @@ body[data-view="preview"] .sample-app {
   outline: 1px dashed var(--sg-accent, #e85a29) !important;
   outline-offset: 1px;
   border-radius: 2px;
+}
+
+/* Live category text theming in the preview (driven by profile.textStyles).
+   chat-all applies first; specific categories override it below. */
+.sample-app[data-sg-text-chat-all="gradient"] .prompt-text,
+.sample-app[data-sg-text-chat-all="gradient"] .prompt-quote,
+.sample-app[data-sg-text-chat-all="gradient"] .chat-msg-body,
+.sample-app[data-sg-text-chat-all="gradient"] .reply-text,
+.sample-app[data-sg-text-chat-all="gradient"] .bubble-content {
+  background-image: var(--sg-text-chat-all-gradient) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+.sample-app[data-sg-text-chat-all="color"] .prompt-text,
+.sample-app[data-sg-text-chat-all="color"] .prompt-quote,
+.sample-app[data-sg-text-chat-all="color"] .chat-msg-body,
+.sample-app[data-sg-text-chat-all="color"] .reply-text,
+.sample-app[data-sg-text-chat-all="color"] .bubble-content {
+  color: var(--sg-text-chat-all-color) !important;
+  -webkit-text-fill-color: var(--sg-text-chat-all-color) !important;
+}
+
+.sample-app[data-sg-text-ai-response="gradient"] .chat-msg-body,
+.sample-app[data-sg-text-ai-response="gradient"] .reply-text,
+.sample-app[data-sg-text-ai-response="gradient"] .bubble-content {
+  background-image: var(--sg-text-ai-response-gradient) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+.sample-app[data-sg-text-ai-response="color"] .chat-msg-body,
+.sample-app[data-sg-text-ai-response="color"] .reply-text,
+.sample-app[data-sg-text-ai-response="color"] .bubble-content {
+  color: var(--sg-text-ai-response-color) !important;
+  -webkit-text-fill-color: var(--sg-text-ai-response-color) !important;
+}
+
+.sample-app[data-sg-text-user-response="gradient"] .prompt-text,
+.sample-app[data-sg-text-user-response="gradient"] .prompt-quote {
+  background-image: var(--sg-text-user-response-gradient) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+.sample-app[data-sg-text-user-response="color"] .prompt-text,
+.sample-app[data-sg-text-user-response="color"] .prompt-quote {
+  color: var(--sg-text-user-response-color) !important;
+  -webkit-text-fill-color: var(--sg-text-user-response-color) !important;
+}
+
+.sample-app[data-sg-text-ai-thought="gradient"] .thought-narrative {
+  background-image: var(--sg-text-ai-thought-gradient) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+.sample-app[data-sg-text-ai-thought="color"] .thought-narrative {
+  color: var(--sg-text-ai-thought-color) !important;
+  -webkit-text-fill-color: var(--sg-text-ai-thought-color) !important;
+}
+
+.sample-app[data-sg-text-heading="gradient"] h1,
+.sample-app[data-sg-text-heading="gradient"] .hero-title,
+.sample-app[data-sg-text-heading="gradient"] .home-welcome h1 {
+  background-image: var(--sg-text-heading-gradient) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+.sample-app[data-sg-text-heading="color"] h1,
+.sample-app[data-sg-text-heading="color"] .hero-title,
+.sample-app[data-sg-text-heading="color"] .home-welcome h1 {
+  color: var(--sg-text-heading-color) !important;
+  -webkit-text-fill-color: var(--sg-text-heading-color) !important;
 }

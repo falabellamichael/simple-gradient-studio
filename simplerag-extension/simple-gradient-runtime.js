@@ -51,7 +51,8 @@
     },
     effects: {
       allOff: false,
-      surface: 'glass'
+      surface: 'glass',
+      autoBlend: true
     }
   };
 
@@ -140,7 +141,9 @@
   const SURFACE_SELECTORS = Object.freeze({
     comfy: Object.freeze({
       app: Object.freeze(['.shell']),
-      page: Object.freeze(['.page-workspace-layout[data-page]']),
+      // Page containers sit behind every tile/card; painting them puts a second
+      // background layer in the way, so only the shell and the surfaces themselves paint.
+      page: Object.freeze([]),
       navigation: Object.freeze([
         '.edge-helper.edge-left',
         '.edge-helper.edge-left .helper-panel',
@@ -148,21 +151,10 @@
         '.edge-left',
         '.chat-rail'
       ]),
-      workspace: Object.freeze([
-        '.page-workspace-layout > .workspace',
-        '.workspace > .page',
-        '.modal-backdrop > .editor.workspace-editor',
-        '.page-workspace-layout .tasks-menu-panel',
-        '.page-workspace-layout .tasks-list-column',
-        '.page-workspace-layout .journal-menu-panel',
-        '.page-workspace-layout .journal-list-column',
-        '.page-workspace-layout .email-menu-panel',
-        '.page-workspace-layout .email-list-column',
-        '.page-workspace-layout .pdf-file-list',
-        '.page-workspace-layout .pdf-preview-inline-wrapper',
-        '.page-workspace-layout .knowledge-graph',
-        '.page-workspace-layout .settings-center'
-      ]),
+      // Workspace containers sit behind the native cards/tiles on every page;
+      // painting them puts a second background box in the way. Tiles keep their
+      // own fills via the cards category.
+      workspace: Object.freeze([]),
       assistant: Object.freeze([
         '.assistant',
         '.assistant.assistant-embedded',
@@ -188,26 +180,16 @@
         '.main-stage .message-card',
         '.main-stage .msg-bubble',
         '.main-stage .message-row > article',
-        '.main-stage .list',
         '.main-stage .graph',
-        '.page-workspace-layout .list',
-        '.page-workspace-layout .settings-tile',
-        '.page-workspace-layout .settings-tiles',
-        '.page-workspace-layout .settings-detail',
         '.page-workspace-layout .pdf-preview-inline',
         '.pdf-preview-backdrop > .pdf-preview-dialog',
         '.tutorial-intro-backdrop > .tutorial-intro',
         '.page-workspace-layout .kg-inspector'
       ]),
+      // Toolbar/action rows are native button strips; painting them leaves
+      // gradient slabs sticking out beside the buttons. Only the topbar fills.
       toolbar: Object.freeze([
-        '.topbar',
-        '.main-stage .actions',
-        '.page-workspace-layout .actions',
-        '.page-workspace-layout .kg-toolbar',
-        '.page-workspace-layout .pdf-toolbar',
-        '.page-workspace-layout .workspace-format-toolbar',
-        '[data-tutorial-id="home-display-menu"][role="dialog"]',
-        '.view-context-menu-popover'
+        '.topbar'
       ]),
       composer: Object.freeze([
         '.main-stage .ask',
@@ -425,10 +407,15 @@
 
   function normalizeEffects(value) {
     const raw = value && typeof value === 'object' ? value : {};
-    return {
+    const result = {
       allOff: raw.allOff === true,
-      surface: raw.surface === 'solid' ? 'solid' : 'glass'
+      surface: raw.surface === 'solid' ? 'solid' : 'glass',
+      autoBlend: raw.autoBlend !== false
     };
+    if (typeof raw.blendStrength === 'number') {
+      result.blendStrength = Math.round(clamp(raw.blendStrength, 0, 100));
+    }
+    return result;
   }
 
   function setSurfaceMode(mode) {
@@ -905,8 +892,13 @@
     const context = detectContext(documentObject);
     const profile = activeProfile();
     const effects = normalizeEffects(profile.effects);
-    const surfaceMode = effects.allOff ? 'off' : effects.surface;
+    // Auto-blend (the panoramic glass look) takes priority; Solid only applies
+    // when Auto-blend is explicitly off.
+    const surfaceMode = effects.allOff ? 'off' : (effects.autoBlend === false ? effects.surface : 'glass');
     setSurfaceMode(surfaceMode);
+    const isBlend = !effects.allOff && effects.autoBlend !== false;
+    const blendStrength = typeof effects.blendStrength === 'number' ? effects.blendStrength : 100;
+    const blendFactor = isBlend ? (blendStrength / 100) : 0;
     state.lastContext = context;
     state.lastProfile = profile;
     syncSettingsEntry(context);
@@ -915,6 +907,14 @@
       documentObject.documentElement.setAttribute('data-simple-gradient-manual-override', String(state.manualOverride !== false));
       documentObject.documentElement.setAttribute('data-simple-gradient-surface', surfaceMode);
       documentObject.documentElement.setAttribute('data-simple-gradient-active', String(state.enabled && !effects.allOff));
+      documentObject.documentElement.setAttribute('data-simple-gradient-blend', String(isBlend));
+      documentObject.documentElement.setAttribute('data-simple-gradient-autoblend', String(isBlend));
+      documentObject.documentElement.style.setProperty('--sg-blend-factor', String(blendFactor));
+      documentObject.documentElement.style.setProperty('--sg-glass-blur', `${Math.round(8 + 24 * blendFactor)}px`);
+      documentObject.documentElement.style.setProperty('--sg-glass-saturation', `${Math.round(105 + 45 * blendFactor)}%`);
+      documentObject.documentElement.style.setProperty('--sg-panel-alpha', String(Math.max(0.08, (0.42 - 0.32 * blendFactor).toFixed(3))));
+      documentObject.documentElement.style.setProperty('--sg-card-alpha', String(Math.max(0.12, (0.52 - 0.35 * blendFactor).toFixed(3))));
+      documentObject.documentElement.style.setProperty('--sg-border-glow', String(Math.max(0.06, (0.10 + 0.16 * blendFactor).toFixed(3))));
 
       const categories = ['ai-response', 'user-response', 'ai-thought', 'chat-all', 'heading', 'brand', 'cards', 'navigation', 'workspace', 'assistant', 'meta'];
       for (const cat of categories) {

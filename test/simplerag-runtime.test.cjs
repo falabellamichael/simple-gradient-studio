@@ -199,10 +199,10 @@ test('maps overview profiles to native Comfy home and keeps selectors fixed', ()
   assert.ok(!runtime.SURFACE_SELECTORS.advanced.navigation.includes('.ribbon'));
   assert.ok(runtime.SURFACE_SELECTORS.advanced.cards.includes('#list-pane'));
   assert.ok(!runtime.SURFACE_SELECTORS.advanced.navigation.includes('#list-pane'));
-  assert.ok(runtime.SURFACE_SELECTORS.comfy.workspace.includes('.modal-backdrop > .editor.workspace-editor'));
+  assert.ok(!runtime.SURFACE_SELECTORS.comfy.workspace.includes('.page-workspace-layout > .workspace'));
   assert.ok(runtime.SURFACE_SELECTORS.comfy.assistant.includes('.expanded-chat-canvas'));
   assert.ok(runtime.SURFACE_SELECTORS.comfy.cards.includes('.pdf-preview-backdrop > .pdf-preview-dialog'));
-  assert.ok(runtime.SURFACE_SELECTORS.comfy.toolbar.includes('.view-context-menu-popover'));
+  assert.ok(!runtime.SURFACE_SELECTORS.comfy.toolbar.includes('.page-workspace-layout .workspace-format-toolbar'));
   assert.ok(runtime.SURFACE_SELECTORS.advanced.workspace.includes('#pdfFocusOverlay .pdf-focus-shell'));
   assert.ok(runtime.SURFACE_SELECTORS.advanced.cards.includes('.workspace-plugin-backdrop > .workspace-plugin-dialog'));
   assert.ok(runtime.SURFACE_SELECTORS.advanced.toolbar.includes('body > .graph-color-selector[role="dialog"]'));
@@ -269,8 +269,8 @@ test('native runtime honors profile effects for all-off and solid surfaces', () 
     assignments: { app: { mode: 'gradient', gradientId: 'base' } },
     effects: { allOff: true, surface: 'solid' }
   });
-  assert.deepEqual(profile.effects, { allOff: true, surface: 'solid' });
-  assert.deepEqual(runtime.normalizeProfile({}).effects, { allOff: false, surface: 'glass' });
+  assert.deepEqual(profile.effects, { allOff: true, surface: 'solid', autoBlend: true });
+  assert.deepEqual(runtime.normalizeProfile({}).effects, { allOff: false, surface: 'glass', autoBlend: true });
 
   runtime.setSurfaceMode('solid');
   assert.doesNotMatch(runtime.gradientToCss(profile.gradients.base), /rgba\(/);
@@ -280,6 +280,8 @@ test('native runtime honors profile effects for all-off and solid surfaces', () 
   assert.match(runtime.gradientToCss(profile.gradients.base), /rgba\(/);
 
   assert.match(runtimeSource, /data-simple-gradient-surface/);
+  assert.match(runtimeSource, /data-simple-gradient-blend/);
+  assert.match(cssSource, /data-simple-gradient-blend="true"\] \.shell \.main-stage \.msg-bubble/);
   assert.match(runtimeSource, /effects\.allOff/);
   assert.match(cssSource, /html\[data-simple-gradient-surface="glass"\]/);
   assert.match(cssSource, /html\[data-simple-gradient-surface="solid"\]/);

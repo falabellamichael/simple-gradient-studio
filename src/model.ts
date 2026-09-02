@@ -25,6 +25,8 @@ export interface GradientAssignment {
 export interface GradientEffects {
   allOff: boolean;
   surface: 'glass' | 'solid';
+  autoBlend: boolean;
+  blendStrength?: number;
 }
 
 export interface GradientTypography {
@@ -184,17 +186,23 @@ export function createDefaultProfile(): GradientProfile {
     },
     effects: {
       allOff: false,
-      surface: 'glass'
+      surface: 'glass',
+      autoBlend: true
     }
   };
 }
 
 export function normalizeEffects(value: unknown): GradientEffects {
   const raw = value && typeof value === 'object' ? value as Partial<GradientEffects> : {};
-  return {
+  const result: GradientEffects = {
     allOff: raw.allOff === true,
-    surface: raw.surface === 'solid' ? 'solid' : 'glass'
+    surface: raw.surface === 'solid' ? 'solid' : 'glass',
+    autoBlend: raw.autoBlend !== false
   };
+  if (typeof raw.blendStrength === 'number') {
+    result.blendStrength = Math.round(clamp(raw.blendStrength, 0, 100));
+  }
+  return result;
 }
 
 export function normalizeProfile(value: unknown): GradientProfile {
@@ -241,42 +249,42 @@ export function normalizeProfile(value: unknown): GradientProfile {
     : fallback.editor.activeTarget;
   const targetCatalog = editor.targetCatalog === 'simplerag' ? 'simplerag' : 'studio';
 
-function normalizeTypography(raw: unknown): GradientTypography | undefined {
-  if (!raw || typeof raw !== 'object') return undefined;
-  const t = raw as Partial<GradientTypography>;
-  return {
-    textGradient: typeof t.textGradient === 'string' && t.textGradient.length < 500 ? t.textGradient : undefined,
-    accentColor: typeof t.accentColor === 'string' && SAFE_HEX.test(t.accentColor) ? t.accentColor.toUpperCase() : undefined,
-    glow: t.glow === true
-  };
-}
-
-function normalizeCustomPages(raw: unknown): Record<string, string> | undefined {
-  if (!raw || typeof raw !== 'object') return undefined;
-  const result: Record<string, string> = {};
-  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
-    if (typeof key === 'string' && key.length < 100 && typeof value === 'string' && value.length < 100000) {
-      result[key] = value;
-    }
+  function normalizeTypography(raw: unknown): GradientTypography | undefined {
+    if (!raw || typeof raw !== 'object') return undefined;
+    const t = raw as Partial<GradientTypography>;
+    return {
+      textGradient: typeof t.textGradient === 'string' && t.textGradient.length < 500 ? t.textGradient : undefined,
+      accentColor: typeof t.accentColor === 'string' && SAFE_HEX.test(t.accentColor) ? t.accentColor.toUpperCase() : undefined,
+      glow: t.glow === true
+    };
   }
-  return Object.keys(result).length ? result : undefined;
-}
 
-function normalizeTextStyles(raw: unknown): Record<string, TargetTextStyle> | undefined {
-  if (!raw || typeof raw !== 'object') return undefined;
-  const result: Record<string, TargetTextStyle> = {};
-  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
-    if (typeof key === 'string' && SAFE_ID.test(key) && value && typeof value === 'object') {
-      const v = value as Record<string, unknown>;
-      result[key] = {
-        textGradient: typeof v.textGradient === 'string' && v.textGradient.length < 500 ? v.textGradient : undefined,
-        color: typeof v.color === 'string' && SAFE_HEX.test(String(v.color)) ? String(v.color).toUpperCase() : undefined,
-        glow: v.glow === true
-      };
+  function normalizeCustomPages(raw: unknown): Record<string, string> | undefined {
+    if (!raw || typeof raw !== 'object') return undefined;
+    const result: Record<string, string> = {};
+    for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+      if (typeof key === 'string' && key.length < 100 && typeof value === 'string' && value.length < 100000) {
+        result[key] = value;
+      }
     }
+    return Object.keys(result).length ? result : undefined;
   }
-  return Object.keys(result).length ? result : undefined;
-}
+
+  function normalizeTextStyles(raw: unknown): Record<string, TargetTextStyle> | undefined {
+    if (!raw || typeof raw !== 'object') return undefined;
+    const result: Record<string, TargetTextStyle> = {};
+    for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+      if (typeof key === 'string' && SAFE_ID.test(key) && value && typeof value === 'object') {
+        const v = value as Record<string, unknown>;
+        result[key] = {
+          textGradient: typeof v.textGradient === 'string' && v.textGradient.length < 500 ? v.textGradient : undefined,
+          color: typeof v.color === 'string' && SAFE_HEX.test(String(v.color)) ? String(v.color).toUpperCase() : undefined,
+          glow: v.glow === true
+        };
+      }
+    }
+    return Object.keys(result).length ? result : undefined;
+  }
 
   return {
     schema: PROFILE_SCHEMA,

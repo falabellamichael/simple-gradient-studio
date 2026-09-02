@@ -161,6 +161,30 @@ html[data-simple-gradient-surface="glass"] .shell .main-stage .dashboard article
   transform: translateY(-2px) !important;
 }
 
+/* Auto-blend: cards, bubbles, tiles and composers go see-through so the shell
+   gradient reads as one continuous panoramic gradient (mirrors Studio preview). */
+html[data-simple-gradient-blend="true"] .shell .main-stage .msg-bubble,
+html[data-simple-gradient-blend="true"] .shell .main-stage .message-row>article,
+html[data-simple-gradient-blend="true"] .shell .main-stage .chat-card,
+html[data-simple-gradient-blend="true"] .shell .main-stage .chat-msg-card,
+html[data-simple-gradient-blend="true"] .shell .main-stage .message-card,
+html[data-simple-gradient-blend="true"] .shell .main-stage .ask,
+html[data-simple-gradient-blend="true"] .shell .main-stage .home-composer .ask,
+html[data-simple-gradient-blend="true"] .shell .main-stage .quick button,
+html[data-simple-gradient-blend="true"] .shell .main-stage .quick>button,
+html[data-simple-gradient-blend="true"] .shell .main-stage .dashboard article,
+html[data-simple-gradient-blend="true"] .shell .main-stage .home-welcome,
+html[data-simple-gradient-blend="true"] .shell .main-stage .welcome,
+html[data-simple-gradient-blend="true"] .shell .main-stage .answer>.chat-header button,
+html[data-simple-gradient-blend="true"] .shell .main-stage .answer .home-new-chat,
+html[data-simple-gradient-blend="true"] .shell .main-stage .metadata span {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
 /* Solid surface mode: opaque panels and cards, no backdrop blur */
 html[data-simple-gradient-surface="solid"] .shell .edge-helper.edge-left,
 html[data-simple-gradient-surface="solid"] .shell .edge-helper.edge-left .helper-panel,
@@ -1360,6 +1384,7 @@ html[data-simple-gradient-surface="solid"] .shell .main-stage .dashboard article
 
 /* Typography & Gradient Text in SimpleRAG App */
 html[data-simple-gradient-text="gradient"] .home-welcome h1,
+html[data-simple-gradient-text="gradient"] .welcome h1,
 html[data-simple-gradient-text="gradient"] .home-hero h1,
 html[data-simple-gradient-text="gradient"] .hero-title,
 html[data-simple-gradient-text="gradient"] .brand-name,
@@ -1379,7 +1404,6 @@ html[data-simple-gradient-text="gradient"] #reading-pane h1 {
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
   color: transparent !important;
-  display: inline-block;
 }
 
 /* AI Assistant & Response Text (Granular Target) */
@@ -1388,6 +1412,12 @@ html[data-sg-text-ai-response="gradient"] .reply-text,
 html[data-sg-text-ai-response="gradient"] .assistant .chat-msg-body,
 html[data-sg-text-ai-response="gradient"] .assistant p,
 html[data-sg-text-ai-response="gradient"] .assistant li,
+html[data-sg-text-ai-response="gradient"] .msg-bubble.ai .bubble-content,
+html[data-sg-text-ai-response="gradient"] .msg-bubble.ai .bubble-content p,
+html[data-sg-text-ai-response="gradient"] .msg-bubble.ai .bubble-content li,
+html[data-sg-text-ai-response="gradient"] .chat-message.ai-message .message-bubble,
+html[data-sg-text-ai-response="gradient"] .chat-message.ai-message .message-bubble p,
+html[data-sg-text-ai-response="gradient"] .chat-message.ai-message .message-bubble li,
 html[data-sg-text-ai-response="gradient"] #ai-sidebar .ai-chat-surface p,
 html[data-sg-text-ai-response="gradient"] #ai-sidebar .chat-message.assistant,
 html[data-sg-text-assistant="gradient"] .assistant .chat-msg-body,
@@ -1401,12 +1431,13 @@ html[data-sg-text-assistant="gradient"] #ai-sidebar .chat-message {
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
   color: transparent !important;
-  display: inline;
 }
 
 html[data-sg-text-ai-response="color"] .chat-msg-body,
 html[data-sg-text-ai-response="color"] .reply-text,
 html[data-sg-text-ai-response="color"] .assistant .chat-msg-body,
+html[data-sg-text-ai-response="color"] .msg-bubble.ai .bubble-content,
+html[data-sg-text-ai-response="color"] .chat-message.ai-message .message-bubble,
 html[data-sg-text-assistant="color"] .assistant .chat-msg-body,
 html[data-sg-text-assistant="color"] #ai-sidebar .chat-message {
   color: var(--sg-text-ai-response-color, var(--sg-text-assistant-color)) !important;
@@ -1416,19 +1447,28 @@ html[data-sg-text-assistant="color"] #ai-sidebar .chat-message {
 /* User Prompt / Responses (Granular Target) */
 html[data-sg-text-user-response="gradient"] .prompt-section .prompt-text,
 html[data-sg-text-user-response="gradient"] .prompt-text,
+html[data-sg-text-user-response="gradient"] .prompt-quote,
+html[data-sg-text-user-response="gradient"] .message-row .prompt-quote,
 html[data-sg-text-user-response="gradient"] .user .chat-msg-body,
+html[data-sg-text-user-response="gradient"] .msg-bubble.user .prompt-quote,
+html[data-sg-text-user-response="gradient"] .msg-bubble.user .bubble-content,
+html[data-sg-text-user-response="gradient"] .chat-message.user-message .message-bubble,
 html[data-sg-text-user-response="gradient"] .chat-message.user {
   background-image: var(--sg-text-user-response-gradient) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
   color: transparent !important;
-  display: inline;
 }
 
 html[data-sg-text-user-response="color"] .prompt-section .prompt-text,
 html[data-sg-text-user-response="color"] .prompt-text,
+html[data-sg-text-user-response="color"] .prompt-quote,
+html[data-sg-text-user-response="color"] .message-row .prompt-quote,
 html[data-sg-text-user-response="color"] .user .chat-msg-body,
+html[data-sg-text-user-response="color"] .msg-bubble.user .prompt-quote,
+html[data-sg-text-user-response="color"] .msg-bubble.user .bubble-content,
+html[data-sg-text-user-response="color"] .chat-message.user-message .message-bubble,
 html[data-sg-text-user-response="color"] .chat-message.user {
   color: var(--sg-text-user-response-color) !important;
   -webkit-text-fill-color: var(--sg-text-user-response-color) !important;
@@ -1436,17 +1476,24 @@ html[data-sg-text-user-response="color"] .chat-message.user {
 
 /* AI Thought Process (Granular Target) */
 html[data-sg-text-ai-thought="gradient"] .thought-process-box .thought-narrative,
-html[data-sg-text-ai-thought="gradient"] .thought-narrative {
+html[data-sg-text-ai-thought="gradient"] .thought-narrative,
+html[data-sg-text-ai-thought="gradient"] .chat-thinking-markdown,
+html[data-sg-text-ai-thought="gradient"] .chat-thinking-markdown p,
+html[data-sg-text-ai-thought="gradient"] .chat-thinking-markdown li,
+html[data-sg-text-ai-thought="gradient"] .stream-thinking-block,
+html[data-sg-text-ai-thought="gradient"] .thinking-message .message-bubble {
   background-image: var(--sg-text-ai-thought-gradient) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
   color: transparent !important;
-  display: inline;
 }
 
 html[data-sg-text-ai-thought="color"] .thought-process-box .thought-narrative,
-html[data-sg-text-ai-thought="color"] .thought-narrative {
+html[data-sg-text-ai-thought="color"] .thought-narrative,
+html[data-sg-text-ai-thought="color"] .chat-thinking-markdown,
+html[data-sg-text-ai-thought="color"] .stream-thinking-block,
+html[data-sg-text-ai-thought="color"] .thinking-message .message-bubble {
   color: var(--sg-text-ai-thought-color) !important;
   -webkit-text-fill-color: var(--sg-text-ai-thought-color) !important;
 }
@@ -1455,17 +1502,20 @@ html[data-sg-text-ai-thought="color"] .thought-narrative {
 html[data-sg-text-chat-all="gradient"] .chat-msg-body,
 html[data-sg-text-chat-all="gradient"] .prompt-text,
 html[data-sg-text-chat-all="gradient"] .thought-narrative,
-html[data-sg-text-chat-all="gradient"] .chat-message {
+html[data-sg-text-chat-all="gradient"] .msg-bubble .bubble-content,
+html[data-sg-text-chat-all="gradient"] .msg-bubble .prompt-quote,
+html[data-sg-text-chat-all="gradient"] .chat-thinking-markdown,
+html[data-sg-text-chat-all="gradient"] .chat-message .message-bubble {
   background-image: var(--sg-text-chat-all-gradient) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
   color: transparent !important;
-  display: inline;
 }
 
 /* Headings & Hero Titles (Granular Target) */
 html[data-sg-text-heading="gradient"] .home-welcome h1,
+html[data-sg-text-heading="gradient"] .welcome h1,
 html[data-sg-text-heading="gradient"] .home-hero h1,
 html[data-sg-text-heading="gradient"] .hero-title,
 html[data-sg-text-heading="gradient"] .main-stage h1,
@@ -1478,7 +1528,6 @@ html[data-sg-text-heading="gradient"] #reading-pane h1 {
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
   color: transparent !important;
-  display: inline-block;
 }
 
 html[data-sg-text-heading="color"] .home-welcome h1,
@@ -1503,7 +1552,6 @@ html[data-sg-text-cards="gradient"] #reading-pane .settings-card b {
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
   color: transparent !important;
-  display: inline-block;
 }
 
 /* Navigation & Badges (Granular Target) */
@@ -1516,7 +1564,6 @@ html[data-sg-text-navigation="gradient"] #nav-pane .nav-item {
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
   color: transparent !important;
-  display: inline-block;
 }
 
 /* Custom Text Selection Highlight in SimpleRAG */
@@ -1528,4 +1575,54 @@ html[data-simple-gradient-active="true"] ::selection {
 html[data-simple-gradient-active="true"] ::-moz-selection {
   background: color-mix(in srgb, var(--accent, #e86633) 45%, #e86633) !important;
   color: #ffffff !important;
+}
+
+/* Enhanced Auto-Blend Panoramic Glass Architecture for SimpleRAG */
+html[data-simple-gradient-autoblend="true"] .shell,
+html[data-simple-gradient-autoblend="true"] .outlook-app {
+  background-image: var(--simple-gradient-runtime-layer, var(--sg-app-gradient, linear-gradient(132deg, #0d1418 0%, #1a1714 50%, #331e15 100%))) !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+
+html[data-simple-gradient-autoblend="true"] .page-workspace-layout,
+html[data-simple-gradient-autoblend="true"] #main-body {
+  background: transparent !important;
+}
+
+html[data-simple-gradient-autoblend="true"] .edge-helper,
+html[data-simple-gradient-autoblend="true"] .edge-left,
+html[data-simple-gradient-autoblend="true"] .edge-right,
+html[data-simple-gradient-autoblend="true"] .workspace,
+html[data-simple-gradient-autoblend="true"] .assistant,
+html[data-simple-gradient-autoblend="true"] #app-bar,
+html[data-simple-gradient-autoblend="true"] #nav-pane,
+html[data-simple-gradient-autoblend="true"] #list-pane,
+html[data-simple-gradient-autoblend="true"] #reading-pane,
+html[data-simple-gradient-autoblend="true"] #ai-sidebar {
+  background: rgba(14, 16, 20, var(--sg-panel-alpha, 0.22)) !important;
+  backdrop-filter: blur(var(--sg-glass-blur, 28px)) saturate(var(--sg-glass-saturation, 140%)) !important;
+  -webkit-backdrop-filter: blur(var(--sg-glass-blur, 28px)) saturate(var(--sg-glass-saturation, 140%)) !important;
+  border: 1px solid rgba(255, 255, 255, var(--sg-border-glow, 0.12)) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-simple-gradient-autoblend="true"] .chat-msg-card,
+html[data-simple-gradient-autoblend="true"] .chat-card,
+html[data-simple-gradient-autoblend="true"] .message-card,
+html[data-simple-gradient-autoblend="true"] .msg-bubble,
+html[data-simple-gradient-autoblend="true"] .home-composer,
+html[data-simple-gradient-autoblend="true"] .doc-card,
+html[data-simple-gradient-autoblend="true"] .task-card,
+html[data-simple-gradient-autoblend="true"] .email-item,
+html[data-simple-gradient-autoblend="true"] .cal-event,
+html[data-simple-gradient-autoblend="true"] .plugin-card,
+html[data-simple-gradient-autoblend="true"] .settings-tile,
+html[data-simple-gradient-autoblend="true"] .component-card,
+html[data-simple-gradient-autoblend="true"] .nav-item {
+  background: rgba(255, 255, 255, var(--sg-card-alpha, 0.04)) !important;
+  backdrop-filter: blur(calc(var(--sg-glass-blur, 28px) * 0.5)) !important;
+  -webkit-backdrop-filter: blur(calc(var(--sg-glass-blur, 28px) * 0.5)) !important;
+  border: 1px solid rgba(255, 255, 255, var(--sg-border-glow, 0.12)) !important;
 }

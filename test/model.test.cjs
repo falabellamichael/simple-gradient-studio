@@ -86,14 +86,14 @@ test('gradient CSS is linear, bounded, and alpha-aware', () => {
 });
 
 test('effects normalize to safe all-off and surface switches', () => {
-  assert.deepEqual(createDefaultProfile().effects, { allOff: false, surface: 'glass' });
+  assert.deepEqual(createDefaultProfile().effects, { allOff: false, surface: 'glass', autoBlend: true });
   assert.deepEqual(
     normalizeProfile({ effects: { allOff: 'yes', surface: 'crystal' } }).effects,
-    { allOff: false, surface: 'glass' }
+    { allOff: false, surface: 'glass', autoBlend: true }
   );
   assert.deepEqual(
-    normalizeProfile({ effects: { allOff: true, surface: 'solid' } }).effects,
-    { allOff: true, surface: 'solid' }
+    normalizeProfile({ effects: { allOff: true, surface: 'solid', autoBlend: false } }).effects,
+    { allOff: true, surface: 'solid', autoBlend: false }
   );
 });
 
