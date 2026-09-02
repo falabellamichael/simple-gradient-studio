@@ -2681,15 +2681,36 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
   }
 
   function detectSemanticCategory(node) {
-    if (!node) return 'assistant';
+    if (!node) return 'ai-response';
     const el = node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement;
-    if (!el) return 'assistant';
-    if (el.closest('.sample-assistant, .assistant, .chat-msg-body, .thought-narrative, .chat-panel, .chat-column')) return 'assistant';
+    if (!el) return 'ai-response';
+    if (el.closest('.prompt-section, .prompt-text, .user-prompt, .user, .user-message')) return 'user-response';
+    if (el.closest('.thought-process-box, .thought-narrative')) return 'ai-thought';
+    if (el.closest('.chat-msg-body, .reply-text, .assistant, .ai-reply, .sample-assistant, .chat-panel, .chat-column')) return 'ai-response';
     if (el.closest('h1, h2, .home-welcome, .hero-title, .app-title')) return 'heading';
-    if (el.closest('.sample-cards, .component-card, .task-card, .doc-card, .email-item, .card-item')) return 'cards';
-    if (el.closest('.sample-navigation, .nav-item, #app-bar, .topbar nav, .nav-pane')) return 'navigation';
+    if (el.closest('.sample-cards, .component-card, .task-card, .doc-card, .email-item, .card-item, .endpoint-status-card')) return 'cards';
+    if (el.closest('.sample-navigation, .nav-item, #app-bar, .topbar nav, .nav-pane, .helper-list')) return 'navigation';
     if (el.closest('.brand, .brand-name, .chat-title-brand')) return 'brand';
-    return 'assistant';
+    return 'ai-response';
+  }
+
+  function getSelectedOrDetectedCategory(range) {
+    const dropdown = byId('toolbarTargetGroup');
+    if (dropdown && dropdown.value && dropdown.value !== 'auto') {
+      return dropdown.value;
+    }
+    return detectSemanticCategory(range?.commonAncestorContainer);
+  }
+
+  function applyStyleToCategory(category, styleUpdate) {
+    profile.textStyles = profile.textStyles || {};
+    if (category === 'chat-all') {
+      profile.textStyles['ai-response'] = { ...(profile.textStyles['ai-response'] || {}), ...styleUpdate };
+      profile.textStyles['user-response'] = { ...(profile.textStyles['user-response'] || {}), ...styleUpdate };
+    } else {
+      profile.textStyles[category] = { ...(profile.textStyles[category] || {}), ...styleUpdate };
+    }
+    scheduleSend();
   }
 
   function applyTextGradient(gradientString) {
@@ -2700,14 +2721,9 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     }
 
     const gradCss = gradientString === 'current' ? gradientCss(activeGradient()) : gradientString;
-    const category = detectSemanticCategory(range.commonAncestorContainer);
+    const category = getSelectedOrDetectedCategory(range);
 
-    profile.textStyles = profile.textStyles || {};
-    profile.textStyles[category] = {
-      ...(profile.textStyles[category] || {}),
-      textGradient: gradCss
-    };
-    scheduleSend();
+    applyStyleToCategory(category, { textGradient: gradCss });
 
     const selectedText = range.toString();
     if (!selectedText) return;
@@ -2735,7 +2751,8 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       saveCurrentPageCustomContent();
     }
 
-    showToast(`Applied gradient to ${category} text.`);
+    const label = category === 'chat-all' ? 'All Chat (AI + User)' : category;
+    showToast(`Applied gradient to ${label}.`);
   }
 
   function applyTextColor(colorHex) {
@@ -2745,14 +2762,9 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       return;
     }
 
-    const category = detectSemanticCategory(range.commonAncestorContainer);
+    const category = getSelectedOrDetectedCategory(range);
 
-    profile.textStyles = profile.textStyles || {};
-    profile.textStyles[category] = {
-      ...(profile.textStyles[category] || {}),
-      color: colorHex
-    };
-    scheduleSend();
+    applyStyleToCategory(category, { color: colorHex });
 
     const selectedText = range.toString();
     if (!selectedText) return;
@@ -2780,7 +2792,8 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       saveCurrentPageCustomContent();
     }
 
-    showToast(`Applied color to ${category} text.`);
+    const label = category === 'chat-all' ? 'All Chat (AI + User)' : category;
+    showToast(`Applied color to ${label}.`);
   }
 
   function applyTextGlow(glowType) {
@@ -2790,14 +2803,9 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       return;
     }
 
-    const category = detectSemanticCategory(range.commonAncestorContainer);
+    const category = getSelectedOrDetectedCategory(range);
 
-    profile.textStyles = profile.textStyles || {};
-    profile.textStyles[category] = {
-      ...(profile.textStyles[category] || {}),
-      glow: true
-    };
-    scheduleSend();
+    applyStyleToCategory(category, { glow: true });
 
     const selectedText = range.toString();
     if (!selectedText) return;
@@ -2824,7 +2832,8 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       // fallback
     }
 
-    showToast(`Applied neon glow to ${category} text.`);
+    const label = category === 'chat-all' ? 'All Chat (AI + User)' : category;
+    showToast(`Applied neon glow to ${label}.`);
   }
 
   function clearTextFormatting() {
@@ -2910,6 +2919,21 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     textToolbar.hidden = false;
     textToolbar.removeAttribute('hidden');
     textToolbar.style.display = 'flex';
+
+    const detected = detectSemanticCategory(range.commonAncestorContainer);
+    const autoOption = document.querySelector('#toolbarTargetGroup option[value="auto"]');
+    if (autoOption) {
+      const prettyNames = {
+        'ai-response': 'AI Response',
+        'user-response': 'User Response',
+        'ai-thought': 'Thought Process',
+        'heading': 'Headings',
+        'cards': 'Cards',
+        'navigation': 'Navigation',
+        'brand': 'Brand'
+      };
+      autoOption.textContent = `⚡ Auto (${prettyNames[detected] || 'Selection'})`;
+    }
 
     const toolbarWidth = textToolbar.offsetWidth || 440;
     const toolbarHeight = textToolbar.offsetHeight || 36;

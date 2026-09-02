@@ -1383,14 +1383,20 @@ html[data-simple-gradient-text="gradient"] #reading-pane h1 {
 }
 
 /* AI Assistant & Response Text (Granular Target) */
+html[data-sg-text-ai-response="gradient"] .chat-msg-body,
+html[data-sg-text-ai-response="gradient"] .reply-text,
+html[data-sg-text-ai-response="gradient"] .assistant .chat-msg-body,
+html[data-sg-text-ai-response="gradient"] .assistant p,
+html[data-sg-text-ai-response="gradient"] .assistant li,
+html[data-sg-text-ai-response="gradient"] #ai-sidebar .ai-chat-surface p,
+html[data-sg-text-ai-response="gradient"] #ai-sidebar .chat-message.assistant,
 html[data-sg-text-assistant="gradient"] .assistant .chat-msg-body,
 html[data-sg-text-assistant="gradient"] .assistant .thought-narrative,
 html[data-sg-text-assistant="gradient"] .assistant p,
 html[data-sg-text-assistant="gradient"] .assistant li,
 html[data-sg-text-assistant="gradient"] #ai-sidebar .ai-chat-surface p,
-html[data-sg-text-assistant="gradient"] #ai-sidebar .chat-message,
-html[data-sg-text-assistant="gradient"] #ai-sidebar .thought-narrative {
-  background-image: var(--sg-text-assistant-gradient) !important;
+html[data-sg-text-assistant="gradient"] #ai-sidebar .chat-message {
+  background-image: var(--sg-text-ai-response-gradient, var(--sg-text-assistant-gradient)) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
@@ -1398,11 +1404,64 @@ html[data-sg-text-assistant="gradient"] #ai-sidebar .thought-narrative {
   display: inline;
 }
 
+html[data-sg-text-ai-response="color"] .chat-msg-body,
+html[data-sg-text-ai-response="color"] .reply-text,
+html[data-sg-text-ai-response="color"] .assistant .chat-msg-body,
 html[data-sg-text-assistant="color"] .assistant .chat-msg-body,
-html[data-sg-text-assistant="color"] .assistant .thought-narrative,
 html[data-sg-text-assistant="color"] #ai-sidebar .chat-message {
-  color: var(--sg-text-assistant-color) !important;
-  -webkit-text-fill-color: var(--sg-text-assistant-color) !important;
+  color: var(--sg-text-ai-response-color, var(--sg-text-assistant-color)) !important;
+  -webkit-text-fill-color: var(--sg-text-ai-response-color, var(--sg-text-assistant-color)) !important;
+}
+
+/* User Prompt / Responses (Granular Target) */
+html[data-sg-text-user-response="gradient"] .prompt-section .prompt-text,
+html[data-sg-text-user-response="gradient"] .prompt-text,
+html[data-sg-text-user-response="gradient"] .user .chat-msg-body,
+html[data-sg-text-user-response="gradient"] .chat-message.user {
+  background-image: var(--sg-text-user-response-gradient) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  display: inline;
+}
+
+html[data-sg-text-user-response="color"] .prompt-section .prompt-text,
+html[data-sg-text-user-response="color"] .prompt-text,
+html[data-sg-text-user-response="color"] .user .chat-msg-body,
+html[data-sg-text-user-response="color"] .chat-message.user {
+  color: var(--sg-text-user-response-color) !important;
+  -webkit-text-fill-color: var(--sg-text-user-response-color) !important;
+}
+
+/* AI Thought Process (Granular Target) */
+html[data-sg-text-ai-thought="gradient"] .thought-process-box .thought-narrative,
+html[data-sg-text-ai-thought="gradient"] .thought-narrative {
+  background-image: var(--sg-text-ai-thought-gradient) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  display: inline;
+}
+
+html[data-sg-text-ai-thought="color"] .thought-process-box .thought-narrative,
+html[data-sg-text-ai-thought="color"] .thought-narrative {
+  color: var(--sg-text-ai-thought-color) !important;
+  -webkit-text-fill-color: var(--sg-text-ai-thought-color) !important;
+}
+
+/* Grouped Chat (Both AI + User) */
+html[data-sg-text-chat-all="gradient"] .chat-msg-body,
+html[data-sg-text-chat-all="gradient"] .prompt-text,
+html[data-sg-text-chat-all="gradient"] .thought-narrative,
+html[data-sg-text-chat-all="gradient"] .chat-message {
+  background-image: var(--sg-text-chat-all-gradient) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  display: inline;
 }
 
 /* Headings & Hero Titles (Granular Target) */

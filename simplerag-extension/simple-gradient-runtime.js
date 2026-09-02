@@ -916,7 +916,7 @@
       documentObject.documentElement.setAttribute('data-simple-gradient-surface', surfaceMode);
       documentObject.documentElement.setAttribute('data-simple-gradient-active', String(state.enabled && !effects.allOff));
 
-      const categories = ['assistant', 'heading', 'brand', 'cards', 'navigation', 'workspace'];
+      const categories = ['ai-response', 'user-response', 'ai-thought', 'chat-all', 'heading', 'brand', 'cards', 'navigation', 'workspace', 'assistant', 'meta'];
       for (const cat of categories) {
         const catStyle = profile.textStyles?.[cat];
         if (catStyle?.textGradient && state.enabled && !effects.allOff) {

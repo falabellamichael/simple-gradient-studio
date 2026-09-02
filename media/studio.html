@@ -532,6 +532,20 @@
   </div>
 
   <div class="text-selection-toolbar" id="textSelectionToolbar" role="toolbar" aria-label="Text Formatting" hidden>
+    <div class="toolbar-target-indicator" id="toolbarTargetIndicator" title="Target Group">
+      <span class="target-indicator-dot"></span>
+      <select id="toolbarTargetGroup" class="target-group-dropdown">
+        <option value="auto">⚡ Auto (Selection)</option>
+        <option value="ai-response">🤖 AI Response</option>
+        <option value="user-response">👤 User Response</option>
+        <option value="chat-all">💬 All Chat (AI + User)</option>
+        <option value="ai-thought">💭 Thought Process</option>
+        <option value="heading">✨ Headings & Hero</option>
+        <option value="cards">🗂️ Cards & Items</option>
+        <option value="navigation">🧭 Navigation</option>
+      </select>
+    </div>
+    <span class="toolbar-divider" aria-hidden="true"></span>
     <button type="button" class="format-btn" data-format="bold" title="Bold (Ctrl+B)"><b>B</b></button>
     <button type="button" class="format-btn" data-format="italic" title="Italic (Ctrl+I)"><i>I</i></button>
     <button type="button" class="format-btn" data-format="underline" title="Underline (Ctrl+U)"><u>U</u></button>
