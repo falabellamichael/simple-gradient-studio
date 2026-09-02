@@ -1357,3 +1357,33 @@ html[data-simple-gradient-surface="solid"] .shell .main-stage .dashboard article
     display: none !important;
   }
 }
+
+/* Typography & Gradient Text in SimpleRAG App */
+html[data-simple-gradient-text="gradient"] .shell .home-welcome h1,
+html[data-simple-gradient-text="gradient"] .shell .home-hero h1,
+html[data-simple-gradient-text="gradient"] .shell .brand-name,
+html[data-simple-gradient-text="gradient"] .shell .chat-title-brand,
+html[data-simple-gradient-text="gradient"] .shell .agent-highlight,
+html[data-simple-gradient-text="gradient"] .shell .gradient-text,
+html[data-simple-gradient-text="gradient"] .shell h1.hero-title,
+html[data-simple-gradient-text="gradient"] .outlook-app .app-title h1,
+html[data-simple-gradient-text="gradient"] .outlook-app .hero-heading,
+html[data-simple-gradient-text="gradient"] .outlook-app .chat-session-title {
+  background-image: var(--simple-gradient-text-gradient, linear-gradient(135deg, #FF6B4A, #E86633, #FFB020)) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  display: inline-block;
+}
+
+/* Custom Text Selection Highlight in SimpleRAG */
+html[data-simple-gradient-active="true"] ::selection {
+  background: color-mix(in srgb, var(--accent, #e86633) 45%, #e86633) !important;
+  color: #ffffff !important;
+}
+
+html[data-simple-gradient-active="true"] ::-moz-selection {
+  background: color-mix(in srgb, var(--accent, #e86633) 45%, #e86633) !important;
+  color: #ffffff !important;
+}

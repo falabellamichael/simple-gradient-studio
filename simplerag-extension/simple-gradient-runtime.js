@@ -318,6 +318,15 @@
     };
   }
 
+  function normalizeTypography(value) {
+    if (!value || typeof value !== 'object') return undefined;
+    return {
+      textGradient: typeof value.textGradient === 'string' && value.textGradient.length < 500 ? value.textGradient : undefined,
+      accentColor: typeof value.accentColor === 'string' && SAFE_HEX.test(value.accentColor) ? value.accentColor.toUpperCase() : undefined,
+      glow: value.glow === true
+    };
+  }
+
   function normalizeProfile(value) {
     const fallback = clone(DEFAULT_PROFILE);
     if (!value || typeof value !== 'object') return fallback;
@@ -381,7 +390,8 @@
         targetMode: rawEditor.targetMode === true,
         zoom: Math.round(clamp(rawEditor.zoom == null ? 100 : rawEditor.zoom, 70, 140))
       },
-      effects: normalizeEffects(value.effects)
+      effects: normalizeEffects(value.effects),
+      typography: normalizeTypography(value.typography)
     };
   }
 
@@ -876,6 +886,18 @@
     if (documentObject.documentElement) {
       documentObject.documentElement.setAttribute('data-simple-gradient-manual-override', String(state.manualOverride !== false));
       documentObject.documentElement.setAttribute('data-simple-gradient-surface', surfaceMode);
+      documentObject.documentElement.setAttribute('data-simple-gradient-active', String(state.enabled && !effects.allOff));
+      if (profile.typography?.textGradient) {
+        documentObject.documentElement.setAttribute('data-simple-gradient-text', 'gradient');
+        documentObject.documentElement.style.setProperty('--simple-gradient-text-gradient', profile.typography.textGradient);
+      } else {
+        documentObject.documentElement.removeAttribute('data-simple-gradient-text');
+        documentObject.documentElement.style.removeProperty('--simple-gradient-text-gradient');
+      }
+      if (profile.typography?.accentColor) {
+        documentObject.documentElement.style.setProperty('--accent', profile.typography.accentColor);
+        documentObject.documentElement.style.setProperty('--accent-color', profile.typography.accentColor);
+      }
     }
 
     let appliedCount = 0;

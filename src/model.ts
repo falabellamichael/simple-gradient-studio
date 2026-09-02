@@ -27,6 +27,12 @@ export interface GradientEffects {
   surface: 'glass' | 'solid';
 }
 
+export interface GradientTypography {
+  textGradient?: string;
+  accentColor?: string;
+  glow?: boolean;
+}
+
 export interface GradientProfile {
   schema: typeof PROFILE_SCHEMA;
   version: typeof PROFILE_VERSION;
@@ -41,6 +47,7 @@ export interface GradientProfile {
     zoom: number;
   };
   effects: GradientEffects;
+  typography?: GradientTypography;
 }
 
 const SAFE_TARGET = /^(app|page:[a-z0-9-]+|panel:[a-z0-9-]+\.[a-z0-9-]+)$/;
@@ -226,6 +233,16 @@ export function normalizeProfile(value: unknown): GradientProfile {
     : fallback.editor.activeTarget;
   const targetCatalog = editor.targetCatalog === 'simplerag' ? 'simplerag' : 'studio';
 
+function normalizeTypography(raw: unknown): GradientTypography | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const t = raw as Partial<GradientTypography>;
+  return {
+    textGradient: typeof t.textGradient === 'string' && t.textGradient.length < 500 ? t.textGradient : undefined,
+    accentColor: typeof t.accentColor === 'string' && SAFE_HEX.test(t.accentColor) ? t.accentColor.toUpperCase() : undefined,
+    glow: t.glow === true
+  };
+}
+
   return {
     schema: PROFILE_SCHEMA,
     version: PROFILE_VERSION,
@@ -239,7 +256,8 @@ export function normalizeProfile(value: unknown): GradientProfile {
       targetMode: editor.targetMode !== false,
       zoom: Math.round(clamp(Number(editor.zoom ?? 100), 70, 140))
     },
-    effects: normalizeEffects(raw.effects)
+    effects: normalizeEffects(raw.effects),
+    typography: normalizeTypography((raw as Record<string, unknown>).typography)
   };
 }
 

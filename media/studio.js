@@ -1924,7 +1924,26 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
   byId('saveButton').addEventListener('click', () => host.postMessage({ type: 'save' }));
   byId('installSimpleRagButton').addEventListener('click', () => {
     host.postMessage({ type: 'installSimpleRag', profile });
-    showToast('Installing this profile into SimpleRAG…');
+
+    try {
+      localStorage.setItem('simpleGradient.runtime.profileOverride.v1', JSON.stringify({
+        schema: 'simple-gradient-runtime-override',
+        version: 1,
+        installedFingerprint: '',
+        profile: clone(profile)
+      }));
+    } catch {}
+
+    try {
+      if (typeof window.parent?.SimpleGradientRuntime?.reapply === 'function') {
+        window.parent.SimpleGradientRuntime.reapply('studio-apply');
+      }
+      if (typeof window.SimpleGradientRuntime?.reapply === 'function') {
+        window.SimpleGradientRuntime.reapply('studio-apply');
+      }
+    } catch {}
+
+    showToast('Applied gradients & typography to SimpleRAG!');
   });
   byId('targetCatalogSelect').addEventListener('change', (event) => {
     const nextCatalog = event.target.value === 'studio' ? 'studio' : 'simplerag';
@@ -2641,6 +2660,13 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     const range = selection.getRangeAt(0);
     const gradCss = gradientString === 'current' ? gradientCss(activeGradient()) : gradientString;
 
+    profile.typography = profile.typography || {};
+    profile.typography.textGradient = gradCss;
+    commit((draft) => {
+      draft.typography = draft.typography || {};
+      draft.typography.textGradient = gradCss;
+    }, 'Applied gradient text style to profile.');
+
     const span = document.createElement('span');
     span.className = 'sg-gradient-text';
     span.style.backgroundImage = gradCss;
@@ -2668,6 +2694,13 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed) return;
     const range = selection.getRangeAt(0);
+
+    profile.typography = profile.typography || {};
+    profile.typography.accentColor = colorHex;
+    commit((draft) => {
+      draft.typography = draft.typography || {};
+      draft.typography.accentColor = colorHex;
+    }, `Applied text color ${colorHex} to profile.`);
 
     const span = document.createElement('span');
     span.className = 'sg-color-text';
