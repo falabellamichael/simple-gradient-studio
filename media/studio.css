@@ -2744,6 +2744,7 @@ body[data-view="preview"] .sample-app {
 }
 
 .sample-app.unified-blend .exact-chat-card,
+.sample-app.unified-blend .chat-msg-card,
 .sample-app.unified-blend .exact-home-composer,
 .sample-app.unified-blend .exact-home-tiles button,
 .sample-app.unified-blend .doc-card,
@@ -2755,12 +2756,11 @@ body[data-view="preview"] .sample-app {
 .sample-app.unified-blend .settings-tile,
 .sample-app.unified-blend .component-card,
 .sample-app.unified-blend .nav-item {
-  background: transparent !important;
-  background-image: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  background: rgba(18, 20, 26, var(--sg-card-alpha, 0.35)) !important;
+  backdrop-filter: blur(calc(var(--sg-glass-blur, 28px) * 0.75)) saturate(var(--sg-glass-saturation, 130%)) !important;
+  -webkit-backdrop-filter: blur(calc(var(--sg-glass-blur, 28px) * 0.75)) saturate(var(--sg-glass-saturation, 130%)) !important;
   border: 1px solid rgba(255, 255, 255, var(--sg-border-glow, 0.12)) !important;
-  box-shadow: none !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
 }
 
 .sample-app.unified-blend .nav-item.active,
