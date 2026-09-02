@@ -4910,6 +4910,71 @@ body[data-view="preview"] .sample-app {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
+.color-picker-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--sg-accent, #e85a29);
+  transition: background 0.12s ease;
+}
+
+.color-picker-btn:hover {
+  background: var(--sg-control-hover, #2a2d2d);
+}
+
+.color-picker-btn input[type="color"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  padding: 0;
+  border: none;
+}
+
+.gradient-badge-btn {
+  font-size: 9px;
+  font-weight: 600;
+  gap: 4px;
+  padding: 0 6px;
+  background: color-mix(in srgb, var(--sg-accent, #e85a29) 15%, transparent);
+  border-color: color-mix(in srgb, var(--sg-accent, #e85a29) 35%, transparent);
+  color: var(--sg-accent, #e85a29);
+}
+
+.gradient-badge-btn:hover {
+  background: color-mix(in srgb, var(--sg-accent, #e85a29) 25%, transparent);
+  border-color: var(--sg-accent, #e85a29);
+  color: #ffffff;
+}
+
+.gradient-swatch-btn .gradient-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+.gradient-dot.ember { background: linear-gradient(135deg, #FF6B4A, #E86633, #FFB020); }
+.gradient-dot.sunset { background: linear-gradient(135deg, #FBBF24, #F97316, #EF4444); }
+.gradient-dot.ocean { background: linear-gradient(135deg, #38BDF8, #0EA5E9, #14B8A6); }
+.gradient-dot.violet { background: linear-gradient(135deg, #C084FC, #A855F7, #EC4899); }
+.gradient-dot.emerald { background: linear-gradient(135deg, #4ADE80, #22C55E, #10B981); }
+
+.glow-btn {
+  font-size: 9px;
+  font-weight: 600;
+  gap: 3px;
+  color: #FFB020;
+}
+
 .highlight-btn .highlight-swatch {
   width: 14px;
   height: 10px;
@@ -4926,6 +4991,26 @@ body[data-view="preview"] .sample-app {
   height: 16px;
   background: var(--sg-border, #343737);
   margin: 0 2px;
+}
+
+/* Styled Span Inline Formats */
+.sg-gradient-text {
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  display: inline;
+  font-weight: inherit;
+  transition: all 0.2s ease;
+}
+
+.sg-color-text {
+  display: inline;
+}
+
+.sg-glow-text {
+  display: inline;
+  text-shadow: 0 0 10px rgba(232, 102, 51, 0.75), 0 0 20px rgba(232, 102, 51, 0.45);
 }
 
 /* Inline Text Editing Active States */

@@ -2635,6 +2635,102 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
 
   const textToolbar = byId('textSelectionToolbar');
 
+  function applyTextGradient(gradientString) {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) return;
+    const range = selection.getRangeAt(0);
+    const gradCss = gradientString === 'current' ? gradientCss(activeGradient()) : gradientString;
+
+    const span = document.createElement('span');
+    span.className = 'sg-gradient-text';
+    span.style.backgroundImage = gradCss;
+    span.style.background = gradCss;
+    span.style.webkitBackgroundClip = 'text';
+    span.style.webkitTextFillColor = 'transparent';
+    span.style.backgroundClip = 'text';
+    span.style.color = 'transparent';
+    span.style.display = 'inline';
+    span.style.fontWeight = 'bold';
+
+    try {
+      span.appendChild(range.extractContents());
+      range.insertNode(span);
+      selection.removeAllRanges();
+      const newRange = document.createRange();
+      newRange.selectNodeContents(span);
+      selection.addRange(newRange);
+    } catch {
+      document.execCommand('insertHTML', false, `<span class="sg-gradient-text" style="background: ${gradCss}; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent; display: inline; font-weight: bold;">${selection.toString()}</span>`);
+    }
+  }
+
+  function applyTextColor(colorHex) {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) return;
+    const range = selection.getRangeAt(0);
+
+    const span = document.createElement('span');
+    span.className = 'sg-color-text';
+    span.style.color = colorHex;
+    span.style.webkitTextFillColor = colorHex;
+    span.style.display = 'inline';
+
+    try {
+      span.appendChild(range.extractContents());
+      range.insertNode(span);
+      selection.removeAllRanges();
+      const newRange = document.createRange();
+      newRange.selectNodeContents(span);
+      selection.addRange(newRange);
+    } catch {
+      document.execCommand('foreColor', false, colorHex);
+    }
+  }
+
+  function applyTextGlow(glowType) {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) return;
+    const range = selection.getRangeAt(0);
+
+    const span = document.createElement('span');
+    span.className = 'sg-glow-text';
+    span.style.textShadow = '0 0 10px rgba(232, 102, 51, 0.75), 0 0 20px rgba(232, 102, 51, 0.45)';
+    span.style.display = 'inline';
+
+    try {
+      span.appendChild(range.extractContents());
+      range.insertNode(span);
+      selection.removeAllRanges();
+      const newRange = document.createRange();
+      newRange.selectNodeContents(span);
+      selection.addRange(newRange);
+    } catch {
+      // fallback
+    }
+  }
+
+  function clearTextFormatting() {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) return;
+    const range = selection.getRangeAt(0);
+    const container = range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE 
+      ? range.commonAncestorContainer 
+      : range.commonAncestorContainer.parentElement;
+
+    document.execCommand('removeFormat', false, null);
+
+    if (container) {
+      const styledSpans = Array.from(container.querySelectorAll('.sg-gradient-text, .sg-color-text, .sg-glow-text, span[style]'));
+      styledSpans.forEach((sp) => {
+        const parent = sp.parentNode;
+        if (parent) {
+          while (sp.firstChild) parent.insertBefore(sp.firstChild, sp);
+          parent.removeChild(sp);
+        }
+      });
+    }
+  }
+
   function updateTextSelectionToolbar() {
     if (!textToolbar) return;
     const selection = window.getSelection();
@@ -2672,7 +2768,10 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
 
   if (textToolbar) {
     textToolbar.addEventListener('mousedown', (event) => {
-      event.preventDefault();
+      // Allow color picker interaction without preventing default
+      if (event.target.tagName !== 'INPUT') {
+        event.preventDefault();
+      }
     });
 
     textToolbar.addEventListener('click', (event) => {
@@ -2681,14 +2780,27 @@ runtime.applySurfaceGradient('panel:journal.workspace');</code></pre>
       event.preventDefault();
       event.stopPropagation();
 
-      if (btn.dataset.format) {
+      if (btn.id === 'clearTextFormattingBtn' || btn.dataset.format === 'removeFormat') {
+        clearTextFormatting();
+      } else if (btn.dataset.textGradient) {
+        applyTextGradient(btn.dataset.textGradient);
+      } else if (btn.dataset.textGlow) {
+        applyTextGlow(btn.dataset.textGlow);
+      } else if (btn.dataset.format) {
         document.execCommand(btn.dataset.format, false, null);
       } else if (btn.dataset.color) {
-        document.execCommand('foreColor', false, btn.dataset.color);
+        applyTextColor(btn.dataset.color);
       } else if (btn.dataset.highlight) {
         document.execCommand('hiliteColor', false, btn.dataset.highlight);
       }
       setTimeout(updateTextSelectionToolbar, 10);
+    });
+  }
+
+  const customColorInput = byId('textCustomColorPicker');
+  if (customColorInput) {
+    customColorInput.addEventListener('input', (event) => {
+      applyTextColor(event.target.value);
     });
   }
 
