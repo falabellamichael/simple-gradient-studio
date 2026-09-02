@@ -1578,12 +1578,25 @@ html[data-simple-gradient-active="true"] ::-moz-selection {
 }
 
 /* Enhanced Auto-Blend Panoramic Glass Architecture for SimpleRAG */
-html[data-simple-gradient-autoblend="true"] .shell,
-html[data-simple-gradient-autoblend="true"] .outlook-app {
+html[data-simple-gradient-autoblend="true"] .shell:not([data-simple-gradient-has-native]),
+html[data-simple-gradient-autoblend="true"] .outlook-app:not([data-simple-gradient-has-native]) {
   background-image: var(--simple-gradient-runtime-layer, var(--sg-app-gradient, linear-gradient(132deg, #0d1418 0%, #1a1714 50%, #331e15 100%))) !important;
   background-size: cover !important;
   background-position: center center !important;
   background-repeat: no-repeat !important;
+}
+
+html[data-simple-gradient-autoblend="true"] .shell[data-simple-gradient-has-native],
+html[data-simple-gradient-autoblend="true"] .outlook-app[data-simple-gradient-has-native] {
+  background-image:
+    var(--simple-gradient-runtime-layer, none),
+    linear-gradient(color-mix(in srgb, var(--background, #14161c) calc(var(--background-overlay, 0.1) * 100%), transparent),
+      color-mix(in srgb, var(--background, #14161c) calc(var(--background-overlay, 0.1) * 100%), transparent)),
+    var(--background-image, none) !important;
+  background-size: cover, cover, var(--background-size, cover) !important;
+  background-repeat: no-repeat, no-repeat, var(--background-repeat, no-repeat) !important;
+  background-position: center, center, var(--background-position, center) !important;
+  background-attachment: fixed, fixed, fixed !important;
 }
 
 html[data-simple-gradient-autoblend="true"] .page-workspace-layout,

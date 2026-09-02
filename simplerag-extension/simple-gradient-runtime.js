@@ -813,6 +813,16 @@
       value = global.getComputedStyle(root).getPropertyValue('--background-image') || '';
     }
     value = String(value).trim();
+    if (!value || value === 'none') {
+      const body = documentObject.body;
+      if (body) {
+        value = body.style?.getPropertyValue?.('--background-image') || '';
+        if (!value && typeof global.getComputedStyle === 'function') {
+          value = global.getComputedStyle(body).getPropertyValue('--background-image') || '';
+        }
+      }
+    }
+    value = String(value).trim();
     return value.includes('url(') || value.includes('data:') ? value : '';
   }
 
